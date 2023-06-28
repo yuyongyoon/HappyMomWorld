@@ -1,0 +1,15 @@
+server:
+  port: 8080
+
+spring:
+  config:
+    activate:
+      on-profile: local # 환경이름설정
+  mvc:
+    static-path-pattern: /static/**
+  resources:
+    static-location: classpath:/static/
+    add-mapping: true
+    
+mybatis:
+    mapper-locations: classpath:/mapper/*.xml

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.reserve.app.mapper.adminMapper">
+
+	<select id="getUserList" parameterType="map" resultType="map">
+		SELECT 
+			id,
+			name,
+			remark,
+			to_char(password_changed_dt,'yyyy-MM-dd HH24:MI:SS') as pswd_chg_dt,
+			to_char(created_dt,'yyyy-MM-dd ') as created_dt
+		FROM tb_user_security
+		<where>
+		<if test='id!=null and id!=""'>and upper(id) like '%'||upper(#{id})||'%'</if>
+		<if test='name!=null and name!=""'>and upper(name) like '%'||upper(#{name})||'%'</if>
+		</where>
+		order by id asc
+	</select>
+	
+	<insert id="addUser" parameterType="map">
+		insert into tb_user_security (id, name, password, remark, created_dt,modified_dt, modified_id, created_id)
+		values (#{id}, #{name}, #{password}, #{remark}, now(), now(), #{_userid}, #{_userid})
+	</insert>
+	
+	<update id="updateUser" parameterType="map">
+		update tb_user_security set
+			name = #{name},
+			remark = #{remark},
+			modified_dt=now(),
+			modified_id=#{_userid}
+		where id=#{id}
+	</update>
+	
+	<select id="validateId" parameterType="map" resultType="int">
+		select count(*)
+		from tb_user_security
+		where id=#{id}
+	</select>
+</mapper>

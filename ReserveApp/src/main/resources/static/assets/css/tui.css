@@ -1,0 +1,31 @@
+.tui-grid-cell-disabled{
+	color : black !important;
+}
+
+.tui-grid-cell-del{
+	background-color:#ffbdbd;
+}
+
+.tui-grid-white{
+	background-color:#fff !important;
+}
+
+.tui-cell-cursor{
+	cursor:pointer;
+}
+
+.ui-datepicker{
+	z-index:1000 !important;
+}
+
+.tui-grid-lside-area{
+	border-right: 1px solid #eee;
+}
+
+.tui-grid-cell-header {
+    background-color: #f8f8f8;
+}
+
+.tui-grid-context-menu{
+	display:none !important;
+}

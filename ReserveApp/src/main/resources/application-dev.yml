@@ -1,0 +1,7 @@
+server:
+  port: 8888
+
+spring:
+  config:
+    activate:
+      on-profile: dev # 환경이름설정

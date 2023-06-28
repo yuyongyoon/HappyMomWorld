@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+	<properties>
+		<property name="appName">ReserveApp</property>
+	</properties>
+	<Appenders>
+		<Console name="console" target="SYSTEM_OUT">
+			<PatternLayout pattern="%d %5p [%c] %m%n" />
+		</Console>
+		
+		<RollingFile name="log_file" fileName="d:/log/${appName}.log" 
+			filePattern="d:/log/$${date:yyyy}/$${date:MM}/$${date:dd}/${appName}_%d{yyyyMMddHH}.log">
+			<PatternLayout pattern="%d %5p [%c] %m%n" />
+			<Policies>
+				<SizeBasedTriggeringPolicy size="10MB" /> <!-- 10MB 용량이 초과시 DefaultRolloverStrategy 정책만큼 넘버링 -->
+				<TimeBasedTriggeringPolicy interval="1" /><!-- 일별 로그 파일 생성 / module="true" -> 에러 생겨서 뺌 -->
+			</Policies>
+			<!-- DefaultRolloverStrategy max="500" fileIndex="min" / --><!-- 롤링 파일 500개 까지 생성 -->
+		</RollingFile>
+		
+	</Appenders>
+
+	<Loggers>
+		<Root level="DEBUG" additivity="false" >
+			<AppenderRef ref="console" level="DEBUG" />
+			<AppenderRef ref="log_file" level="DEBUG" />
+		</Root>
+		
+		<Logger name="org" additivity="false">
+			<AppenderRef ref="console" level="WARN"/>
+			<AppenderRef ref="log_file" level="WARN"/>
+		</Logger>
+		
+		<Logger name="_org" additivity="false">
+			<AppenderRef ref="console" level="WARN"/>
+			<AppenderRef ref="log_file" level="WARN"/>
+		</Logger>
+		
+		<Logger name="com.zaxxer" additivity="false">
+			<AppenderRef ref="log_file" level="WARN"/>
+		</Logger>
+		
+		<logger name="jdbc" level="OFF"/>
+		<logger name="jdbc.sqlonly" level="DEBUG"/>
+		<logger name="jdbc.sqltiming" level="OFF"/>
+		<logger name="jdbc.audit" level="OFF"/>
+		<logger name="jdbc.resultset" level="OFF"/>
+		<logger name="jdbc.resultsettable" level="OFF"/>
+		<logger name="jdbc.connection" level="OFF"/>
+		
+	</Loggers>
+</Configuration>
