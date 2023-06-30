@@ -1,63 +1,50 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
-<script type="text/javascript">			
-	var SBpath = "/static/";
-	
-	document.getElementsByClassName = function (className) {
-		return document.querySelectorAll('.' + className)
-	}
+<!-- Fonts and icons -->
+<script src="/static/assets/js/plugin/webfont/webfont.min.js"></script> 
+<script>
+	WebFont.load({
+		google: {"families":["Open+Sans:300,400,600,700"]},
+		custom: {"families":["Flaticon", "Font Awesome 5 Solid", "Font Awesome 5 Regular", "Font Awesome 5 Brands"], urls: ['/static/assets/css/fonts.css']},
+		active: function() {
+			sessionStorage.fonts = true;
+		}
+	});
 </script>
 
-<!-- Styles -->
-<link href="/static/assets/css/lib/calendar2/pignose.calendar.min.css" rel="stylesheet">
-<link href="/static/assets/css/lib/chartist/chartist.min.css" rel="stylesheet">
-<link href="/static/assets/css/lib/font-awesome.min.css" rel="stylesheet">
-<link href="/static/assets/css/lib/themify-icons.css" rel="stylesheet">
-<link href="/static/assets/css/lib/owl.carousel.min.css" rel="stylesheet" />
-<link href="/static/assets/css/lib/owl.theme.default.min.css" rel="stylesheet" />
-<link href="/static/assets/css/lib/weather-icons.css" rel="stylesheet" />
-<link href="/static/assets/css/lib/menubar/sidebar.css" rel="stylesheet">
-<link href="/static/assets/css/lib/bootstrap.min.css" rel="stylesheet">
-<link href="/static/assets/css/lib/helper.css" rel="stylesheet">
-<link href="/static/assets/css/style.css" rel="stylesheet">
-<link href="/static/assets/css/common.css" rel="stylesheet">
 
+<!-- CSS Files -->
+<link rel="stylesheet" href="/static/assets/css/bootstrap.min.css">
+<link rel="stylesheet" href="/static/assets/css/azzara.min.css">
+	
+<!--   Core JS Files   -->
+<script src="/static/assets/js/core/jquery.3.2.1.min.js"></script>
+<script src="/static/assets/js/core/popper.min.js"></script>
+<script src="/static/assets/js/core/bootstrap.min.js"></script>
 
-<!-- jquery vendor -->
-<!-- <script src="/static/assets/js/lib/jquery.min.js"></script> -->
-<script src="/static/assets/js/jquery-3.3.1.min.js"></script>
-<script src="/static/assets/js/lib/jquery.nanoscroller.min.js"></script>
-<!-- nano scroller -->
-<script src="/static/assets/js/lib/menubar/sidebar.js"></script>
-<script src="/static/assets/js/lib/preloader/pace.min.js"></script>
-<!-- sidebar -->
+<!-- jQuery UI -->
+<script src="/static/assets/js/plugin/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
+<script src="/static/assets/js/plugin/jquery-ui-touch-punch/jquery.ui.touch-punch.min.js"></script>
+<script src="/static/assets/js/plugin/bootstrap-toggle/bootstrap-toggle.min.js"></script>
 
-<script src="/static/assets/js/lib/bootstrap.min.js"></script>
-<script src="/static/assets/js/scripts.js"></script>
-<!-- bootstrap -->
+<!-- jQuery Scrollbar -->
+<script src="/static/assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js"></script>
 
+<script src="/static/assets/js/ready.min.js"></script>
 
-<link href="/static/assets/jqueryui/jquery-ui.min.css" rel="stylesheet">
-<script src="/static/assets/jqueryui/jquery-ui.min.js"></script>
-<script src="/static/assets/jqueryui/jquery.mtz.monthpicker.js"></script>
-<script src="/static/assets/js/jqcloud.min.js"></script>
-<link href="/static/assets/js/jqcloud.min.css" rel="stylesheet">
-<script src="/static/assets/js/common.js"></script>
-<script src="/static/assets/js/sb-com.js"></script>
-<script src="/static/assets/js/chart.js"></script>
-<script src="/static/assets/js/chartjs-plugin-annotation.min.js"></script>
-<script src="/static/assets/js/toastui-chart.min.js"></script>
-<link href="/static/assets/js/toastui-chart.min.css" rel="stylesheet"/>
+<!-- 공통코드 -->
+<link rel="stylesheet" href="/static/common/css/common.css" />
+<script src="/static/common/js/common.js"></script>
 
-<script src="/static/assets/js/tui-pagination.js"></script>
-<script src="/static/assets/js/tui-com.js"></script>
-<script src="/static/assets/js/tui-grid.js"></script>
-<script src="/static/assets/js/FileSaver.min.js"></script>
-<script src="/static/assets/js/xlsx.full.min.js"></script>
-<script src="/static/assets/js/xlsx.style.min.js"></script>
+<!-- Grid & tui -->
+<link rel="stylesheet" href="/static/common/css/tui/tui-pagination.css" />
+<link rel="stylesheet" href="/static/common/css/tui/tui-grid.css" />
+<link rel="stylesheet" href="/static/common/css/tui/tui.css" />
+<script src="/static/common/js/tui/tui-pagination.js"></script>
+<script src="/static/common/js/tui/tui-com.js"></script>
+<script src="/static/common/js/tui/tui-grid.js"></script>
+<script src="/static/common/js/tui/FileSaver.min.js"></script>
+<script src="/static/common/js/tui/xlsx.full.min.js"></script>
+<script src="/static/common/js/tui/xlsx.style.min.js"></script>
 
-
-<link rel="stylesheet" href="/static/assets/css/tui-pagination.css" />
-<link rel="stylesheet" href="/static/assets/css/tui-grid.css" />
-<link rel="stylesheet" href="/static/assets/css/tui.css" />

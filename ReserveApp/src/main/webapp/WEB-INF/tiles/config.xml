@@ -1,39 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN" "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
 <tiles-definitions>
-	<!-- Base : 일반유저화면 -->
+	<!-- Base : 기본화면 -->
 	<definition name="base" template="/WEB-INF/tiles/layout/template.jsp">
 		<put-attribute name="common"	value="/WEB-INF/tiles/layout/common.jsp" />
 		<put-attribute name="nav"		value="/WEB-INF/tiles/layout/nav.jsp" />
 		<put-attribute name="sidebar"	value="/WEB-INF/tiles/layout/sidebar.jsp" />
 	</definition>
 	
-<!-- 	<definition name="login" 		template="/WEB-INF/views/login/login.jsp"/> -->
-<!-- 	<definition name="login_fail" 	template="/WEB-INF/views/login/login_fail.jsp"/> -->
-<!-- 	<definition name="login_error"  template="/WEB-INF/views/login/login_error.jsp"/> -->
+	<!-- 로그인 -->
+	<definition name="login" 		template="/WEB-INF/views/login/login.jsp"/>
 	
-<!-- 	<definition name="main" extends="base"> -->
-<!-- 		<put-attribute name="body" value="/WEB-INF/views/dashboard.jsp" /> -->
-<!-- 	</definition> -->
+	<!-- 캘린더 -->
+	<definition name="calendar" extends="base">
+		<put-attribute name="body" value="/WEB-INF/views/calendar.jsp" />
+	</definition>
 
-<!-- 	<definition name="insta/*" extends="base"> -->
-<!-- 		<put-attribute name="body" value="/WEB-INF/views/instagram/{1}.jsp" /> -->
-<!-- 	</definition> -->
-	
-<!-- 	<definition name="sales/*" extends="base"> -->
-<!-- 		<put-attribute name="body" value="/WEB-INF/views/sales/{1}.jsp" /> -->
-<!-- 	</definition> -->
-	
+	<!-- 관리자 화면 -->
 	<definition name="admin/*" extends="base">
 		<put-attribute name="body" value="/WEB-INF/views/admin/{1}.jsp" />
 	</definition>
 	
-<!-- 	<definition name="review/*" extends="base"> -->
-<!-- 		<put-attribute name="body" value="/WEB-INF/views/review/{1}.jsp" /> -->
-<!-- 	</definition> -->
-	
-<!-- 	<definition name="report/*" extends="base"> -->
-<!-- 		<put-attribute name="body" value="/WEB-INF/views/report/{1}.jsp" /> -->
-<!-- 	</definition> -->
-
 </tiles-definitions>

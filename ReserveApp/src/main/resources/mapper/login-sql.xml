@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.reserve.app.mapper.LoginMapper">
+
+	<select id="getUserInfo" parameterType="map" resultType="com.reserve.app.entity.LoginEntity">
+		SELECT id, password, name, user_role, remark, created_id, created_dt, modified_id, modified_dt, user_status
+		FROM tb_user 
+		where id=#{id} and user_status=true
+	</select>
+	
+</mapper>
