@@ -23,5 +23,4 @@ public class ReserveAppApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(ReserveAppApplication.class, args);
 	}
-
 }
