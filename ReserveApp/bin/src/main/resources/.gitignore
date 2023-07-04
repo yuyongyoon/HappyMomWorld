@@ -1,0 +1,6 @@
+/application-dev.yml
+/application-local.yml
+/application-prod.yml
+/application.yml
+/log4j2.xml
+/log4jdbc.log4j2.properties
