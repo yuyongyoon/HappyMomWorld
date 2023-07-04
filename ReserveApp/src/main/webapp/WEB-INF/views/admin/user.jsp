@@ -1,14 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
-<!doctype html>
-<html lang="ko">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>회원 정보 관리 페이지</title>   
-  </head>
-  <body>
-  	<script>
+
+	<script>
 		$(document).ready(function() {
 			//통신 객체
 			ajaxCom = {
@@ -37,12 +30,12 @@
 					});
 				}
 			
-			getUserInfo : function() {
-				let changed = $('#input_id_name').val();
-				let phoneNumber = $('#input_phone').val();
-				let startDate = $('#input_startDate').val();
-				let endDate = $('#input_endDate').val();
-			}
+// 			getUserInfo : function() {
+// 				let changed = $('#input_id_name').val();
+// 				let phoneNumber = $('#input_phone').val();
+// 				let startDate = $('#input_startDate').val();
+// 				let endDate = $('#input_endDate').val();
+// 			}
 			// 수정된 입력 데이터 불러오기
 			/*changedUserInfo : function() {
 				let changedId = $('#input_userId_edit').val();
@@ -63,7 +56,12 @@
 				btn_add : function(){	//추가버튼
 					$('#user_add_modal').modal('show');						
 				},
-				btn_save : function(){	//저장버튼
+				btn_updateAccount : function(){
+					let param = {
+// 							변수명1 : $('#아이디값').val(),
+// 							변수명2 : $('#아이디값').val(),
+					}
+					console.log('param 데이터 확인: ', param)
 				}
 			}; //btnCom END
 			
@@ -101,6 +99,8 @@
 					cellclick : function(rowKey,colName,grid){
 						if(colName=="id"){	// 회원id 클릭 시 modal 팝업
 							$('#user_modify_modal').modal('show');
+							let rowData = userGrid.getRow(rowKey);
+							$('#input_userId_edit').val(rowData.id);
 						}
 					}
 				}
@@ -345,6 +345,3 @@
 			</div>
 		</div>
 	</div>
-    
-  </body>
-</html>
