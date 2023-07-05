@@ -7,8 +7,9 @@
 		<!-- Logo Header -->
 		<div class="logo-header">
 			
-			<a href="#" class="logo">
-				<img src="/static/assets/img/logoazzara.svg" alt="navbar brand" class="navbar-brand">
+			<a href="/" class="logo">
+<!-- 				<img src="/static/assets/img/logoazzara.svg" alt="navbar brand" class="navbar-brand"> -->
+				<span>HappyMamWorld</span>
 			</a>
 			<button class="navbar-toggler sidenav-toggler ml-auto" type="button" data-toggle="collapse" data-target="collapse" aria-expanded="false" aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon">
@@ -65,17 +66,6 @@
 											</div>
 										</a>
 										<a href="#">
-											<div class="notif-img"> 
-												<img src="/static/assets/img/profile2.jpg" alt="Img Profile">
-											</div>
-											<div class="notif-content">
-												<span class="block">
-													Reza send messages to you
-												</span>
-												<span class="time">12 minutes ago</span> 
-											</div>
-										</a>
-										<a href="#">
 											<div class="notif-icon notif-danger"> <i class="fa fa-heart"></i> </div>
 											<div class="notif-content">
 												<span class="block">
@@ -93,28 +83,20 @@
 						</ul>
 					</li>
 					<li class="nav-item dropdown hidden-caret">
-						<a class="dropdown-toggle profile-pic" data-toggle="dropdown" href="#" aria-expanded="false">
-							<div class="avatar-sm">
-								<img src="/static/assets/img/profile.jpg" alt="..." class="avatar-img rounded-circle">
-							</div>
+						<a class="nav-link dropdown-toggle" href="#" id="userMenu" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							<i class="la flaticon-settings"></i>
 						</a>
-						<ul class="dropdown-menu dropdown-user animated fadeIn">
+						
+						<ul class="dropdown-menu dropdown-user animated fadeIn" aria-labelledby="userMenu">
 							<li>
-								<div class="user-box">
-									<div class="avatar-lg"><img src="/static/assets/img/profile.jpg" alt="image profile" class="avatar-img rounded"></div>
-									<div class="u-text">
-										<h4>박땡땡</h4>
-									</div>
-								</div>
+								<a class="dropdown-item" href="#">정보 변경</a>
 							</li>
 							<li>
-								<div class="dropdown-divider"></div>
-								<a class="dropdown-item" href="#">예약확인</a>
+								<a class="dropdown-item" href="#">예약 확인</a>
 							</li>
 							<li id="logOut">
-								<div class="dropdown-divider"></div>
 								<a class="dropdown-item" href="#" onclick="document.getElementById('logout').submit();">
-									<span>Logout</span>
+									<span>로그아웃</span>
 								</a>
 								<form id="logout" action="/logout" method="POST"></form>
 							</li>

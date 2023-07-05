@@ -24,9 +24,8 @@
 	</head>
 	<body class="login">
 		<div class="wrapper wrapper-login">
-			<div class="container container-login animated fadeIn">
+			<div class="container container-login animated fadeIn" style="width:500px">
 				<h3 class="text-center">Sign In</h3>
-<!-- 				<div class="login-form"> -->
 					<form class="login-form" method="post" name="f" action="loginProc">
 						<div class="form-group form-floating-label">
 							<input id="id" name="id" type="text" class="form-control input-border-bottom" required>
@@ -45,13 +44,12 @@
 								<label class="custom-control-label" for="rememberme">Remember Me</label>
 							</div>
 							
-							<a href="#" class="link float-right">Forget Password ?</a>
+							<a href="" class="link float-right">Forget Password ?</a>
 						</div>
 						<div class="form-action mb-3">
-							<button class="btn btn-primary btn-rounded btn-login" type="submit">Sign In</button>
+							<button class="btn btn-secondary btn-rounded btn-login" type="submit">Sign In</button>
 						</div>
 					</form>
-<!-- 				</div> -->
 			</div>
 		</div>
 		

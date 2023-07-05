@@ -9,6 +9,7 @@
 	// 비밀번호 동일 확인 기능 추가
 	// db에 사용자 정보 추가가 끝나면 input값 disable 값 모두 입력 가능한 창으로 reset하기
 	// date picker 적용 후 초기 값 적용
+	let idCheck = false;
 	
 		$(document).ready(function() {
 			//통신 객체
@@ -89,7 +90,25 @@
 							alert("오류가 발생했습니다.");
 						}
 					});
-				}
+				},
+				updateAccount : function(param){
+					$.doPost({
+						url	 	: "/admin/updateAccount",
+						data 	: param,
+						success	: function(result) {
+							if(result.msg == 'success') {
+								alert('등록되었습니다.');
+								$('#user_edit_modal').modal('hide');//창 닫기
+								ajaxCom.getUserList();	// 조회
+								$('#btn_get').click();
+							}
+							
+						},
+						error	: function(xhr,status){
+							alert("오류가 발생했습니다.");
+						}
+					});
+				},
 			}; //ajaxCom END
 			
 			//이벤트 객체 : id값을 주면 클릭 이벤트 발생
@@ -157,6 +176,11 @@
 					console.log(param);
 					
 					ajaxCom.addAccount(param);
+				},
+				btn_checkId : function() {
+					let param = {
+							//id 
+					}
 				}
 			}; //btnCom END
 			
@@ -178,7 +202,18 @@
 			
 			//기타 함수 객체
 			fnCom = {
-				
+				btn_checkId : function(){
+					$('.input_checkId_add').changed(function(){
+						$('#sucess').hide();
+						$('btn_checId').show();
+						$('.input_checkId_add').attr("result", "fail");
+					})
+					
+					if($('.input_checkId_add').val() == '') {
+						alter('이메일을 입력해주세요');
+						return;
+					}
+				}
 			}; //fnCom END
 			
 			const userGrid = tuiGrid.createGrid(
@@ -226,6 +261,10 @@
 			);
 			
 			ajaxCom.getUserList();
+			
+			//여기에 비밀번호 확인 입력
+
+			
 		}); //END $(document).ready
 		
 	</script>
@@ -304,13 +343,13 @@
 								                  <div class="form-group row">
 								                     <label class="col-sm-2 control-label text-right p-1" style="border: 0px;">전화번호</label>
 								                     <div class="col-sm-10">
-								                        <input type="text" class="form-control" id="input_phoneNumber_edit" maxlength='13'>
+								                        <input type="tel" class="form-control" id="input_phoneNumber_edit">
 								                     </div>
 								                  </div>
 								                  <div class="form-group row">
 								                     <label class="col-sm-2 control-label text-right p-1">등록일</label>
 								                     <div class="col-sm-10">
-								                        <input type="text" class="form-control" id="input_createdDate_edit" style="border: 0px;" readonly>
+								                        <input type="date" class="form-control" id="input_createdDate_edit" style="border: 0px;" readonly>
 								                     </div>
 								                  </div>
 								                  

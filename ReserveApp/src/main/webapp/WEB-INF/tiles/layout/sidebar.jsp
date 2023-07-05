@@ -10,7 +10,19 @@
 				<li class="nav-item">
 					<a href="/">
 						<i class="fas fa-calendar"></i>
-						<p>Reservation Calendar</p>
+						<p>예약 캘린더</p>
+					</a>
+				</li>
+				<li class="nav-item">
+					<a href="/">
+						<i class="fas fa-unlock-alt"></i>
+						<p>정보 변경</p>
+					</a>
+				</li>
+				<li class="nav-item">
+					<a href="/">
+						<i class="fas fa-tasks"></i>
+						<p>예약 확인</p>
 					</a>
 				</li>
 				<sec:authorize access="hasAnyRole('ROLE_ADMIN')">
@@ -23,7 +35,7 @@
 					<li class="nav-item">
 						<a data-toggle="collapse" href="#base">
 							<i class="fas fa-desktop"></i>
-							<p>Menu</p>
+							<p>관리자 메뉴</p>
 							<span class="caret"></span>
 						</a>
 						<div class="collapse" id="base">
