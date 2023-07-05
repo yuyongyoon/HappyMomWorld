@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 	
 	<script>
-	// 추가할 기능
+	// <<추가할 기능>>
 	// 회원 정보 수정에 값 뿌리는기
 	// 비밀번호 input type password로 변경
 	// 전화번호 입력칸 010-1111-1111 입력값 안들어감
@@ -37,6 +37,7 @@
 						}
 					});
 				},
+				// reset버튼(회원 정보 수정 modal)
 				resetPwd : function(param) {
 					$.doPost({
 						url	 	: "/admin/resetPassword",
@@ -50,6 +51,7 @@
 						}
 					});
 				},
+				// 추가 버튼(회원 정보 추가 modal)
 				addAccount : function(param) {
 					$.doPost({
 						url	 	: "/admin/addAccount",
@@ -67,29 +69,72 @@
 							alert("오류가 발생했습니다.");
 						}
 					});
+				},
+				// 저장 버튼(회원 정보 수정 modal)
+				//// ~작업중~
+				updateAccount : function(param){
+					$.doPost({
+						url	 	: "/admin/updateAccount",
+						data 	: param,
+						success	: function(result) {
+							if(result.msg == 'success') {
+								alert('등록되었습니다.');
+								$('#user_edit_modal').modal('hide');//창 닫기
+								ajaxCom.getUserList();	// 조회
+								$('#btn_get').click();
+							}
+							
+						},
+						error	: function(xhr,status){
+							alert("오류가 발생했습니다.");
+						}
+					});
 				}
 			}; //ajaxCom END
 			
 			//이벤트 객체 : id값을 주면 클릭 이벤트 발생
 			btnCom = {
-				btn_get : function() {	//조회 버튼 > 해당 데이터 출력
+				//조회 버튼 > 해당 데이터 출력
+				btn_get : function() {
 					ajaxCom.getUserList();
 				},
-				btn_add : function(){	//추가 버튼 > 회원 정보 추가 modal 팝업
+				//추가 버튼 > 회원 정보 추가 modal 팝업
+				btn_add : function(){
 					$('#user_add_modal').modal('show');						
 				},
-				btn_updateAccount : function(){	//회원 정보 수정 버튼 > 수정된 정보 DB에 저장
+				//회원 정보 추가 버튼: 추가된 정보 DB에 저장
+				btn_addAccount : function(){
 					let param = {
-						changedUserId		: $('#input_userId_edit').val(),		// id
-						changedUserName 	: $('#input_userName_edit').val(),		// 이름
-						changedPhoneNumber	: $('#input_phoneNumber_edit').val(),		// 전화번호
-						changedCreatedDate	: $('#input_startDate').val(),	// 등록일
-						changedRole			: $('#input_role_edit').val(),			// 사용자 구분
-						changedEnabled		: $('#input_enabled_edit').val(),		// 사용 여부
-						changedRemark		: $('#input_rmk_edit').val()			// 비고
+						addcheckId		: $('#input_checkId_add').val(),		// id 중복확인
+						addPwd			: $('#input_userPwd_add').val(),		// pw
+						addCheckPwd		: $('#input_checkPwd_add').val(),		// id 중복확인
+						addUserName 	: $('#input_userName_add').val(),		// 이름
+						addPhoneNumber	: $('#input_phoneNumber_add').val(),		// 전화번호
+						addRole			: $('#input_role_add').val(),			// 사용자 구분
+						addEnabled		: $('#input_enabled_add').val(),		// 사용 여부
+						addRemark		: $('#input_rmk_add').val()			// 비고
 					}
-				console.log('수정된 회원 정보 확인 >', param)
+					//test
+					console.log('추가된 회원 정보 확인 >', param)
 				},
+				//회원 정보 수정 버튼 > 수정된 정보 DB에 저장
+				//// ~작업중~
+				btn_updateAccount : function(){
+					let param = {
+						id			: $('#input_userId_edit').val(),		// id
+						name 		: $('#input_userName_edit').val(),		// 이름
+						phone_number: $('#input_phoneNumber_edit').val(),	// 전화번호
+						created_dt	: $('#input_startDate').val(),			// 등록일
+						user_role	: $('#input_role_edit').val(),			// 사용자 구분
+						user_status	: $('#input_enabled_edit').val(),		// 사용 여부
+						remark		: $('#input_rmk_edit').val()			// 비고
+					}
+					//test
+					console.log('수정된 회원 정보 확인 >', param)
+					ajaxCom.updateAccount(param);
+					
+				},
+				// reset버튼(회원 정보 수정 modal)
 				btn_resetPwd : function() {
 					let param = {
 						user_id : $('#input_checkId_add').val()
@@ -97,6 +142,7 @@
 					ajaxCom.resetPwd(param);
 					
 				},
+				// 추가버튼(회원 정보 추가 modal)
 				btn_addAccount : function() {
 					//키값은 db 컬럼 이름으로 
 					let param = {
@@ -113,6 +159,22 @@
 					ajaxCom.addAccount(param);
 				}
 			}; //btnCom END
+			
+			// 중복 확인 함수 객체
+			/* checkCom = {
+				btn_checkId : function(){
+					$('.input_checkId_add').changed(function(){
+						$('#sucess').hide();
+						$('btn_checId').show();
+						$('.input_checkId_add').attr("result", "fail");
+					})
+					
+					if($('.input_checkId_add').val() == '') {
+						alter('이메일을 입력해주세요');
+						return;
+					}
+				}
+			} */
 			
 			//기타 함수 객체
 			fnCom = {
@@ -146,11 +208,18 @@
 				//이벤트
 				{
 					cellclick : function(rowKey,colName,grid){
-						if(colName=="id"){	// 회원id 클릭 시 modal 팝업
+						if(colName=="id"){	// 회원id 클릭 시 회원 수정 modal 팝업
+							// 회원 수정 modal 초기 input의 data
 							$('#user_edit_modal').modal('show');
 							let rowData = userGrid.getRow(rowKey);
-							//수정 사항 : 화면에 회원 정보 값 뿌리세요.
-							$('#input_userId_edit').val(rowData.id);
+							
+							$('#input_userId_edit').val(rowData.id);				//id
+							$('#input_userName_edit').val(rowData.name);			//이름
+							$('#input_phoneNumber_edit').val(rowData.phone_number);			//전화번호
+							$('#input_createdDate_edit').val(rowData.created_dt);	//등록일
+							$('#input_role_edit').val(rowData.user_role);			//구분
+							$('#input_enabled_edit').val(rowData.user_status);		//사용여부
+							$('#input_rmk_edit').val(rowData.remark);				//비고
 						}
 					}
 				}
@@ -250,8 +319,8 @@
 								                     <label class="col-sm-2 control-label text-right p-1" style="border: 0px;">구분</label>
 								                     <div class="col-sm-10">
 								                        <select name="user_role" class="form-control" id="input_role_edit">
-								                           <option value="user">회원</option>
-								                           <option value="admin">관리자</option>
+								                           <option value="USER">회원</option>
+								                           <option value="ADMIN">관리자</option>
 								                        </select>
 								                     </div>
 								                  </div>
@@ -259,8 +328,8 @@
 								                     <label class="col-sm-2 control-label text-right p-1" style="border: 0px;">사용 여부</label>
 								                     <div class="col-sm-10">
 								                        <select name="enabled" class="form-control" id="input_enabled_edit">
-								                           <option value="1">사용</option>
-								                           <option value="0">미사용</option>
+								                           <option value="Y">사용</option>
+								                           <option value="N">미사용</option>
 								                        </select>
 								                     </div>
 								                  </div>
@@ -274,7 +343,7 @@
 								            </div>
 								         </div>
 								         <div class="modal-footer">
-								            <button type="button" class="btn btn-secondary" id="btn_resetPwd">비밀번호 변경</button>
+								            <button type="button" class="btn btn-secondary" id="btn_resetPwd">초기화</button>
 								            <button type="button" class="btn btn-secondary" id="btn_updateAccount">저장</button>
 								         </div>
 								      </div>
@@ -300,10 +369,10 @@
 								                        <input type="text" class="form-control" id="input_checkId_add">
 								                     </div>
 								                     <div>
-								                     	<button type="button" class="btn btn-primary" id="btn_checkId">확인</button>
+								                     	<button type="button" class="btn btn-secondary" id="btn_checkId">확인</button>
 								                     </div>
 								                  </div>
-								                     	<span  class="col-sm-7" style="font-color: red;">입력하신 아이디가 일치하지 않습니다. 다시 입력해주십시오.</span>
+								                     	<span  class="col-sm-7" style="color: red;">입력하신 아이디가 일치하지 않습니다. 다시 입력해주십시오.</span>
 								                  <div class="form-group row">
 								                     <label class="col-sm-2 control-label text-right p-1" style="border: 0px;">비밀번호</label>
 								                     <div class="col-sm-7">
@@ -316,10 +385,10 @@
 								                        <input type="text" class="form-control" id="input_checkPwd_add">
 								                     </div>
 								                     <div>
-								                     	<button type="button" class="btn btn-primary" id="btn_checkPwd">확인</button>
+								                     	<button type="button" class="btn btn-secondary" id="btn_checkPwd">확인</button>
 								                     </div>
 								                   </div>
-								                     <span style="font-color: red;">입력하신 비밀번호가 일치하지 않습니다. 다시 입력해주십시오.</span>
+								                     <span style="color: red;">입력하신 비밀번호가 일치하지 않습니다. 다시 입력해주십시오.</span>
 
 								                  <div class="form-group row">
 								                     <label class="col-sm-2 control-label text-right p-1" style="border: 0px;">이름</label>
@@ -330,7 +399,7 @@
 								                  <div class="form-group row">
 								                     <label class="col-sm-2 control-label text-right p-1" style="border: 0px;">전화번호</label>
 								                     <div class="col-sm-10">
-								                        <input type="text" class="form-control" id="input_phoneNumber_add" maxlength='12'>
+								                        <input type="text" class="form-control" id="input_phoneNumber_add" maxlength='13'>
 								                     </div>
 								                  </div>
 								                  <div class="form-group row">
@@ -346,8 +415,8 @@
 								                     <label class="col-sm-2 control-label text-right p-1" style="border: 0px;">사용 여부</label>
 								                     <div class="col-sm-10">
 								                        <select name="enabled" class="form-control" id="input_enabled_add">
-								                           <option value="1">사용</option>
-								                           <option value="0">미사용</option>
+								                           <option value="Y">사용</option>
+								                           <option value="N">미사용</option>
 								                        </select>
 								                     </div>
 								                  </div>
@@ -361,7 +430,7 @@
 								            </div>
 								         </div>
 								         <div class="modal-footer">
-								            <button type="button" class="btn btn-primary" id="btn_addAccount">추가</button>
+								            <button type="button" class="btn btn-secondary" id="btn_addAccount">추가</button>
 								         </div>
 								      </div>
 								   </div>
