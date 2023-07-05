@@ -32,9 +32,6 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 		
 		LoginEntity user = (LoginEntity) loginService.loadUserByUsername(username);
 		
-		System.out.println("CustomAuthenticationProvider username : " + username);
-		System.out.println("CustomAuthenticationProvider password : " + user.getPassword());
-		
 		//패스워드 체크
 		//password : 입력된 패스워드
 		//user.getPassword() : 사용자 계정의 인코딩된 패스워드

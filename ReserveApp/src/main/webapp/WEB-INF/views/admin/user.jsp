@@ -1,7 +1,15 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-
-
+	
 	<script>
+	// 추가할 기능
+	// 회원 정보 수정에 값 뿌리는기
+	// 비밀번호 input type password로 변경
+	// 전화번호 입력칸 010-1111-1111 입력값 안들어감
+	// 중복확인 기능 추가, 중복된 아이디가 없다면 아이디입력칸 disable로 변경
+	// 비밀번호 동일 확인 기능 추가
+	// db에 사용자 정보 추가가 끝나면 input값 disable 값 모두 입력 가능한 창으로 reset하기
+	// date picker 적용 후 초기 값 적용
+	
 		$(document).ready(function() {
 			//통신 객체
 			ajaxCom = {
@@ -28,7 +36,38 @@
 							alert("오류가 발생했습니다.");
 						}
 					});
-				}// 			
+				},
+				resetPwd : function(param) {
+					$.doPost({
+						url	 	: "/admin/resetPassword",
+						data 	: param,
+						success	: function(result) {
+							console.log(result)
+							alert('초기화된 비밀번호는 ' + result.raw_pw + ' 입니다.');
+						},
+						error	: function(xhr,status){
+							alert("오류가 발생했습니다.");
+						}
+					});
+				},
+				addAccount : function(param) {
+					$.doPost({
+						url	 	: "/admin/addAccount",
+						data 	: param,
+						success	: function(result) {
+							console.log(result.msg)
+							if(result.msg == 'success') {
+								alert('등록되었습니다.');
+								//input 박스 비우는 작업 추가
+								//조회창에서 조회버튼 클릭 이벤트 추가하여 그리드가 업데이트되도록 변경
+							}
+
+						},
+						error	: function(xhr,status){
+							alert("오류가 발생했습니다.");
+						}
+					});
+				}
 			}; //ajaxCom END
 			
 			//이벤트 객체 : id값을 주면 클릭 이벤트 발생
@@ -50,6 +89,28 @@
 						changedRemark		: $('#input_rmk_edit').val()			// 비고
 					}
 				console.log('수정된 회원 정보 확인 >', param)
+				},
+				btn_resetPwd : function() {
+					let param = {
+						user_id : $('#input_checkId_add').val()
+					}
+					ajaxCom.resetPwd(param);
+					
+				},
+				btn_addAccount : function() {
+					//키값은 db 컬럼 이름으로 
+					let param = {
+						id : $('#input_checkId_add').val(), 
+						password : $('#input_userPwd_add').val(),
+						name : $('#input_userName_add').val(),
+						phone_number : $('#input_phoneNumber_add').val(),
+						user_role : $('#input_role_add').val(), //html value 회원 USER, 관리자 ADMIN
+						user_status : 'Y',
+						remark : $('#input_rmk_add').val()
+					}
+					console.log(param);
+					
+					ajaxCom.addAccount(param);
 				}
 			}; //btnCom END
 			
@@ -88,6 +149,7 @@
 						if(colName=="id"){	// 회원id 클릭 시 modal 팝업
 							$('#user_edit_modal').modal('show');
 							let rowData = userGrid.getRow(rowKey);
+							//수정 사항 : 화면에 회원 정보 값 뿌리세요.
 							$('#input_userId_edit').val(rowData.id);
 						}
 					}
@@ -212,8 +274,8 @@
 								            </div>
 								         </div>
 								         <div class="modal-footer">
-								            <button type="button" class="btn btn-primary" id="btn_updatePwd">비밀번호 변경</button>
-								            <button type="button" class="btn btn-primary" id="btn_updateAccount">저장</button>
+								            <button type="button" class="btn btn-secondary" id="btn_resetPwd">비밀번호 변경</button>
+								            <button type="button" class="btn btn-secondary" id="btn_updateAccount">저장</button>
 								         </div>
 								      </div>
 								   </div>
@@ -275,8 +337,8 @@
 								                     <label class="col-sm-2 control-label text-right p-1" style="border: 0px;">구분</label>
 								                     <div class="col-sm-10">
 								                        <select name="enabled" class="form-control" id="input_role_add">
-								                           <option value="user">회원</option>
-								                           <option value="admin">관리자</option>
+								                           <option value="USER">회원</option>
+								                           <option value="ADMIN">관리자</option>
 								                        </select>
 								                     </div>
 								                  </div>

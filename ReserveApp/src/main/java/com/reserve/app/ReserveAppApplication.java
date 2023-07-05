@@ -11,7 +11,6 @@ import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
 @ComponentScan("com.reserve.app")
-@MapperScan("com.reserve.app.mapper")
 public class ReserveAppApplication {
 	
 	@PostConstruct

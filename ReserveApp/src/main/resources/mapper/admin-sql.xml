@@ -18,6 +18,23 @@
 				and created_dt BETWEEN to_timestamp(#{startDate}, 'YYYY-MM-DD') AND to_timestamp(#{endDate}, 'YYYY-MM-DD') + INTERVAL '1 day' - INTERVAL '1 second'
 			</if>
 		</where>
-		order by created_dt desc
+		order by created_dt desc, id
 	</select>
+	
+	<update id="resetPassword" parameterType="map">
+		update tb_user
+		set password = #{user_pw},
+			modified_dt = now(),
+			modified_id = #{login_id}
+		where id = #{user_id}
+	</update>
+	
+	<insert id="addAccount" parameterType="map">
+		insert into tb_user (
+			id, password, name, user_role, remark, created_id, created_dt, modified_id, modified_dt, user_status, phone_number
+		)
+		values (
+			#{id}, #{encoded_password}, #{name}, #{user_role}, #{remark}, #{login_id}, now(), #{login_id}, now(), #{user_status}, #{phone_number}
+		)
+	</insert>
 </mapper>

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -39,4 +40,18 @@ public class AdminController {
 		return result;
 	}
 	
+	@RequestMapping(value="/resetPassword")
+	@ResponseBody
+	public Map<String, Object> resetPassword(@RequestBody Map<String, Object> param, HttpServletResponse response) throws Exception{
+		return adminService.resetPassword(param);
+	}
+	
+	@RequestMapping(value = "/addAccount", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String,Object> addUser(HttpServletRequest request, @RequestBody HashMap<String,Object> param) throws Exception {
+		Map<String,Object> result = new HashMap<String,Object>();
+		String msg = adminService.addAccount(param);
+		result.put("msg", msg);
+		return result;
+	}
 }
