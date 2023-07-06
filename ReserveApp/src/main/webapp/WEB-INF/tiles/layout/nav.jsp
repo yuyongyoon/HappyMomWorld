@@ -88,12 +88,28 @@
 						</a>
 						
 						<ul class="dropdown-menu dropdown-user animated fadeIn" aria-labelledby="userMenu">
-							<li>
-								<a class="dropdown-item" href="#">정보 변경</a>
-							</li>
-							<li>
-								<a class="dropdown-item" href="#">예약 확인</a>
-							</li>
+							<sec:authorize access="hasAnyRole('ROLE_USER')">
+								<li>
+									<a class="dropdown-item" href="#">정보 변경</a>
+								</li>
+								<li>
+									<a class="dropdown-item" href="#">예약 확인</a>
+								</li>
+							</sec:authorize>
+							<sec:authorize access="hasAnyRole('ROLE_ADMIN')">
+								<li>
+									<a class="dropdown-item" href="#">회원 관리</a>
+								</li>
+								<li>
+									<a class="dropdown-item" href="#">예약 현황 조회</a>
+								</li>
+								<li>
+									<a class="dropdown-item" href="#">예약 관리</a>
+								</li>
+								<li>
+									<a class="dropdown-item" href="#">마스터 관리</a>
+								</li>
+							</sec:authorize>
 							<li id="logOut">
 								<a class="dropdown-item" href="#" onclick="document.getElementById('logout').submit();">
 									<span>로그아웃</span>

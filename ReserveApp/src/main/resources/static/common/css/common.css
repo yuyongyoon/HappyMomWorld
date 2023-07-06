@@ -1,12 +1,12 @@
 .row.search{
 	margin-left: 0px;
-    margin-right: 0px;
-    margin-bottom: 10px;
-    height: 40px;
-    padding-left: 5px;
-    padding-right: 5px;
-    border-top: 1px lightgray solid;
-    border-bottom: 1px lightgray solid;
+	margin-right: 0px;
+	margin-bottom: 10px;
+	height: 40px;
+	padding-left: 5px;
+	padding-right: 5px;
+	border-top: 1px lightgray solid;
+	border-bottom: 1px lightgray solid;
 }
 
 .row.search .form-control{
@@ -19,16 +19,25 @@
 	font-size: 13px;
 }
 .row-title{
-    font-size: 30px;
-    font-weight: 600;
-    color: #444;
-    line-height: 30px;
-    margin-bottom: 20px;
+	font-size: 30px;
+	font-weight: 600;
+	color: #444;
+	line-height: 30px;
+	margin-bottom: 20px;
 }
 
 .button-list .header-btn {
 	height:37px;
 }
-/* .row.search .button-list{ */
-/* 	margin-top:3px; */
-/* } */
+.tui-datepicker-input {
+	margin-top: 6px;
+	height: 28px !important;
+}
+
+.tui-datepicker-input > input {
+	font-size: 14px !important;
+}
+
+.tui-datepicker {
+	z-index: 30;
+}

@@ -41,10 +41,12 @@
 <link rel="stylesheet" href="/static/common/css/tui/tui-pagination.css" />
 <link rel="stylesheet" href="/static/common/css/tui/tui-grid.css" />
 <link rel="stylesheet" href="/static/common/css/tui/tui.css" />
+<link rel="stylesheet" href="/static/common/css/tui/tui-date-picker.css" />
 <script src="/static/common/js/tui/tui-pagination.js"></script>
 <script src="/static/common/js/tui/tui-com.js"></script>
 <script src="/static/common/js/tui/tui-grid.js"></script>
 <script src="/static/common/js/tui/FileSaver.min.js"></script>
 <script src="/static/common/js/tui/xlsx.full.min.js"></script>
 <script src="/static/common/js/tui/xlsx.style.min.js"></script>
+<script src="/static/common/js/tui/tui-date-picker.js"></script>
 

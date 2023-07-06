@@ -7,24 +7,26 @@
 	<div class="sidebar-wrapper scrollbar-inner">
 		<div class="sidebar-content">
 			<ul class="nav">
-				<li class="nav-item">
-					<a href="/">
-						<i class="fas fa-calendar"></i>
-						<p>예약 캘린더</p>
-					</a>
-				</li>
-				<li class="nav-item">
-					<a href="/">
-						<i class="fas fa-unlock-alt"></i>
-						<p>정보 변경</p>
-					</a>
-				</li>
-				<li class="nav-item">
-					<a href="/">
-						<i class="fas fa-tasks"></i>
-						<p>예약 확인</p>
-					</a>
-				</li>
+				<sec:authorize access="hasAnyRole('ROLE_USER')">
+					<li class="nav-item">
+						<a href="/">
+							<i class="fas fa-calendar"></i>
+							<p>예약 캘린더</p>
+						</a>
+					</li>
+					<li class="nav-item">
+						<a href="/">
+							<i class="fas fa-unlock-alt"></i>
+							<p>정보 변경</p>
+						</a>
+					</li>
+					<li class="nav-item">
+						<a href="/">
+							<i class="fas fa-tasks"></i>
+							<p>예약 확인</p>
+						</a>
+					</li>
+				</sec:authorize>
 				<sec:authorize access="hasAnyRole('ROLE_ADMIN')">
 					<li class="nav-section">
 						<span class="sidebar-mini-icon">
@@ -47,7 +49,17 @@
 								</li>
 								<li>
 									<a href="">
+										<span class="sub-item">예약 현황 조회</span>
+									</a>
+								</li>
+								<li>
+									<a href="">
 										<span class="sub-item">예약 관리</span>
+									</a>
+								</li>
+								<li>
+									<a href="">
+										<span class="sub-item">마스터 관리</span>
 									</a>
 								</li>
 							</ul>
