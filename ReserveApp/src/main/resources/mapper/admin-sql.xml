@@ -37,4 +37,24 @@
 			#{id}, #{encoded_password}, #{name}, #{user_role}, #{remark}, #{login_id}, now(), #{login_id}, now(), #{user_status}, #{phone_number}
 		)
 	</insert>
+	
+	<update id="updateAccount" parameterType="map">
+		update tb_user
+		set id = #{id}, 
+			name = #{name}, 
+			user_role = #{user_role}, 
+			remark = #{remark}, 
+			modified_id = #{login_id}, 
+			modified_dt = now(), 
+			user_status = #{user_status}, 
+			phone_number = #{phone_number}
+		where id = #{id}
+	</update>
+
+	<select id="checkId" parameterType="map" resultType="int">
+		SELECT count(id)
+		FROM tb_user
+		WHERE 	id = #{user_id}
+	</select>
+
 </mapper>

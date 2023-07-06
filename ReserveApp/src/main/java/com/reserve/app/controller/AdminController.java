@@ -54,4 +54,23 @@ public class AdminController {
 		result.put("msg", msg);
 		return result;
 	}
+	
+	@RequestMapping(value = "/updateAccount", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String,Object> updateUser(HttpServletRequest request, @RequestBody HashMap<String,Object> param) throws Exception {
+		Map<String,Object> result = new HashMap<String,Object>();
+		String msg = adminService.updateAccount(param);
+		result.put("msg", msg);
+		return result;
+	}
+
+	@RequestMapping(value = "/checkId", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String,Object> checkId(HttpServletRequest request, @RequestBody Map<String,Object> param) throws Exception {
+		Map<String,Object> result = new HashMap<String,Object>();
+		int checkedId = adminService.checkId(param);
+		result.put("idCnt", checkedId);
+		return result;
+	}
+	
 }

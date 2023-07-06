@@ -72,4 +72,21 @@ public class AdminService {
 		}
 		return msg;
 	}
+
+	public String updateAccount(HashMap<String, Object> param) {
+		String msg = "success";
+		
+		try {
+			mapper.updateAccount((Map<String,Object>) param);
+		}catch (Exception e) {
+			e.printStackTrace();
+			msg = "fail";
+		}
+		return msg;
+	}
+
+	public int checkId(Map<String,Object> param) {
+		int idCnt = mapper.checkId(param);
+		return idCnt;
+	}
 }

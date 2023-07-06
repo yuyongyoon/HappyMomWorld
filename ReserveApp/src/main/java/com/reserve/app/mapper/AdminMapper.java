@@ -13,4 +13,8 @@ public interface AdminMapper {
 	
 	void addAccount(Map<String,Object> param);
 
+	void updateAccount(Map<String, Object> param);
+
+	int checkId(Map<String,Object> param);
+
 }
