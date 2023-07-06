@@ -30,11 +30,6 @@
 			
 			<div class="container-fluid">
 				<ul class="navbar-nav topbar-nav ml-md-auto align-items-center">
-					<li class="nav-item toggle-nav-search hidden-caret">
-						<a class="nav-link" data-toggle="collapse" href="#search-nav" role="button" aria-expanded="false" aria-controls="search-nav">
-							<i class="fa fa-search"></i>
-						</a>
-					</li>
 					<li class="nav-item dropdown hidden-caret">
 						<a class="nav-link dropdown-toggle" href="#" id="notifDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 							<i class="fa fa-bell"></i>
@@ -90,24 +85,24 @@
 						<ul class="dropdown-menu dropdown-user animated fadeIn" aria-labelledby="userMenu">
 							<sec:authorize access="hasAnyRole('ROLE_USER')">
 								<li>
-									<a class="dropdown-item" href="#">정보 변경</a>
+									<a class="dropdown-item" href="/user/userInfo">정보 변경</a>
 								</li>
 								<li>
-									<a class="dropdown-item" href="#">예약 확인</a>
+									<a class="dropdown-item" href="/user/reservation">예약 확인</a>
 								</li>
 							</sec:authorize>
 							<sec:authorize access="hasAnyRole('ROLE_ADMIN')">
 								<li>
-									<a class="dropdown-item" href="#">회원 관리</a>
+									<a class="dropdown-item" href="/admin/user">회원 관리</a>
 								</li>
 								<li>
-									<a class="dropdown-item" href="#">예약 현황 조회</a>
+									<a class="dropdown-item" href="/admin/search">예약 현황 조회</a>
 								</li>
 								<li>
-									<a class="dropdown-item" href="#">예약 관리</a>
+									<a class="dropdown-item" href="/admin/management">예약 관리</a>
 								</li>
 								<li>
-									<a class="dropdown-item" href="#">마스터 관리</a>
+									<a class="dropdown-item" href="/admin/master">마스터 관리</a>
 								</li>
 							</sec:authorize>
 							<li id="logOut">

@@ -21,4 +21,8 @@
 		<put-attribute name="body" value="/WEB-INF/views/admin/{1}.jsp" />
 	</definition>
 	
+	<!-- 유저 화면 -->
+	<definition name="user/*" extends="base">
+		<put-attribute name="body" value="/WEB-INF/views/user/{1}.jsp" />
+	</definition>
 </tiles-definitions>

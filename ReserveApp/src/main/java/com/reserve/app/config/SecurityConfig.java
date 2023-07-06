@@ -54,6 +54,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.accessDeniedPage("/login_error") // forward url : error occurs 
 				;
 
+		//remember 기능
+		http.rememberMe() //사용자 계정 저장
+				.rememberMeParameter("rememberme")
+				.tokenValiditySeconds(86400 * 30) //30일
+				.alwaysRemember(false)
+				.userDetailsService(loginService);
+		
 		http.csrf().disable();
 	}
 	

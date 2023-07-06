@@ -39,12 +39,15 @@
 							</div>
 						</div>
 						<div class="row form-sub m-0">
-							<div class="custom-control custom-checkbox">
-								<input type="checkbox" class="custom-control-input" id="rememberme">
-								<label class="custom-control-label" for="rememberme">Remember Me</label>
+							<div class="custom-control custom-checkbox" tabindex="0" data-toggle="tooltip" data-placement="bottom" title="30일간 유지됩니다.">
+								<input type="checkbox" class="custom-control-input" id="rememberme" name="rememberme">
+								<label class="custom-control-label" for="rememberme">로그인 유지하기</label>
 							</div>
 							
-							<a href="" class="link float-right">Forget Password ?</a>
+							<span class="link float-right" id="forgotPwdSpan" style="color:blue;cursor:pointer;">Forget Password ?</span>
+						</div>
+						<div id="forgotPwdDiv" style="display:none;">
+							<span class="float-right" style="color:red;">관리자에게 문의 바랍니다.</span>
 						</div>
 						<div class="form-action mb-3">
 							<button class="btn btn-secondary btn-rounded btn-login" type="submit">Sign In</button>
@@ -66,6 +69,10 @@
 				if (params.error === 'true' && params.exception === 'Invaild Username or Password') {
 					alert('ID 또는 패스워드를 확인해주세요')
 				}
+				
+				$('#forgotPwdSpan').click(function() {
+					$('#forgotPwdDiv').css('display','block')
+				})
 			})
 		</script>
 	</body>

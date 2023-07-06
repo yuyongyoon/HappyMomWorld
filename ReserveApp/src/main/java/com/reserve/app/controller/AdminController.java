@@ -24,11 +24,28 @@ public class AdminController {
 	@Autowired
 	AdminService adminService;
 	
-	//기본틀 config.xml에 작성
-	//화면 호출
+	//회원 관리 화면
 	@RequestMapping(value = "/user", method = RequestMethod.GET)
 	public String viewUser(Model model, HttpServletRequest request) throws Exception {
 		return "admin/user";
+	}
+	
+	//예약 현황 조회 화면
+	@RequestMapping(value = "/search", method = RequestMethod.GET)
+	public String viewSearch(Model model, HttpServletRequest request) throws Exception {
+		return "admin/search";
+	}
+	
+	//예약 관리 화면
+	@RequestMapping(value = "/management", method = RequestMethod.GET)
+	public String viewManagement(Model model, HttpServletRequest request) throws Exception {
+		return "admin/management";
+	}
+	
+	//마스터 관리 화면
+	@RequestMapping(value = "/master", method = RequestMethod.GET)
+	public String viewMaster(Model model, HttpServletRequest request) throws Exception {
+		return "admin/master";
 	}
 	
 	@RequestMapping(value = "/getUserList", method = RequestMethod.POST)

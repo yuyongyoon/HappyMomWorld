@@ -1,14 +1,28 @@
+:root {
+	--info-color: #6c757d;  /* info 클래스의 색상을 회색으로 재정의 */
+}
+.btn-info {
+	background-color: var(--info-color) !important;
+	border-color: var(--info-color) !important;
+	color: white !important;
+}
+.btn-info:hover {
+	background-color: #6c757d !important;
+	border-color: #6c757d !important;
+	color: white !important;
+}
+input .form-control {
+	height: 32px;
+}
 .row.search{
 	margin-left: 0px;
 	margin-right: 0px;
 	margin-bottom: 10px;
-	height: 40px;
 	padding-left: 5px;
 	padding-right: 5px;
 	border-top: 1px lightgray solid;
 	border-bottom: 1px lightgray solid;
 }
-
 .row.search .form-control{
 	height:25px !important;
 	width:75%;
@@ -25,7 +39,6 @@
 	line-height: 30px;
 	margin-bottom: 20px;
 }
-
 .button-list .header-btn {
 	height:37px;
 }
@@ -33,11 +46,12 @@
 	margin-top: 6px;
 	height: 28px !important;
 }
-
 .tui-datepicker-input > input {
 	font-size: 14px !important;
 }
-
 .tui-datepicker {
 	z-index: 30;
+}
+.searchDiv{
+	margin-bottom: 8px;
 }

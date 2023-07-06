@@ -34,7 +34,7 @@
 			id, password, name, user_role, remark, created_id, created_dt, modified_id, modified_dt, user_status, phone_number
 		)
 		values (
-			#{id}, #{encoded_password}, #{name}, #{user_role}, #{remark}, #{login_id}, now(), #{login_id}, now(), #{user_status}, #{phone_number}
+			#{id}, #{encoded_password}, #{name}, #{user_role}, #{remark}, #{login_id}, now(), #{login_id}, now(), 'Y', #{phone_number}
 		)
 	</insert>
 	
