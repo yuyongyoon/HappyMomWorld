@@ -207,7 +207,7 @@ $(document).ready(function() {
 		// 초기화 버튼(회원 정보 수정 modal)
 		btn_resetPwd : function() {
 			let param = {
-				user_id : $('#input_checkId_add').val()
+				user_id : $('#input_userId_edit').val()
 			}
 			ajaxCom.resetPwd(param);
 			
