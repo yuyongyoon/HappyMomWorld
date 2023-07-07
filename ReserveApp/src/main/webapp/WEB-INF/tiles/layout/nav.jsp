@@ -91,7 +91,7 @@
 									<a class="dropdown-item" href="/user/reservation">예약 확인</a>
 								</li>
 							</sec:authorize>
-							<sec:authorize access="hasAnyRole('ROLE_ADMIN')">
+							<%--<sec:authorize access="hasAnyRole('ROLE_ADMIN')">
 								<li>
 									<a class="dropdown-item" href="/admin/user">회원 관리</a>
 								</li>
@@ -104,7 +104,14 @@
 								<li>
 									<a class="dropdown-item" href="/admin/master">마스터 관리</a>
 								</li>
-							</sec:authorize>
+							</sec:authorize> --%>							
+							<!-- nav 추가 -->
+							<li id="updateUserInfo"> 
+								<a class="dropdown-item" href="#" onclick="document.getElementById('updateUserInfo').submit();">
+									<span>사용자 정보 수정</span>
+								</a>
+								<form id="updateUserInfo" action="/updateUserInfo" method="POST"></form>
+							</li>
 							<li id="logOut">
 								<a class="dropdown-item" href="#" onclick="document.getElementById('logout').submit();">
 									<span>로그아웃</span>

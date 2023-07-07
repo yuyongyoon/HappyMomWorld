@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
 <script>
-$(document).ready(function() {
+$(document).ready(function() { 
 	let id_check = false;
 	let pwd_check = false;
 	let name_check;
@@ -53,7 +53,7 @@ $(document).ready(function() {
 				}
 			});
 		},
-		// reset(회원 정보 수정 modal)
+		// reset(사용자 정보 수정 modal)
 		resetPwd : function(param) {
 			$.doPost({
 				url	 	: "/admin/resetPassword",
@@ -84,7 +84,7 @@ $(document).ready(function() {
 				}
 			});
 		},
-		// 회원 정보 수정
+		// 사용자 정보 수정
 		updateAccount : function(param){
 			$.doPost({
 				url	 	: "/admin/updateAccount",
@@ -133,8 +133,8 @@ $(document).ready(function() {
 		},
 		//추가 버튼(회원 관리 페이지)
 		btn_add : function(){
-			$('#user_add_modal').modal('show');	//사용자 정보 추가 modal open
-			
+			//사용자 정보 추가 modal open
+			$('#user_add_modal').modal('show');
 			// 비번 중복 확인 이벤트
 			$('#input_checkPwd_add').blur(function() {
 				let pwd = $('#input_userPwd_add').val();
@@ -154,49 +154,56 @@ $(document).ready(function() {
 					$('#input_userName_add').focus();// 다음 input로 커서 옮김
 					pwd_check = true;	// 비번 중복확인(완)
 				}
-			})
+			});
+			// 출산 예정일 input datepicker(사용자 정보 추가 modal)
+			 var datepicker = new tui.DatePicker('#wrapper_add', {
+				date: new Date(),
+				input: {
+					element: '#input_dueDate_add',
+					format: 'yyyy-MM-dd'
+				}
+			});
 		},
 		//추가 버튼(사용자 정보 추가 modal)
 		btn_addAccount : function(){
-			//id 중복 확인 버튼 클릭 여부
-			if($('#input_checkId_add').val() == ''){
+			// 필수항목 확인 여부
+			if($('#input_checkId_add').val() == ''){// 아이디 입력 여부
 				alert('아이디를 입력해주세요.');
 				return false;
-			} else if(id_check == false){
+			} else if(id_check == false){// 아이디 중복 확인 여부
 				alert('아이디 중복 확인해주세요.');
 				return false;
-			} else if($('#input_userPwd_add').val() == '' || $('#input_checkPwd_add').val() == ''){
+			} else if($('#input_userPwd_add').val() == '' || $('#input_checkPwd_add').val() == ''){// 비번 입력 여부
 				alert('비밀번호를 입력해주세요.');
 				return false;
-			} else if(pwd_check == false){
+			} else if(pwd_check == false){// 비번 중복 확인 여부
 				alert('비밀번호를 확인해주세요.');
 				return false;
-			} else if($('#input_userName_add').val() == ''){
+			} else if($('#input_userName_add').val() == ''){// 이름 입력 여부
 				alert('이름을 확인해주세요.');
 				return false;
 			}
-			
+			// 정보 DB에 추가
 			let param = {
 				id			: $('#input_checkId_add').val(),		// id
 				password	: $('#input_checkPwd_add').val(),		// 비밀번호
 				name 		: $('#input_userName_add').val(),		// 이름
 				phone_number: $('#input_phoneNumber_add').val(),	// 전화번호
-				created_dt	: $('#input_startDate').val(),			// 등록일
-				user_role	: $('#input_role_add').val(),			// 사용자 구분
-				user_status	: $('#input_enabled_add').val(),		// 사용 여부
+				due_date	: $('#input_dueDate_add').val(),		// 출산 예정일
+				hospital	: $('#input_hospital_add').val(),		// 병원 정보
 				remark		: $('#input_rmk_add').val()				// 비고
 			}
 
 			ajaxCom.addAccount(param);
 		},
-		//저장 버튼 (사용자 정보 수정 modal)
+		//저장 버튼(사용자 정보 수정 modal)
 		btn_updateAccount : function(){
 			let param = {
 				id			: $('#input_userId_edit').val(),		// id
 				name 		: $('#input_userName_edit').val(),		// 이름
 				phone_number: $('#input_phoneNumber_edit').val(),	// 전화번호
-				created_dt	: $('#input_startDate').val(),			// 등록일
-				user_role	: $('#input_role_edit').val(),			// 사용자 구분
+				due_date	: $('#input_dueDate_edit').val(),		// 출산 예정일
+				hospital	: $('#input_hospital_edit').val(),		// 병원 정보
 				user_status	: $('#input_enabled_edit').val(),		// 사용 여부
 				remark		: $('#input_rmk_edit').val()			// 비고
 			}
@@ -204,7 +211,7 @@ $(document).ready(function() {
 			ajaxCom.updateAccount(param);
 			
 		},
-		// 초기화 버튼(회원 정보 수정 modal)
+		// 초기화 버튼(사용자 정보 수정 modal)
 		btn_resetPwd : function() {
 			let param = {
 				user_id : $('#input_userId_edit').val()
@@ -212,7 +219,7 @@ $(document).ready(function() {
 			ajaxCom.resetPwd(param);
 			
 		},
-		// 아이디 중복 확인 버튼(회원 정보 추가 modal)
+		// 아이디 중복 확인 버튼(사용자 정보 추가 modal)
 		btn_checkId : function(){
 			if($('#input_checkId_add').val() == '') {
 				alert('ID를 입력해주세요');
@@ -225,7 +232,7 @@ $(document).ready(function() {
 			
 			ajaxCom.checkId(param);
 		},
-		//사용자 정보 추가 버튼 닫기
+		//닫기 버튼(사용자 정보 추가 modal)
 		btn_addAccountClose : function() {
 			let modalId = $(this).closest(".modal").attr("id");
 			
@@ -236,8 +243,9 @@ $(document).ready(function() {
 				$('#input_checkPwd_add').val('');
 				$('#input_userName_add').val('');
 				$('#input_phoneNumber_add').val('');
+				$('#input_dueDate_add').val('');
+				$('#input_hospital_add').val('');
 				$('#input_rmk_add').val('');
-				$('#input_role_add').val('USER');
 				$('#checkId_msg_add_div').css('display', 'none');
 				$('#checkPwd_msg_add_div').css('display', 'none');
 				$('#input_userPwd_add').attr('disabled', false);
@@ -245,7 +253,7 @@ $(document).ready(function() {
 				$('#' + modalId).modal('hide');
 			}
 		},
-		//
+		//닫기 버튼(사용자 정보 수정 modal)
 		btn_updateAccountClose : function() {
 			let modalId = $(this).closest(".modal").attr("id");
 			
@@ -254,6 +262,7 @@ $(document).ready(function() {
 			}
 		}
 	}; //btnCom END
+	
 	
 	//기타 함수 객체
 	fnCom = {
@@ -268,17 +277,16 @@ $(document).ready(function() {
 			scrollY : true,
 			readOnlyColorFlag : false,
 			columns: [
-				{header : 'ID',			name : 'id',				width : 200,  align:'left',	
+				{header : 'ID',			name : 'id',			width : 100,  align:'left',	
 					style:'cursor:pointer;text-decoration:underline;',},
-				{header : '이름',			name : 'name',				width : 200,  align:'left'},
-				{header : '전화번호',		name : 'phone_number',		width : 200,  align:'left'},
-				{header : '등록일',		name : 'created_dt',		width : 200,  align:'center'},
-				{header : '구분',			name : 'user_role',			width : 100,  align:'center', formatter: 'listItemText', disabled:true,
+				{header : '이름',			name : 'name',			width : 150,  align:'center'},
+				{header : '전화번호',		name : 'phone_number',	width : 150,  align:'center'},
+				{header : '출산 예정일',	name : 'due_date',		width : 150,  align:'center'},
+				{header : '병원',			name : 'hospital',		width : 200,  align:'left'},
+				{header : '구분',			name : 'user_role',		width : 100,  align:'center', formatter: 'listItemText', disabled:true,
 					editor: { type: 'select', options: { listItems: [{text:'관리자', value:'ADMIN'},{text:'회원',value:'USER'}]} }
 				},
-				{header : '사용여부',		name : 'user_status', width : 100,  align:'center', formatter: 'listItemText', disabled:true,
-					editor: { type: 'select', options: { listItems: [{text:'사용', value:'Y'},{text:'미사용',value:'N'}]} }
-				},
+				{header : '등록일',		name : 'created_dt',	width : 150,  align:'center'},
 				{header : '비고',			name : 'remark',	align:'left'}
 			]
 		},
@@ -286,18 +294,29 @@ $(document).ready(function() {
 		//이벤트
 		{
 			cellclick : function(rowKey,colName,grid){
-				if(colName=="id"){	// 회원id 클릭 시 회원 수정 modal 팝업
+				// id클릭 시 modal open(사용자 정보 수정 modal)
+				if(colName=="id"){
 					// 회원 수정 modal 초기 input의 data
 					$('#user_edit_modal').modal('show');
+					
 					let rowData = userGrid.getRow(rowKey);
 					
 					$('#input_userId_edit').val(rowData.id);				//id
 					$('#input_userName_edit').val(rowData.name);			//이름
-					$('#input_phoneNumber_edit').val(rowData.phone_number);			//전화번호
-					$('#input_createdDate_edit').val(rowData.created_dt);	//등록일
-					$('#input_role_edit').val(rowData.user_role);			//구분
-					$('#input_enabled_edit').val(rowData.user_status);		//사용여부
+					$('#input_phoneNumber_edit').val(rowData.phone_number);	//전화번호
+					$('#input_dueDate_edit').val(rowData.due_date),			// 출산 예정일
+					$('#input_hospital_edit').val(rowData.hospital),		// 병원 정보
+					$('#input_role_edit').val(rowData.user_role),		// 회원 구분
 					$('#input_rmk_edit').val(rowData.remark);				//비고
+					
+					// 출산 예정일 input datepicker(사용자 정보 수정 modal)
+					 var datepicker = new tui.DatePicker('#wrapper_edit', {
+						date: new Date(),
+						input: {
+							element: '#input_dueDate_edit',
+							format: 'yyyy-MM-dd'
+						}
+					});
 				}
 			}
 		}
@@ -364,7 +383,7 @@ $(document).ready(function() {
 								<div id="user_grid"></div>
 							</div>
 							
-							<!-- 회원 정보 수정 modal -->
+							<!-- 사용자 정보 수정 modal -->
 							<div class="modal fade" id="user_edit_modal" tabindex="-1" role="dialog" aria-hidden="true">
 								<div class="modal-dialog modal-dialog-centered" role="document">
 									<div class="modal-content">
@@ -399,21 +418,22 @@ $(document).ready(function() {
 												</div>
 												<div class="form-group row pb-0">
 													<div class="col-sm-2">
-														<label class="control-label mt-2">등록일</label>
+														<label class="control-label mt-2">출산 예정일</label>
 													</div>
 													<div class="col-sm-10">
-														<input type="date" class="form-control" id="input_createdDate_edit" style="border: 0px;" readonly>
+														<div class="tui-datepicker-input tui-datetime-input tui-has-focus">
+															<input type="text" id="input_dueDate_edit" aria-label="Date-Time">
+															<span class="tui-ico-date"></span>
+														</div>
+														<div id="wrapper_edit" style="margin-top: -1px;"></div>
 													</div>
 												</div>
 												<div class="form-group row pb-0">
 													<div class="col-sm-2">
-														<label class="control-label mt-2" style="border: 0px;">구분</label>
+														<label class="control-label mt-2" style="border: 0px;">병원</label>
 													</div>
 													<div class="col-sm-10">
-														<select name="user_role" class="form-control" id="input_role_edit">
-															<option value="USER">회원</option>
-															<option value="ADMIN">관리자</option>
-														</select>
+														<input type="text" class="form-control" id="input_hospital_edit">
 													</div>
 												</div>
 												<div class="form-group row pb-0">
@@ -506,13 +526,22 @@ $(document).ready(function() {
 												</div>
 												<div class="form-group row pb-0">
 													<div class="col-sm-3">
-														<label class="control-label mt-2" style="border: 0px;">구분</label>
+														<label class="control-label mt-2">출산 예정일</label>
 													</div>
 													<div class="col-sm-9">
-														<select name="enabled" class="form-control" id="input_role_add">
-															<option value="USER">회원</option>
-															<option value="ADMIN">관리자</option>
-														</select>
+														<div class="tui-datepicker-input tui-datetime-input tui-has-focus">
+															<input type="text" id="input_dueDate_add" aria-label="Date-Time">
+															<span class="tui-ico-date"></span>
+														</div>
+														<div id="wrapper_add" style="margin-top: -1px;"></div>
+													</div>
+												</div>
+												<div class="form-group row pb-0">
+													<div class="col-sm-3">
+														<label class="control-label mt-2" style="border: 0px;">병원</label>
+													</div>
+													<div class="col-sm-9">
+														<input type="text" class="form-control" id="input_hospital_add">
 													</div>
 												</div>
 												<div class="form-group row pb-0">
