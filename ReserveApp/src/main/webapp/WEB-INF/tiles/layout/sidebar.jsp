@@ -7,27 +7,7 @@
 	<div class="sidebar-wrapper scrollbar-inner">
 		<div class="sidebar-content">
 			<ul class="nav">
-					<li class="nav-item">
-						<a href="/">
-							<i class="fas fa-calendar"></i>
-							<p>예약 캘린더</p>
-						</a>
-					</li>
-				<sec:authorize access="hasAnyRole('ROLE_USER')">
-					<li class="nav-item">
-						<a href="/user/userInfo">
-							<i class="fas fa-unlock-alt"></i>
-							<p>정보 변경</p>
-						</a>
-					</li>
-					<li class="nav-item">
-						<a href="/user/reservation">
-							<i class="fas fa-tasks"></i>
-							<p>예약 확인</p>
-						</a>
-					</li>
-				</sec:authorize>
-				<sec:authorize access="hasAnyRole('ROLE_ADMIN')">
+				<sec:authorize access="hasAnyRole('ROLE_SUPERADMIN', 'ROLE_ADMIN')">
 					<li class="nav-section">
 						<span class="sidebar-mini-icon">
 							<i class="fa fa-ellipsis-h"></i>
@@ -35,35 +15,25 @@
 						<h4 class="text-section">Administrator</h4>
 					</li>
 					<li class="nav-item">
-						<a data-toggle="collapse" href="#base">
-							<i class="fas fa-desktop"></i>
-							<p>관리자 메뉴</p>
-							<span class="caret"></span>
-						</a>
-						<div class="collapse" id="base">
-							<ul class="nav nav-collapse">
-								<li>
-									<a href="/admin/user">
-										<span class="sub-item">회원 관리</span>
-									</a>
-								</li>
-								<li>
-									<a href="/admin/search">
-										<span class="sub-item">예약 현황 조회</span>
-									</a>
-								</li>
-								<li>
-									<a href="/admin/management">
-										<span class="sub-item">예약 관리</span>
-									</a>
-								</li>
-								<li>
-									<a href="/admin/master">
-										<span class="sub-item">마스터 관리</span>
-									</a>
-								</li>
-							</ul>
-						</div>
+						<a href="/admin/dashboard"><i class="fas fa-desktop"></i><p>대시보드</p></a>
+					</li>
+					<li class="nav-item">
+						<a href="/admin/user"><i class="fas fa-user-alt"></i><p>회원 관리</p></a>
+					</li>
+					<li class="nav-item">
+						<a href="/admin/search"><i class="far fa-calendar-alt"></i><p>예약 현황 조회</p></a>
+					</li>
+					<li class="nav-item">
+						<a href="/admin/master"><i class="far fa-calendar-plus"></i><p>마스터 관리</p></a>
+					</li>
+				</sec:authorize>
+				
+				<sec:authorize access="hasAnyRole('ROLE_USER')">
+					<li class="nav-item">
+						<a href="/user/calendar"><i class="fas fa-calendar"></i><p>예약 캘린더</p></a>
+					</li>
+					<li class="nav-item">
+						<a href="/user/reservation"><i class="fas fa-tasks"></i><p>예약 확인</p></a>
 					</li>
 				</sec:authorize>
 			</ul>

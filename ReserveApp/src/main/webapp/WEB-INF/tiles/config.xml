@@ -10,11 +10,6 @@
 	
 	<!-- 로그인 -->
 	<definition name="login" 		template="/WEB-INF/views/login/login.jsp"/>
-	
-	<!-- 캘린더 -->
-	<definition name="calendar" extends="base">
-		<put-attribute name="body" value="/WEB-INF/views/calendar.jsp" />
-	</definition>
 
 	<!-- 관리자 화면 -->
 	<definition name="admin/*" extends="base">

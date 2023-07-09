@@ -23,7 +23,7 @@ input .form-control {
 	border-top: 1px lightgray solid;
 	border-bottom: 1px lightgray solid;
 }
-.row.search .form-control{
+.row.search .form-control {
 	height:25px !important;
 	width:75%;
 }
@@ -55,3 +55,13 @@ input .form-control {
 .searchDiv{
 	margin-bottom: 8px;
 }
+
+/* .tui-calendar-container{ */
+/* 	width:100% */
+/* } */
+/* .tui-calendar{ */
+/* 	width:100% */
+/* } */
+/* .tui-datepicker-body{ */
+/* 	width:100% */
+/* } */

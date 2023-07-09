@@ -91,16 +91,16 @@ function cfn_getFormatDate(value,format){
 }
 
 function cfn_getLPAD(str, padLen, padStr) {
-    if (padStr.length > padLen) {
-        console.log("오류 : 채우고자 하는 문자열이 요청 길이보다 큽니다");
-        return str;
-    }
-    str += ""; // 문자로
-    padStr += ""; // 문자로
-    while (str.length < padLen)
-        str = padStr + str;
-    str = str.length >= padLen ? str.substring(0, padLen) : str;
-    return str;
+	if (padStr.length > padLen) {
+		console.log("오류 : 채우고자 하는 문자열이 요청 길이보다 큽니다");
+		return str;
+	}
+	str += ""; // 문자로
+	padStr += ""; // 문자로
+	while (str.length < padLen)
+		str = padStr + str;
+	str = str.length >= padLen ? str.substring(0, padLen) : str;
+	return str;
 }
 
 function cfn_tuiDateFormat(date) {
@@ -108,6 +108,12 @@ function cfn_tuiDateFormat(date) {
 	const month = String(date.getMonth() + 1).padStart(2, '0');
 	const day = String(date.getDate()).padStart(2, '0');
 	return `${year}-${month}-${day}`;
+}
+
+function cfn_clearField(modalId){
+	const modal = $('#' + modalId);
+	modal.find('input, textarea').val('');
+	modal.find('input, textarea').prop('disabled', false);
 }
 
 $(document).ready(function() {

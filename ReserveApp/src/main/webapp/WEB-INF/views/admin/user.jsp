@@ -10,7 +10,7 @@ $(document).ready(function() {
 	const today = new Date();
 	const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
 	
-	const picker = tui.DatePicker.createRangePicker({
+	const searchPicker = tui.DatePicker.createRangePicker({
 		startpicker: {
 			date: lastMonth,
 			input: '#input_startDate',
@@ -25,8 +25,11 @@ $(document).ready(function() {
 		format: 'YYYY-MM-dd'
 	});
 
-	let startDate = cfn_tuiDateFormat(picker.getStartDate());
-	let endDate = cfn_tuiDateFormat(picker.getEndDate());
+	let startDate = cfn_tuiDateFormat(searchPicker.getStartDate());
+	let endDate = cfn_tuiDateFormat(searchPicker.getEndDate());
+	
+	let updatemodalDatepicker;
+	let addmodalDatepicker;
 	
 	//통신 객체
 	ajaxCom = {
@@ -74,6 +77,7 @@ $(document).ready(function() {
 				success	: function(result) {
 					if(result.msg == 'success') {
 						alert('등록되었습니다.');
+						cfn_clearField('user_add_modal'); //모달 id 값을 파라미터로 넘겨주세요
 						$('#user_add_modal').modal('hide');//창 닫기
 						ajaxCom.getUserList();	// 조회
 						$('#btn_get').click();
@@ -95,6 +99,7 @@ $(document).ready(function() {
 						$('#user_edit_modal').modal('hide');//창 닫기
 						ajaxCom.getUserList();	// 조회
 						$('#btn_get').click();
+// 						updatemodalDatepicker.setDate(''); //수정된 날짜 초기화
 					}
 				},
 				error	: function(xhr,status){
@@ -114,7 +119,7 @@ $(document).ready(function() {
 						$('#checkId_msg_add_div').show();
 					} else{
 						$('#input_checkId_add').attr('disabled', true);
-						document.getElementById("input_userPwd_add").focus();
+						$("#input_userPwd_add").focus();
 						id_check = true;	// 아이디 중복확인(완)
 					}
 				},
@@ -135,6 +140,17 @@ $(document).ready(function() {
 		btn_add : function(){
 			//사용자 정보 추가 modal open
 			$('#user_add_modal').modal('show');
+			
+			// 출산 예정일 input datepicker(사용자 정보 추가 modal)
+			addmodalDatepicker = new tui.DatePicker('#wrapper_add', {
+				language: 'ko',
+				date: '',
+				input: {
+					element: '#input_dueDate_add',
+					format: 'yyyy-MM-dd'
+				}
+			});
+			
 			// 비번 중복 확인 이벤트
 			$('#input_checkPwd_add').blur(function() {
 				let pwd = $('#input_userPwd_add').val();
@@ -155,14 +171,6 @@ $(document).ready(function() {
 					pwd_check = true;	// 비번 중복확인(완)
 				}
 			});
-			// 출산 예정일 input datepicker(사용자 정보 추가 modal)
-			 var datepicker = new tui.DatePicker('#wrapper_add', {
-				date: new Date(),
-				input: {
-					element: '#input_dueDate_add',
-					format: 'yyyy-MM-dd'
-				}
-			});
 		},
 		//추가 버튼(사용자 정보 추가 modal)
 		btn_addAccount : function(){
@@ -180,7 +188,7 @@ $(document).ready(function() {
 				alert('비밀번호를 확인해주세요.');
 				return false;
 			} else if($('#input_userName_add').val() == ''){// 이름 입력 여부
-				alert('이름을 확인해주세요.');
+				alert('이름을 입력해주세요.');
 				return false;
 			}
 			// 정보 DB에 추가
@@ -189,11 +197,11 @@ $(document).ready(function() {
 				password	: $('#input_checkPwd_add').val(),		// 비밀번호
 				name 		: $('#input_userName_add').val(),		// 이름
 				phone_number: $('#input_phoneNumber_add').val(),	// 전화번호
-				due_date	: $('#input_dueDate_add').val(),		// 출산 예정일
+				due_date	: addmodalDatepicker.getDate() != null ? cfn_tuiDateFormat(addmodalDatepicker.getDate()) : '',		// 출산 예정일
 				hospital	: $('#input_hospital_add').val(),		// 병원 정보
 				remark		: $('#input_rmk_add').val()				// 비고
 			}
-
+			
 			ajaxCom.addAccount(param);
 		},
 		//저장 버튼(사용자 정보 수정 modal)
@@ -202,14 +210,13 @@ $(document).ready(function() {
 				id			: $('#input_userId_edit').val(),		// id
 				name 		: $('#input_userName_edit').val(),		// 이름
 				phone_number: $('#input_phoneNumber_edit').val(),	// 전화번호
-				due_date	: $('#input_dueDate_edit').val(),		// 출산 예정일
+				due_date	: updatemodalDatepicker.getDate() != null ? cfn_tuiDateFormat(updatemodalDatepicker.getDate()) : '',	// 출산 예정일
 				hospital	: $('#input_hospital_edit').val(),		// 병원 정보
 				user_status	: $('#input_enabled_edit').val(),		// 사용 여부
 				remark		: $('#input_rmk_edit').val()			// 비고
 			}
 
 			ajaxCom.updateAccount(param);
-			
 		},
 		// 초기화 버튼(사용자 정보 수정 modal)
 		btn_resetPwd : function() {
@@ -227,7 +234,7 @@ $(document).ready(function() {
 			}
 			
 			let param = {
-				user_id : $('#input_checkId_add').val()
+				add_id : $('#input_checkId_add').val()
 			};
 			
 			ajaxCom.checkId(param);
@@ -236,21 +243,14 @@ $(document).ready(function() {
 		btn_addAccountClose : function() {
 			let modalId = $(this).closest(".modal").attr("id");
 			
-			if (confirm("창을 닫으면 내용이 모두 지워집니다. 닫으시겠습니까?")) {
+			if (confirm("창을 닫으면 수정한 내용이 모두 지워집니다. 닫으시겠습니까?")) {
 				$('#input_checkId_add').attr('disabled', false);
-				$('#input_checkId_add').val('');
-				$('#input_userPwd_add').val('');
-				$('#input_checkPwd_add').val('');
-				$('#input_userName_add').val('');
-				$('#input_phoneNumber_add').val('');
-				$('#input_dueDate_add').val('');
-				$('#input_hospital_add').val('');
-				$('#input_rmk_add').val('');
+				cfn_clearField('user_add_modal');
 				$('#checkId_msg_add_div').css('display', 'none');
 				$('#checkPwd_msg_add_div').css('display', 'none');
-				$('#input_userPwd_add').attr('disabled', false);
-				$('#input_checkPwd_add').attr('disabled', false);
 				$('#' + modalId).modal('hide');
+			} else {
+				$('#btn_addAccountClose').blur();
 			}
 		},
 		//닫기 버튼(사용자 정보 수정 modal)
@@ -259,6 +259,8 @@ $(document).ready(function() {
 			
 			if (confirm("창을 닫으면 수정한 내용이 모두 지워집니다. 닫으시겠습니까?")) {
 				$('#' + modalId).modal('hide');
+			} else {
+				$('#btn_updateAccountClose').blur();
 			}
 		}
 	}; //btnCom END
@@ -304,18 +306,18 @@ $(document).ready(function() {
 					$('#input_userId_edit').val(rowData.id);				//id
 					$('#input_userName_edit').val(rowData.name);			//이름
 					$('#input_phoneNumber_edit').val(rowData.phone_number);	//전화번호
-					$('#input_dueDate_edit').val(rowData.due_date),			// 출산 예정일
 					$('#input_hospital_edit').val(rowData.hospital),		// 병원 정보
 					$('#input_role_edit').val(rowData.user_role),		// 회원 구분
 					$('#input_rmk_edit').val(rowData.remark);				//비고
 					
 					// 출산 예정일 input datepicker(사용자 정보 수정 modal)
-					 var datepicker = new tui.DatePicker('#wrapper_edit', {
-						date: new Date(),
+					updatemodalDatepicker = new tui.DatePicker('#wrapper_edit', {
+						language: 'ko',
+						date: rowData.due_date != '' ? new Date(rowData.due_date) : null, //가져온 string을 날짜로 변경..........
 						input: {
 							element: '#input_dueDate_edit',
 							format: 'yyyy-MM-dd'
-						}
+						},
 					});
 				}
 			}
@@ -354,7 +356,7 @@ $(document).ready(function() {
 							<div class="row search flex-grow-1">
 								<div class="col-md-3 col-sm-6 searchDiv">
 									<label for="input_id" class="search-label float-left mt-2">ID / 이름</label>
-									<input type="text" id="input_id_name" class="form-control form-control-sm mt-2" size="5"/>
+									<input type="text" id="input_id_name" class="form-control form-control-sm mt-2"/>
 								</div>
 								<div class="col-md-3 col-sm-6 searchDiv">
 									<label for="input_phone" class="search-label float-left mt-2">전화번호</label>
@@ -362,7 +364,8 @@ $(document).ready(function() {
 								</div>
 								<div class="col-md-3 col-sm-6 searchDiv">
 									<label for="input_startDate" class="search-label float-left mt-2">기간</label>
-									<div class="tui-datepicker-input tui-datetime-input tui-has-focus">
+									<div class="tui-datepicker-input tui-datetime-input">
+<!-- 										<input id="input_startDate" type="text" aria-label="Date"> -->
 										<input id="input_startDate" type="text" aria-label="Date">
 										<span class="tui-ico-date"></span>
 										<div id="startDate-container" style="margin-left: -1px;"></div>
@@ -370,7 +373,7 @@ $(document).ready(function() {
 								</div>
 								<div class="col-md-3 col-sm-6 searchDiv">
 									<label for="input_endDate" class="search-label float-left mt-2">~</label>
-									<div class="tui-datepicker-input tui-datetime-input tui-has-focus">
+									<div class="tui-datepicker-input tui-datetime-input">
 										<input id="input_endDate" type="text" aria-label="Date">
 										<span class="tui-ico-date"></span>
 										<div id="endDate-container" style="margin-left: -1px;"></div>
@@ -421,7 +424,7 @@ $(document).ready(function() {
 														<label class="control-label mt-2">출산 예정일</label>
 													</div>
 													<div class="col-sm-10">
-														<div class="tui-datepicker-input tui-datetime-input tui-has-focus">
+														<div class="tui-datepicker-input tui-datetime-input">
 															<input type="text" id="input_dueDate_edit" aria-label="Date-Time">
 															<span class="tui-ico-date"></span>
 														</div>
@@ -529,7 +532,7 @@ $(document).ready(function() {
 														<label class="control-label mt-2">출산 예정일</label>
 													</div>
 													<div class="col-sm-9">
-														<div class="tui-datepicker-input tui-datetime-input tui-has-focus">
+														<div class="tui-datepicker-input tui-datetime-input">
 															<input type="text" id="input_dueDate_add" aria-label="Date-Time">
 															<span class="tui-ico-date"></span>
 														</div>

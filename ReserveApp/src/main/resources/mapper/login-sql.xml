@@ -3,7 +3,7 @@
 <mapper namespace="com.reserve.app.mapper.LoginMapper">
 
 	<select id="getUserInfo" parameterType="map" resultType="com.reserve.app.entity.LoginEntity">
-		SELECT id, password, name, user_role, remark, created_id, created_dt, modified_id, modified_dt, user_status
+		SELECT id, password, name, user_role, remark, created_id, created_dt, modified_id, modified_dt, user_status, phone_number, due_date, hospital, branch_code
 		FROM tb_user 
 		where id=#{id} and user_status='Y'
 	</select>

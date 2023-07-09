@@ -24,6 +24,12 @@ public class AdminController {
 	@Autowired
 	AdminService adminService;
 	
+	//관리자 대시보드
+	@RequestMapping(value = "/dashboard", method = RequestMethod.GET)
+	public String viewDashboard(Model model, HttpServletRequest request) throws Exception {
+		return "admin/dashboard";
+	}
+	
 	//회원 관리 화면
 	@RequestMapping(value = "/user", method = RequestMethod.GET)
 	public String viewUser(Model model, HttpServletRequest request) throws Exception {
@@ -36,17 +42,13 @@ public class AdminController {
 		return "admin/search";
 	}
 	
-	//예약 관리 화면
-	@RequestMapping(value = "/management", method = RequestMethod.GET)
-	public String viewManagement(Model model, HttpServletRequest request) throws Exception {
-		return "admin/management";
-	}
-	
 	//마스터 관리 화면
 	@RequestMapping(value = "/master", method = RequestMethod.GET)
 	public String viewMaster(Model model, HttpServletRequest request) throws Exception {
 		return "admin/master";
 	}
+	
+	//=======================회원 관리 controller=====================
 	
 	@RequestMapping(value = "/getUserList", method = RequestMethod.POST)
 	@ResponseBody

@@ -1,9 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<title>Login</title>
-		<meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>Login</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+		
 		<link rel="icon" href="/static/assets/img/icon.ico" type="image/x-icon"/>
 	
 		<!-- Fonts and icons -->
@@ -21,15 +24,43 @@
 		<!-- CSS Files -->
 		<link rel="stylesheet" href="/static/assets/css/bootstrap.min.css">
 		<link rel="stylesheet" href="/static/assets/css/azzara.min.css">
+		
+		<style>
+			html, body {
+				width: 100%;
+				height: 100%;
+				margin: 0;
+				padding: 0;
+				overflow: hidden;
+			}
+
+			.wrapper.wrapper-login {
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				overflow: auto;
+			}
+
+			.container.container-login {
+				height: 100%;
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				align-items: center;
+			}
+		</style>
+		
 	</head>
 	<body class="login">
 		<div class="wrapper wrapper-login">
-			<div class="container container-login animated fadeIn" style="width:500px">
-				<h3 class="text-center">Sign In</h3>
+			<div class="container container-login animated fadeIn">
+				<h3 class="text-center">로그인</h3>
 					<form class="login-form" method="post" name="f" action="loginProc">
 						<div class="form-group form-floating-label">
 							<input id="id" name="id" type="text" class="form-control input-border-bottom" required>
-							<label for="id" class="placeholder">Username</label>
+							<label for="id" class="placeholder">ID</label>
 						</div>
 						<div class="form-group form-floating-label">
 							<input id="password" name="password" type="password" class="form-control input-border-bottom" required>
@@ -50,7 +81,7 @@
 							<span class="float-right" style="color:red;">관리자에게 문의 바랍니다.</span>
 						</div>
 						<div class="form-action mb-3">
-							<button class="btn btn-secondary btn-rounded btn-login" type="submit">Sign In</button>
+							<button class="btn btn-secondary btn-rounded btn-login" type="submit">로그인</button>
 						</div>
 					</form>
 			</div>

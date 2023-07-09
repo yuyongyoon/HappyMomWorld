@@ -13,6 +13,9 @@ import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import com.reserve.app.entity.LoginEntity;
 
 @Intercepts({
 	@Signature(type=Executor.class, method="update", args= {MappedStatement.class, Object.class}), //insert, update 때 사용
@@ -27,13 +30,19 @@ public class MybatisInterceptor implements Interceptor {
 	
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String userName = null;
+		String branchCode = null;
 	
 		if (authentication != null && authentication.isAuthenticated()) {
 			userName = authentication.getName();
+			Object principal = authentication.getPrincipal();
+			if (principal instanceof UserDetails) {
+				branchCode = ((LoginEntity) ((UserDetails) principal)).getBranch_code();
+			}
 		}
 	
 		if (userName != null && param instanceof HashMap) {
 			((HashMap) param).put("login_id", userName);
+			((HashMap) param).put("branch_code", branchCode);
 		} else if (userName != null) {
 			Map<String, Object> newParam = new HashMap<>();
 			newParam.put("login_id", userName);

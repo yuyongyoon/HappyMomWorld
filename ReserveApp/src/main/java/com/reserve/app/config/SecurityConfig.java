@@ -8,6 +8,7 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import com.reserve.app.CustomAuthenticationProvider;
@@ -26,13 +27,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	AuthenticationFailureHandler loginFailureHandler;
 	
 	@Autowired
+	AuthenticationSuccessHandler loginSuccessHandler;
+	
+	@Autowired
 	private CustomAuthenticationProvider authProvider;
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http
 			.authorizeRequests()
-				.antMatchers("/admin/**").hasRole("ADMIN")
+				.antMatchers("/admin/**").hasAnyRole("ADMIN", "SUPERADMIN")
 				.antMatchers("/login").permitAll()
 				.anyRequest().authenticated()
 			.and()
@@ -41,7 +45,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.loginProcessingUrl("/loginProc")
 				.usernameParameter("id") // id parameter
 				.passwordParameter("password") // pass parameter
-				.defaultSuccessUrl("/", true) // forward url : login success
+				.successHandler(loginSuccessHandler) // 커스텀 핸들러 등록
 				.failureHandler(loginFailureHandler)	// login fail handler
 				.permitAll()
 			.and()

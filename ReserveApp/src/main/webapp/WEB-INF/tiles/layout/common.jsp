@@ -12,12 +12,6 @@
 		}
 	});
 </script>
-
-
-<!-- CSS Files -->
-<link rel="stylesheet" href="/static/assets/css/bootstrap.min.css">
-<link rel="stylesheet" href="/static/assets/css/azzara.min.css">
-	
 <!--   Core JS Files   -->
 <script src="/static/assets/js/core/jquery.3.2.1.min.js"></script>
 <script src="/static/assets/js/core/popper.min.js"></script>
@@ -33,10 +27,6 @@
 
 <script src="/static/assets/js/ready.min.js"></script>
 
-<!-- 공통코드 -->
-<link rel="stylesheet" href="/static/common/css/common.css" />
-<script src="/static/common/js/common.js"></script>
-
 <!-- Grid & tui -->
 <link rel="stylesheet" href="/static/common/css/tui/tui-pagination.css" />
 <link rel="stylesheet" href="/static/common/css/tui/tui-grid.css" />
@@ -50,3 +40,10 @@
 <script src="/static/common/js/tui/xlsx.style.min.js"></script>
 <script src="/static/common/js/tui/tui-date-picker.js"></script>
 
+<!-- CSS Files -->
+<link rel="stylesheet" href="/static/assets/css/bootstrap.min.css">
+<link rel="stylesheet" href="/static/assets/css/azzara.min.css">
+
+<!-- 공통코드 -->
+<link rel="stylesheet" href="/static/common/css/common.css" />
+<script src="/static/common/js/common.js"></script>
