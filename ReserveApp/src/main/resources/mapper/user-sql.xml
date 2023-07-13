@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.reserve.app.mapper.UserMapper">
+	
+	<select id="getUserInfo" parameterType="map" resultType="map">
+		SELECT id, name, phone_number, due_date, hospital, to_char(created_dt,'YYYY-MM-DD') as created_dt, to_char(modified_dt,'YYYY-MM-DD') as modified_dt, branch_code
+		FROM tb_user
+		<where>
+			id like #{user_id}
+			and branch_code like #{branch_code}
+			and user_role like 'USER'
+			<!-- <if test='userIdOrName != null and userIdOrName != ""'>
+				and (
+					upper(id) like '%' || upper(#{userIdOrName}) || '%' 
+					or upper(name) like '%' || upper(#{userIdOrName}) || '%'
+				)
+			</if> -->
+			<if test='name!=null and name!=""'>and upper(name) like '%'||upper(#{name})||'%'</if>
+			<if test='phoneNumber!=null and phoneNumber!=""'>and phone_number like '%'||upper(#{phoneNumber})||'%'</if>
+			<if test="startDate != null and startDate != '' and endDate != null and endDate != ''">
+				and created_dt BETWEEN to_timestamp(#{startDate}, 'YYYY-MM-DD') AND to_timestamp(#{endDate}, 'YYYY-MM-DD') + INTERVAL '1 day' - INTERVAL '1 second'
+			</if>
+		</where>
+		order by created_dt desc, id asc
+	</select>
+	
+	<update id="updateUserInfo" parameterType="map">
+		UPDATE	tb_user
+		SET name = #{name},
+			phone_number = #{phone_number},
+			due_date = #{due_date},
+			hospital = #{hospital},
+			modified_id = #{login_id}, 
+			modified_dt = now()
+		WHERE	id = #{id}
+	</update>
+	
+	<select id="checkOrgPwd" parameterType="map" resultType="int">
+		SELECT count(password)
+		FROM tb_user
+		WHERE 	password = #{org_pwd}
+	</select>
+	
+	<insert id="updateUserPwd" parameterType="map">
+		INSERT INTO tb_user (password) VALUE (#{new_pwd})
+	</insert>
+</mapper>
