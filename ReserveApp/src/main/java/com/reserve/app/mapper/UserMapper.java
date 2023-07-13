@@ -8,7 +8,9 @@ public interface UserMapper {
 	
 	void updateUserInfo(Map<String, Object> param);
 	
-	void updateUserPwd(Map<String, Object> new_pwd);
+	int checkOrgPwd(Map<String, Object> param);
 	
-	int checkOrgPwd(Map<String, Object> org_pwd);
+	int updateUserPwd(Map<String, Object> param);
+	
+	
 }

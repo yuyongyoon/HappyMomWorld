@@ -24,7 +24,7 @@ public class UserService {
 	}
 	
 	// 개인 정보 변경
-	public String updateUserInfo(HashMap<String, Object> param) {
+	public String updateUserInfo(Map<String, Object> param) {
 		String msg = "success";
 		
 		try {
@@ -36,24 +36,33 @@ public class UserService {
 		return msg;
 	}
 	// 기존 비밀번호 확인
-	public int checkOrgPwd(Map<String,Object> org_pwd) {
-		int pwdCnt = mapper.checkOrgPwd(org_pwd);
-		System.out.println("checkOrgPwd(service): " + pwdCnt);	//test
-		return pwdCnt;
-	}
+//	public int checkOrgPwd(Map<String,Object> org_pwd) {
+//		int pwdCnt = mapper.checkOrgPwd(org_pwd);
+//		System.out.println("checkOrgPwd(service): " + pwdCnt);	//test
+//		return pwdCnt;
+//	}
 	// 비밀번호 변경
-	public String updateUserPwd(Map<String,Object> new_pwd) {
+	public String updateUserPwd(Map<String,Object> param) {
 		String msg = "success";
 		
 		try {
-			String orgPassword = new_pwd.get("password").toString();
-			System.out.println("새로운 비밀 번호 : " + orgPassword);		//test
-			SHA512PasswordEncoder sha512Service = new SHA512PasswordEncoder();
-			String encPassword = sha512Service.encode(orgPassword);
-			new_pwd.put("encoded_password", encPassword);
+			String orgPassword = param.get("org_pwd").toString();
+			String newPassword = param.get("new_pwd").toString();
 			
-			mapper.updateUserPwd((Map<String,Object>) new_pwd);
-			System.out.println("updateUserPwd_service: " + msg);	//test
+			SHA512PasswordEncoder sha512Service = new SHA512PasswordEncoder();
+			String encOrgPassword = sha512Service.encode(orgPassword);
+			String encNewPassword = sha512Service.encode(newPassword);
+			
+			param.put("encOrgPassword", encOrgPassword);
+			param.put("encNewPassword", encNewPassword);
+			
+			//기존 비밀번호 확인
+			int pwdCnt = mapper.checkOrgPwd(param);
+			if(pwdCnt != 1) {
+				msg = "not found Pwd";
+			} else {
+				mapper.updateUserPwd(param);
+			}
 		}catch (Exception e) {
 			e.printStackTrace();
 			msg = "fail";

@@ -47,32 +47,33 @@ public class UserController {
 		result.put("hospital", userList.get(0).get("hospital").toString());
 		return result;
 	}
+	
 	// 개인 정보 변경
 	@RequestMapping(value = "/updateUserInfo", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String,Object> updateUserInfo(HttpServletRequest request, @RequestBody HashMap<String,Object> param) throws Exception {
+	public Map<String,Object> updateUserInfo(HttpServletRequest request, @RequestBody Map<String,Object> param) throws Exception {
 		Map<String,Object> result = new HashMap<String,Object>();
 		String msg = userService.updateUserInfo(param);
 		result.put("msg", msg);
-		//System.out.println("controller: " + msg);
 		return result;
 	}
+	
 	// 비밀번호 확인
-	@RequestMapping(value = "/checkOrgPwd", method = RequestMethod.POST)
-	@ResponseBody
-	public Map<String,Object> checkId(HttpServletRequest request, @RequestBody Map<String,Object> org_pwd) throws Exception {
-		Map<String,Object> result = new HashMap<String,Object>();
-		int pwdCnt = userService.checkOrgPwd(org_pwd);
-		result.put("pwdCnt : ", pwdCnt);
-		return result;
-	}
+//	@RequestMapping(value = "/checkOrgPwd", method = RequestMethod.POST)
+//	@ResponseBody
+//	public Map<String,Object> checkId(HttpServletRequest request, @RequestBody Map<String,Object> org_pwd) throws Exception {
+//		Map<String,Object> result = new HashMap<String,Object>();
+//		int pwdCnt = userService.checkOrgPwd(org_pwd);
+//		result.put("pwdCnt : ", pwdCnt);
+//		return result;
+//	}
+	
 	// 비밀번호 변경
 	@RequestMapping(value = "/updateUserPwd", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String,Object> updatePwd(HttpServletRequest request, @RequestBody HashMap<String,Object> new_pwd) throws Exception {
 		Map<String,Object> result = new HashMap<String,Object>();
 		String msg = userService.updateUserPwd(new_pwd);
-		System.out.println("새로운 비밀 번호 : " + new_pwd);		//test
 		result.put("msg", msg);
 		return result;
 	}

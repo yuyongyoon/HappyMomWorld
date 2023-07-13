@@ -5,23 +5,8 @@
 	<select id="getUserInfo" parameterType="map" resultType="map">
 		SELECT id, name, phone_number, due_date, hospital, to_char(created_dt,'YYYY-MM-DD') as created_dt, to_char(modified_dt,'YYYY-MM-DD') as modified_dt, branch_code
 		FROM tb_user
-		<where>
-			id like #{user_id}
-			and branch_code like #{branch_code}
-			and user_role like 'USER'
-			<!-- <if test='userIdOrName != null and userIdOrName != ""'>
-				and (
-					upper(id) like '%' || upper(#{userIdOrName}) || '%' 
-					or upper(name) like '%' || upper(#{userIdOrName}) || '%'
-				)
-			</if> -->
-			<if test='name!=null and name!=""'>and upper(name) like '%'||upper(#{name})||'%'</if>
-			<if test='phoneNumber!=null and phoneNumber!=""'>and phone_number like '%'||upper(#{phoneNumber})||'%'</if>
-			<if test="startDate != null and startDate != '' and endDate != null and endDate != ''">
-				and created_dt BETWEEN to_timestamp(#{startDate}, 'YYYY-MM-DD') AND to_timestamp(#{endDate}, 'YYYY-MM-DD') + INTERVAL '1 day' - INTERVAL '1 second'
-			</if>
-		</where>
-		order by created_dt desc, id asc
+		WHERE id like #{user_id}
+		ORDER BY created_dt desc, id asc
 	</select>
 	
 	<update id="updateUserInfo" parameterType="map">
@@ -32,16 +17,20 @@
 			hospital = #{hospital},
 			modified_id = #{login_id}, 
 			modified_dt = now()
-		WHERE	id = #{id}
+		WHERE id = #{id}
 	</update>
 	
 	<select id="checkOrgPwd" parameterType="map" resultType="int">
 		SELECT count(password)
 		FROM tb_user
-		WHERE 	password = #{org_pwd}
+		WHERE id = #{login_id} and password = #{encOrgPassword}
 	</select>
 	
-	<insert id="updateUserPwd" parameterType="map">
-		INSERT INTO tb_user (password) VALUE (#{new_pwd})
-	</insert>
+	<update id="updateUserPwd" parameterType="map">
+		UPDATE tb_user
+		SET password = #{encNewPassword},
+			modified_id = #{login_id}, 
+			modified_dt = now()
+		WHERE id = #{login_id}
+	</update>
 </mapper>

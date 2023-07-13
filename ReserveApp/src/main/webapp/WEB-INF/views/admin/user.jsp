@@ -163,6 +163,9 @@ $(document).ready(function() {
 				} else if(pwd == '' || checkPwd == '' ){
 					$('#checkPwd_msg_add').text('비밀번호를 입력해주세요.');
 					$('#checkPwd_msg_add_div').show();
+				} else if(pwd == ' ' || checkPwd == ' ') {
+					$('#checkNewPwd_msg').text('비밀번호를 입력해주세요.');
+					$('#checkNewPwd_msg_div').show();
 				} else {
 					$('#input_userPwd_add').attr('disabled', true);
 					$('#input_checkPwd_add').attr('disabled', true);

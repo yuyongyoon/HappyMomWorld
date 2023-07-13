@@ -6,6 +6,7 @@
 $(document).ready(function() {
 	let orgPwd_check = false;
 	let newPwd_check = false;
+	let updateInfo_datePicker = '';
 	
 	//통신 객체
 	ajaxCom = {
@@ -17,11 +18,6 @@ $(document).ready(function() {
 				url	 	: "/user/getUserInfo",
 				data 	: param,
 				success	: function(result) {
-					/* console.log('name >>',result.name);
-					console.log('전화번호 >>',result.phone_number);
-					console.log('출산 예정일 >>',result.due_date);
-					console.log('출산 병원 >>',result.hospital); */
-					$('#input_userName_info').val(result.name);
 					$('#input_phoneNumber_info').val(result.phone_number);
 					$('#input_dueDate_info').val(result.due_date);
 					$('#input_hospital_info').val(result.hospital);
@@ -30,7 +26,7 @@ $(document).ready(function() {
 					alert('오류가 발생했습니다.');
 				}
 			});
-		}, //*/
+		},
 		// 개인 정보 변경
 		updateUserInfo : function(param) {
 			$.doPost({
@@ -40,30 +36,6 @@ $(document).ready(function() {
 					if(result.msg == 'success') {
 						alert('등록되었습니다.');
 						$('#nav-updateInfo-modal').modal('hide');//창 닫기
-						//updateInfo_datePicker.setDate(''); //수정된 날짜 초기화
-						//console.log('param >> ', param)
-					}
-				},
-				error	: function(xhr,status){
-					alert('오류가 발생했습니다.');
-				}
-			}); //*/
-		},
-		// 기존 비빈번호 확인
-		checkOrgPwd : function() {
-			let org_pwd = { org_pawd : $('#input_orgPwd_pwd').val() };
-			$.doPost({
-				url	 	: "/user/checkOrgPwd",
-				data 	: org_pwd,
-				success	: function(result) {
-					if(result.pwdCnt == 1) {	// 비밀 번호 잘못 입력한 경우
-						$('#checkOrgPwd_msg').text('비밀 번호가 다릅니다. 다시 입력해주세요.');
-						$('#checkOrgPwd_msg_div').show();
-					} else{	// 비밀 번호 맞게 입력한 경우
-						console.log('기존 비밀번호 : ', org_pwd)
-						//$('#input_orgPwd_pwd').attr('disabled', true);
-						$("#input_newPwd_pwd").focus();
-						orgPwd_check = true;	// 기존 비밀번호 확인(완)
 					}
 				},
 				error	: function(xhr,status){
@@ -72,19 +44,19 @@ $(document).ready(function() {
 			});
 		},
 		// 새 비밀번호 변경
-		updateUserPwd : function() {
-			let new_pwd = { new_pwd : $('#input_checkNewPwd_pwd').val() }	// 비밀번호
-			console.log('func: ',$('#input_checkNewPwd_pwd').val());
-			
+		updateUserPwd : function(param) {
 			$.doPost({
-				url	 	: "/admin/updateUserPwd",
-				data 	: new_pwd,
+				url	 	: "/user/updateUserPwd",
+				data 	: param,
 				success	: function(result) {
-					if(result.msg == 'success') {
-						alert('등록되었습니다.');
+					if(result.msg == 'not found Pwd') {
+						alert('기존 비밀번호가 틀렸습니다.');
+						cfn_clearField('nav-updatePwd-modal');
+						return false;
+					} else{
 						cfn_clearField('nav-updatePwd-modal');
 						$('#nav-updatePwd-modal').modal('hide');//창 닫기
-						alert('비밀번호가 변경되었습니다.')
+						alert('비밀번호가 변경되었습니다.');
 					}
 				},
 				error	: function(xhr,status){
@@ -94,105 +66,99 @@ $(document).ready(function() {
 		}
 	}; //ajaxCom END
 	
-	//------------------------------------- 개인 정보 변경 -------------------------------------
+	btnCom = {
+		// 정보 저장 버튼 클릭 시(개인 정보 변경 modal)
+		btn_updateInfo_save : function() {
+			let param = {
+					id			: $('#input_userId_info').val(),		// id
+					name 		: $('#input_userName_info').val(),		// 이름
+					phone_number: $('#input_phoneNumber_info').val(),	// 전화번호
+					due_date	: updateInfo_datePicker.getDate() != null ? cfn_tuiDateFormat(updateInfo_datePicker.getDate()) : '',// 출산 예정일
+					hospital	: $('#input_hospital_info').val()		// 병원 정보
+			}
+			ajaxCom.updateUserInfo(param);
+		},
+		btn_updateInfo_close : function() {
+			let modalId = $(this).closest(".modal").attr("id");
+			
+			if (confirm("창을 닫으면 수정한 내용이 모두 지워집니다. 닫으시겠습니까?")) {
+				$('#' + modalId).modal('hide');
+			} else {
+				$('#btn_updateAccountClose').blur();
+			}
+		},
+		btn_updatePwd_save : function(){
+			let orgPwd = $('#input_orgPwd_pwd').val();
+			let newPwd = $('#input_newPwd_pwd').val();
+			
+			let param = {
+				org_pwd : orgPwd,
+				new_pwd : newPwd
+			}
+			
+			ajaxCom.updateUserPwd(param);
+		},
+		btn_updatePwd_close : function() {
+			let modalId = $(this).closest(".modal").attr("id");
+			
+			if (confirm("창을 닫으면 수정한 내용이 모두 지워집니다. 닫으시겠습니까?")) {
+				cfn_clearField('nav-updatePwd-modal');
+				$('#checkNewPwd_msg_div').css('display', 'none');
+				$('#' + modalId).modal('hide');
+			} else {
+				$('#btn_updateAccountClose').blur();
+			}
+		}
+	}
+	
 	// 개인 정보 변경 버튼 클릭 시
-	$('#updateUserInfo_list').click(function(rowKey, colName, grid) {
-		$('#nav-updateInfo-modal').modal('show');
-		console.log('개인 정보 변경 버튼 클릭')
+	$('#updateUserInfo_list').click(function() {
 		ajaxCom.getUserInfo();
+		$('#nav-updateInfo-modal').modal('show');
 		
 		// 출산 예정일 input datepicker(사용자 정보 추가 modal)
-		/* updateInfo_datePicker = new tui.DatePicker('#wrapper_info', {
+		updateInfo_datePicker = new tui.DatePicker('#wrapper_info', {
 			language: 'ko',
-			date: '',
+			date: $('#input_dueDate_info').val() != '' ? new Date($('#input_dueDate_info').val()) : null,
 			input: {
 				element: '#input_dueDate_info',
 				format: 'yyyy-MM-dd'
 			}
-		});	 */
+		});
 	});
-	// 정보 저장 버튼 클릭 시(개인 정보 변경 modal)
-	$('#btn_updateInfo_save').click(function(){
-		//console.log('저장 버튼 클릭')
-		let param = {
-				id			: $('#input_userId_info').val(),		// id
-				name 		: $('#input_userName_info').val(),		// 이름
-				phone_number: $('#input_phoneNumber_info').val(),	// 전화번호
-				//due_date	: updateInfo_datePicker.getDate() != null ? cfn_tuiDateFormat(updateInfo_datePicker.getDate()) : '',// 출산 예정일
-				due_date	: "2023-09-09",
-				hospital	: $('#input_hospital_info').val()		// 병원 정보
-		}
-		ajaxCom.updateUserInfo(param);
-		
-		$('#userMenu').val(name);
-		
-	});
-	// 취소 버튼 클릭 시
-	$('#btn_updateInfo_close').click(function(){
-		//console.log('취소 버튼 클릭')
-		let modalId = $(this).closest(".modal").attr("id");
-		
-		if (confirm("창을 닫으면 수정한 내용이 모두 지워집니다. 닫으시겠습니까?")) {
-			//cfn_clearField('#nav-updateInfo-modal');
-			$('#' + modalId).modal('hide');
-		} else {
-			$('#btn_updateAccountClose').blur();
-		}
-	});
+	
 	//------------------------------------- 비밀 번호 변경 -------------------------------------
 	// 비밀번호 변경 버튼 클릭 시
 	$('#updateUserPwd_list').click(function() {
 		$('#nav-updatePwd-modal').modal('show');
-		console.log('비밀 번호 변경 버튼 클릭');
-		// 기존 비밀번호 확인
-		$('#input_orgPwd_pwd').blur(function() {
-			ajaxCom.checkOrgPwd();
-		});
+
 		//새로운 비밀번호 확인
 		$('#input_checkNewPwd_pwd').blur(function() {
 			let pwd = $('#input_newPwd_pwd').val();
 			let checkPwd = $('#input_checkNewPwd_pwd').val();
 			
 			if(pwd != checkPwd) {// 비밀 번호가 다를 경우
+				console.log('여기1')
 				$('#input_checkNewPwd_pwd').val(''); // 비번 초기화
 				$('#checkNewPwd_msg').text('비밀 번호가 다릅니다.');
-				$('#checkNewPwd_msg_div').show();
+				$('#checkNewPwd_msg_div').css('display', '');
 			} else if(pwd == '' || checkPwd == '' ){// 값이 없을 경우
+				console.log('여기2')
 				$('#checkNewPwd_msg').text('비밀번호를 입력해주세요.');
-				$('#checkNewPwd_msg_div').show();
+				$('#checkNewPwd_msg_div').css('display', 'flex');
+			} else if(pwd == ' ' || checkPwd == ' ') {
+				console.log('여기3')
+				$('#checkNewPwd_msg').text('비밀번호를 입력해주세요.');
+				$('#checkNewPwd_msg_div').css('display', 'flex');
 			} else {// 비밀 번호가 동일할 경우
-				//$('#input_newPwd_pwd').attr('disabled', true);
-				//$('#input_checkNewPwd_pwd').attr('disabled', true);
+				console.log('여기4')
+				$('#input_newPwd_pwd').attr('disabled', true);
+				$('#input_checkNewPwd_pwd').attr('disabled', true);
 				$('#checkNewPwd_msg_div').css('display','none');// 에러 메세지 지우기
-			}// */
+			}
 		});
 		
 	});
-	// 변경 버튼 클릭 시(비밀 번호 변경 modal)
-	$('#btn_updatePwd_save').click(function(){
-		if(orgPwd_check == false) {
-			alert('기존 비밀번호를 확인해주세요.');
-			return false;
-		} else if(newPwd_check == false){
-			alert('새 비밀번호를 확인해주세요.');
-			return false;
-		}
-		console.log('btn: ',$('#input_checkNewPwd_pwd').val());
-		ajaxCom.updateUserPwd();
-	});
-	// 취소 버튼 클릭 시
-	$('#btn_updatePwd_close').click(function(){
-		//console.log('취소 버튼 클릭')
-		let modalId = $(this).closest(".modal").attr("id");
-		
-		if (confirm("창을 닫으면 수정한 내용이 모두 지워집니다. 닫으시겠습니까?")) {
-			//cfn_clearField('#nav-updateInfo-modal');
-			$('#' + modalId).modal('hide');
-		} else {
-			$('#btn_updateAccountClose').blur();
-		}
-	});
-	
 })
 </script>
 
@@ -227,11 +193,7 @@ $(document).ready(function() {
 						<form class="navbar-left navbar-form nav-search mr-md-3" style="background-color: transparent;">
 							<div class="form-group">
 								<select class="form-control form-control-sm" id="select_branch" style="border: 1px solid white;background-color: white;">
-									<option>지점 선택</option>
-									<option id="option_branch1">A 마사지 지점</option>
-									<option id="option_branch2">B 마사지 지점</option>
-									<option id="option_branch3">C 마사지 지점</option>
-									<option id="option_branch4">D 마사지 지점</option>
+									<option value="">=====지점 선택====</option>
 								</select>
 							</div>
 						</form>
@@ -337,7 +299,7 @@ $(document).ready(function() {
 							<div class="col-sm-3">
 								<label for="input_userId_info" class="control-label mt-2">ID</label>
 							</div>
-							<div class="col-sm-7">
+							<div class="col-sm-9">
 								<input type="text" class="form-control" id="input_userId_info" value="<sec:authentication property="principal.id" />" readonly>
 							</div>
 						</div>
@@ -349,7 +311,7 @@ $(document).ready(function() {
 								<label class="control-label mt-2" style="border: 0px;">이름</label>
 							</div>
 							<div class="col-sm-9">
-								<input type="text" class="form-control" id="input_userName_info" maxlength='12' value="<sec:authentication property="principal.name" />">
+								<input type="text" class="form-control" id="input_userName_info" maxlength='12' value="<sec:authentication property="principal.name" />" readonly>
 							</div>
 						</div>
 						<div class="form-group row pb-0">
@@ -357,7 +319,7 @@ $(document).ready(function() {
 								<label class="control-label mt-2" style="border: 0px;">전화번호</label>
 							</div>
 							<div class="col-sm-9">
-								<input type="tel" class="form-control" id="input_phoneNumber_info" maxlength='13' value="<sec:authentication property="principal.phone_number" />">
+								<input type="tel" class="form-control" id="input_phoneNumber_info" maxlength='13'>
 							</div>
 						</div>
 						<div class="form-group row pb-0">
@@ -377,7 +339,7 @@ $(document).ready(function() {
 								<label class="control-label mt-2" style="border: 0px;">출산 병원</label>
 							</div>
 							<div class="col-sm-9">
-								<input type="text" class="form-control" id="input_hospital_info" value="<sec:authentication property="principal.hospital" />">
+								<input type="text" class="form-control" id="input_hospital_info">
 							</div>
 						</div>
 					</div>
@@ -405,7 +367,7 @@ $(document).ready(function() {
 							<div class="col-sm-3">
 								<label for="input_orgPwd_pwd" class="control-label mt-2">기존 비밀번호</label>
 							</div>
-							<div class="col-sm-7">
+							<div class="col-sm-9">
 								<input type="text" class="form-control" id="input_orgPwd_pwd" />
 							</div>
 						</div>
