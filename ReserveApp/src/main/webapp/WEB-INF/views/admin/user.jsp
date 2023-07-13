@@ -43,6 +43,7 @@ $(document).ready(function() {
 			$.doPost({
 				url	 	: "/admin/getUserList",
 				data 	: {
+					branch_code		: bracnch_code,
 					userIdOrName	: userIdOrName,
 					phoneNumber		: phoneNumber,
 					startDate		: startDate,

@@ -77,5 +77,17 @@ public class UserController {
 		result.put("msg", msg);
 		return result;
 	}
+	
+	//-------------------------------------------------------------------------------------------------
+	
+	//지점 정보 가져오기
+	@RequestMapping(value = "/selectBranch", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String,Object> selectBranch(HttpServletRequest request, @RequestBody Map<String,Object> param) throws Exception {
+		Map<String,Object> result = new HashMap<String,Object>();
+		List<Map<String,Object>> branchList = userService.selectBranch(param);
+		result.put("branchList", branchList);
+		return result;
+	}
 
 }

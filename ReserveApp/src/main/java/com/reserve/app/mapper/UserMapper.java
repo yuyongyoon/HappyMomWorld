@@ -1,5 +1,6 @@
 package com.reserve.app.mapper;
 
+
 import java.util.List;
 import java.util.Map;
 
@@ -11,6 +12,8 @@ public interface UserMapper {
 	int checkOrgPwd(Map<String, Object> param);
 	
 	int updateUserPwd(Map<String, Object> param);
+	
+	List<Map<String, Object>> selectBranch(Map<String, Object> param);
 	
 	
 }

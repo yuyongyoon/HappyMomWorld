@@ -69,5 +69,9 @@ public class UserService {
 		}
 		return msg;
 	}
+	// 지점 가져오기
+	public List<Map<String, Object>> selectBranch(Map<String,Object> param){
+		return mapper.selectBranch(param);
+	}
 	
 }

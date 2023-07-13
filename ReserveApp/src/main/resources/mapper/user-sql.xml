@@ -5,7 +5,7 @@
 	<select id="getUserInfo" parameterType="map" resultType="map">
 		SELECT id, name, phone_number, due_date, hospital, to_char(created_dt,'YYYY-MM-DD') as created_dt, to_char(modified_dt,'YYYY-MM-DD') as modified_dt, branch_code
 		FROM tb_user
-		WHERE id like #{user_id}
+		WHERE id like #{login_id}
 		ORDER BY created_dt desc, id asc
 	</select>
 	
@@ -33,4 +33,13 @@
 			modified_dt = now()
 		WHERE id = #{login_id}
 	</update>
+	
+	<select id="selectBranch" parameterType="map"  resultType="map">
+		SELECT tb_branch_mng.branch_code, branch_name
+		FROM tb_branch_mng, tb_user
+		WHERE 
+			tb_branch_mng.branch_code != 'b0000'
+			AND tb_user.user_role like 'SUPERADMIN'
+	</select>
+	
 </mapper>

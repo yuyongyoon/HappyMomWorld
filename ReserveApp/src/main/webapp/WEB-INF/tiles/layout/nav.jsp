@@ -63,6 +63,25 @@ $(document).ready(function() {
 					alert('오류가 발생했습니다.');
 				}
 			});
+		},
+		// 지점 data 가져오기
+		getBranch : function(param){
+			$.doPost({
+				url		: "/user/selectBranch",
+				success	: function(result){
+					//console.log(result);
+					//console.log($('#select-branch'))
+					let opt = '';
+					result.branchList.forEach(i => {
+						opt += '<option value= "'+i.branch_code+'">'+i.branch_name+'</option>';
+					})
+					//console.log(opt)
+					$('#select-branch').append(opt)
+				},
+				error	: function(xhr,status){
+					alert('오류가 발생했습니다.');
+				}
+			});
 		}
 	}; //ajaxCom END
 	
@@ -131,7 +150,6 @@ $(document).ready(function() {
 	// 비밀번호 변경 버튼 클릭 시
 	$('#updateUserPwd_list').click(function() {
 		$('#nav-updatePwd-modal').modal('show');
-
 		//새로운 비밀번호 확인
 		$('#input_checkNewPwd_pwd').blur(function() {
 			let pwd = $('#input_newPwd_pwd').val();
@@ -157,8 +175,10 @@ $(document).ready(function() {
 				$('#checkNewPwd_msg_div').css('display','none');// 에러 메세지 지우기
 			}
 		});
-		
 	});
+	
+	// 지점 선택
+	ajaxCom.selectBranch();
 })
 </script>
 
@@ -192,8 +212,8 @@ $(document).ready(function() {
 					<div class="collapse" id="search-nav">
 						<form class="navbar-left navbar-form nav-search mr-md-3" style="background-color: transparent;">
 							<div class="form-group">
-								<select class="form-control form-control-sm" id="select_branch" style="border: 1px solid white;background-color: white;">
-									<option value="">=====지점 선택====</option>
+								<select class="form-control form-control-sm" id="select-branch" style="border: 1px solid white;background-color: white;">
+									<option value="val-branch">=======지점 선택=======</option>
 								</select>
 							</div>
 						</form>
