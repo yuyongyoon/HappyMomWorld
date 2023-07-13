@@ -39,15 +39,21 @@ $(document).ready(function() {
 			let phoneNumber = $('#input_phone').val();
 			let startDate = $('#input_startDate').val();
 			let endDate = $('#input_endDate').val();
+			let superBranchCode;
+			
+			if($('#select-branch').val() != ''){
+				superBranchCode = $('#select-branch').val();
+			}
 			
 			$.doPost({
 				url	 	: "/admin/getUserList",
 				data 	: {
-					branch_code		: bracnch_code,
 					userIdOrName	: userIdOrName,
 					phoneNumber		: phoneNumber,
 					startDate		: startDate,
-					endDate			: endDate
+					endDate			: endDate,
+					super_branch_code : superBranchCode
+					
 				},
 				success	: function(result) {
 					userGrid.resetData(result.userList);
@@ -283,16 +289,16 @@ $(document).ready(function() {
 			scrollY : true,
 			readOnlyColorFlag : false,
 			columns: [
-				{header : 'ID',			name : 'id',			width : 100,  align:'left',	
-					style:'cursor:pointer;text-decoration:underline;',},
-				{header : '이름',			name : 'name',			width : 150,  align:'center'},
-				{header : '전화번호',		name : 'phone_number',	width : 150,  align:'center'},
-				{header : '출산 예정일',	name : 'due_date',		width : 150,  align:'center'},
-				{header : '병원',			name : 'hospital',		width : 200,  align:'left'},
-				{header : '구분',			name : 'user_role',		width : 100,  align:'center', formatter: 'listItemText', disabled:true,
-					editor: { type: 'select', options: { listItems: [{text:'관리자', value:'ADMIN'},{text:'회원',value:'USER'}]} }
+				{header : 'ID',				name : 'id',			width : 100,  align:'left',	
+					style:'cursor:pointer;text-decoration:underline;', sortable: true},
+				{header : '이름',				name : 'name',				width : 150, align:'left', sortable: true},
+				{header : '전화번호',			name : 'phone_number',		width : 150, align:'left', sortable: true},
+				{header : '출산 예정일',		name : 'due_date',			width : 150, align:'left', sortable: true},
+				{header : '출산 병원',			name : 'hospital',			width : 200, align:'left', sortable: true},
+				{header : '마사지 예약 여부',	name : 'massage_reserve',	width : 150, align:'center', formatter: 'listItemText', disabled:true,
+					editor: { type: 'select', options: { listItems: [{text:'YES', value:'Y'},{text:'NO',value:'N'}]}, sortable: true }
 				},
-				{header : '등록일',		name : 'created_dt',	width : 150,  align:'center'},
+				{header : '등록일',		name : 'created_dt',	width : 150,  align:'center', sortable: true},
 				{header : '비고',			name : 'remark',	align:'left'}
 			]
 		},
@@ -369,7 +375,6 @@ $(document).ready(function() {
 								<div class="col-md-3 col-sm-6 searchDiv">
 									<label for="input_startDate" class="search-label float-left mt-2">기간</label>
 									<div class="tui-datepicker-input tui-datetime-input">
-<!-- 										<input id="input_startDate" type="text" aria-label="Date"> -->
 										<input id="input_startDate" type="text" aria-label="Date">
 										<span class="tui-ico-date"></span>
 										<div id="startDate-container" style="margin-left: -1px;"></div>

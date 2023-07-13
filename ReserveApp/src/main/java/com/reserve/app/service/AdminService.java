@@ -18,6 +18,11 @@ public class AdminService {
 	@Autowired
 	private AdminMapper mapper;
 	
+	// 지점 가져오기
+	public List<Map<String, Object>> getBranchInfo(Map<String,Object> param){
+		return mapper.getBranchInfo(param);
+	}
+	
 	public List<Map<String,Object>> getUserList(Map<String,Object> param) {
 		return mapper.getUserList(param);
 	}

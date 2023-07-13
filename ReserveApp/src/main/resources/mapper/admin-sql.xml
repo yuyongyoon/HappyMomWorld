@@ -2,12 +2,22 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.reserve.app.mapper.AdminMapper">
 
+	<select id="getBranchInfo" parameterType="map"  resultType="map">
+		SELECT tb_branch_mng.branch_code, branch_name
+		FROM tb_branch_mng, tb_user
+		WHERE 
+			tb_branch_mng.branch_code != 'b0000'
+			AND tb_user.user_role like 'SUPERADMIN'
+	</select>
+
 	<select id="getUserList" parameterType="map" resultType="map">
 		SELECT id, name, phone_number, due_date, hospital, user_role, remark, to_char(created_dt,'YYYY-MM-DD') as created_dt, to_char(modified_dt,'YYYY-MM-DD') as modified_dt, branch_code
 		FROM tb_user
 		<where>
-			branch_code like #{branch_code}
-			and user_role like 'USER'
+			user_role like 'USER'
+			<if test="super_branch_code == null or super_branch_code == ''">
+				and branch_code = #{branch_code}
+			</if>
 			<if test='userIdOrName != null and userIdOrName != ""'>
 				and (
 					upper(id) like '%' || upper(#{userIdOrName}) || '%' 

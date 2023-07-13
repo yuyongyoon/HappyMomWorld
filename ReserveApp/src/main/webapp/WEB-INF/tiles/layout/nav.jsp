@@ -4,8 +4,7 @@
 
 <script>
 $(document).ready(function() {
-	let orgPwd_check = false;
-	let newPwd_check = false;
+	let doubleCheckPwd = false;
 	let updateInfo_datePicker = '';
 	
 	//통신 객체
@@ -27,14 +26,14 @@ $(document).ready(function() {
 				}
 			});
 		},
-		// 개인 정보 변경
+		// 회원 정보 변경
 		updateUserInfo : function(param) {
 			$.doPost({
 				url	 	: "/user/updateUserInfo",
 				data 	: param,
 				success	: function(result) {
 					if(result.msg == 'success') {
-						alert('등록되었습니다.');
+						alert('정보가 변경되었습니다.');
 						$('#nav-updateInfo-modal').modal('hide');//창 닫기
 					}
 				},
@@ -57,6 +56,7 @@ $(document).ready(function() {
 						cfn_clearField('nav-updatePwd-modal');
 						$('#nav-updatePwd-modal').modal('hide');//창 닫기
 						alert('비밀번호가 변경되었습니다.');
+						doubleCheckPwd = false;
 					}
 				},
 				error	: function(xhr,status){
@@ -67,16 +67,13 @@ $(document).ready(function() {
 		// 지점 data 가져오기
 		getBranch : function(param){
 			$.doPost({
-				url		: "/user/selectBranch",
+				url		: "/admin/getBranchInfo",
 				success	: function(result){
-					//console.log(result);
-					//console.log($('#select-branch'))
 					let opt = '';
 					result.branchList.forEach(i => {
 						opt += '<option value= "'+i.branch_code+'">'+i.branch_name+'</option>';
 					})
-					//console.log(opt)
-					$('#select-branch').append(opt)
+					$('#select-branch').append(opt);
 				},
 				error	: function(xhr,status){
 					alert('오류가 발생했습니다.');
@@ -107,15 +104,18 @@ $(document).ready(function() {
 			}
 		},
 		btn_updatePwd_save : function(){
-			let orgPwd = $('#input_orgPwd_pwd').val();
-			let newPwd = $('#input_newPwd_pwd').val();
-			
-			let param = {
-				org_pwd : orgPwd,
-				new_pwd : newPwd
+			if(doubleCheckPwd){
+				let orgPwd = $('#input_orgPwd_pwd').val();
+				let newPwd = $('#input_newPwd_pwd').val();
+				
+				let param = {
+					org_pwd : orgPwd,
+					new_pwd : newPwd
+				}
+				
+				ajaxCom.updateUserPwd(param);
 			}
 			
-			ajaxCom.updateUserPwd(param);
 		},
 		btn_updatePwd_close : function() {
 			let modalId = $(this).closest(".modal").attr("id");
@@ -147,6 +147,7 @@ $(document).ready(function() {
 	});
 	
 	//------------------------------------- 비밀 번호 변경 -------------------------------------
+	
 	// 비밀번호 변경 버튼 클릭 시
 	$('#updateUserPwd_list').click(function() {
 		$('#nav-updatePwd-modal').modal('show');
@@ -156,29 +157,30 @@ $(document).ready(function() {
 			let checkPwd = $('#input_checkNewPwd_pwd').val();
 			
 			if(pwd != checkPwd) {// 비밀 번호가 다를 경우
-				console.log('여기1')
 				$('#input_checkNewPwd_pwd').val(''); // 비번 초기화
 				$('#checkNewPwd_msg').text('비밀 번호가 다릅니다.');
 				$('#checkNewPwd_msg_div').css('display', '');
 			} else if(pwd == '' || checkPwd == '' ){// 값이 없을 경우
-				console.log('여기2')
 				$('#checkNewPwd_msg').text('비밀번호를 입력해주세요.');
 				$('#checkNewPwd_msg_div').css('display', 'flex');
 			} else if(pwd == ' ' || checkPwd == ' ') {
-				console.log('여기3')
 				$('#checkNewPwd_msg').text('비밀번호를 입력해주세요.');
 				$('#checkNewPwd_msg_div').css('display', 'flex');
-			} else {// 비밀 번호가 동일할 경우
-				console.log('여기4')
+			} else { // 비밀 번호가 동일할 경우
 				$('#input_newPwd_pwd').attr('disabled', true);
 				$('#input_checkNewPwd_pwd').attr('disabled', true);
 				$('#checkNewPwd_msg_div').css('display','none');// 에러 메세지 지우기
+				doubleCheckPwd = true;
 			}
 		});
 	});
 	
 	// 지점 선택
-	ajaxCom.selectBranch();
+	console.log($('#role'))
+	if($('#role').text() == 'SUPERADMIN'){
+		ajaxCom.getBranch();
+	}
+
 })
 </script>
 
@@ -213,7 +215,7 @@ $(document).ready(function() {
 						<form class="navbar-left navbar-form nav-search mr-md-3" style="background-color: transparent;">
 							<div class="form-group">
 								<select class="form-control form-control-sm" id="select-branch" style="border: 1px solid white;background-color: white;">
-									<option value="val-branch">=======지점 선택=======</option>
+									<option value="">============지점 선택==========</option>
 								</select>
 							</div>
 						</form>
@@ -232,23 +234,25 @@ $(document).ready(function() {
 						<li class="nav-item dropdown hidden-caret">
 							<a class="nav-link dropdown-toggle" href="#" id="userMenu" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 								<span><sec:authentication property="principal.name" /> 님</span>
+								<span id="role" style="display:none"><sec:authentication property="principal.user_role" /></span>
 							</a>
 							
 							<ul class="dropdown-menu dropdown-user animated fadeIn" aria-labelledby="userMenu">
 								<sec:authorize access="hasAnyRole('ROLE_USER')">
 								<li id="updateUserInfo_list">
-									<a class="dropdown-item" style="cursor:pointer;">개인 정보 변경</a>
+									<a class="dropdown-item" style="cursor:pointer;">회원정보 변경</a>
 								</li>
-								</sec:authorize>
-								</li>
+								
 								<li id="updateUserPwd_list">
 									<a class="dropdown-item" style="cursor:pointer;">비밀번호 변경</a>
-								</li>								
+								</li>
+								</sec:authorize>
 								<li id="logOut_list">
 									<a class="dropdown-item" href="#" onclick="document.getElementById('logout').submit();">
 										<span>로그아웃</span>
 									</a>
 									<form id="logout" action="/logout" method="POST"></form>
+								</li>
 							</ul>
 						</li>
 					
@@ -311,7 +315,7 @@ $(document).ready(function() {
 		<div class="modal-dialog modal-dialog-centered" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h4 class="modal-title" id="updateInfo_modalTitle">개인 정보 변경</h4>
+					<h4 class="modal-title" id="updateInfo_modalTitle">회원 정보 변경</h4>
 				</div>
 				<div class="modal-body">
 					<div class="col-12">

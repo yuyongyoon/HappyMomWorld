@@ -48,6 +48,16 @@ public class AdminController {
 		return "admin/master";
 	}
 	
+	//=======================nav 지점 코드 가져오기=====================
+	@RequestMapping(value = "/getBranchInfo", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String,Object> getBranchInfo(HttpServletRequest request, @RequestBody Map<String,Object> param) throws Exception {
+		Map<String,Object> result = new HashMap<String,Object>();
+		List<Map<String,Object>> branchList = adminService.getBranchInfo(param);
+		result.put("branchList", branchList);
+		return result;
+	}
+	
 	//=======================회원 관리 controller=====================
 	
 	@RequestMapping(value = "/getUserList", method = RequestMethod.POST)

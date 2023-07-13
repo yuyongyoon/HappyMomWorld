@@ -16,5 +16,7 @@ public interface AdminMapper {
 	void updateAccount(Map<String, Object> param);
 
 	int checkId(Map<String,Object> param);
-
+	
+	List<Map<String, Object>> getBranchInfo(Map<String, Object> param);
+	
 }

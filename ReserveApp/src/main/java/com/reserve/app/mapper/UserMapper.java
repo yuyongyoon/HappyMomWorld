@@ -13,7 +13,4 @@ public interface UserMapper {
 	
 	int updateUserPwd(Map<String, Object> param);
 	
-	List<Map<String, Object>> selectBranch(Map<String, Object> param);
-	
-	
 }

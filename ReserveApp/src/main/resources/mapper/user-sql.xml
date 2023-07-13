@@ -33,13 +33,4 @@
 			modified_dt = now()
 		WHERE id = #{login_id}
 	</update>
-	
-	<select id="selectBranch" parameterType="map"  resultType="map">
-		SELECT tb_branch_mng.branch_code, branch_name
-		FROM tb_branch_mng, tb_user
-		WHERE 
-			tb_branch_mng.branch_code != 'b0000'
-			AND tb_user.user_role like 'SUPERADMIN'
-	</select>
-	
 </mapper>

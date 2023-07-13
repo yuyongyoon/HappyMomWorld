@@ -118,7 +118,6 @@ function cfn_clearField(modalId){
 
 $(document).ready(function() {
 	$('.row.search input').keydown(function(e){
-		
 		if(e.keyCode===13){
 			if($('#btn_get').length>0){
 				$('#btn_get').click();
