@@ -15,9 +15,14 @@
 		FROM tb_user
 		<where>
 			user_role like 'USER'
-			<if test="super_branch_code == null or super_branch_code == ''">
-				and branch_code = #{branch_code}
-			</if>
+			<choose>
+				<when test="super_branch_code == null or super_branch_code == ''">
+					and branch_code = #{branch_code}
+				</when>
+				<otherwise>
+					and branch_code = #{super_branch_code}
+				</otherwise>
+			</choose>
 			<if test='userIdOrName != null and userIdOrName != ""'>
 				and (
 					upper(id) like '%' || upper(#{userIdOrName}) || '%' 

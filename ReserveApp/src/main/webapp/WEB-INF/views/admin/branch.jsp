@@ -75,7 +75,7 @@
 									<div class="col-md-12">
 										<div class="row">
 											<div class="col-sm-6">
-												<span class="row-title">회원관리</span>
+												<span class="row-title">지점 관리</span>
 											</div>
 											<div class="col-sm-6">
 												<div class="button-list float-right">

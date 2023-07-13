@@ -176,11 +176,13 @@ $(document).ready(function() {
 	});
 	
 	// 지점 선택
-	console.log($('#role'))
-	if($('#role').text() == 'SUPERADMIN'){
+	if($('#role').val() == 'SUPERADMIN'){
 		ajaxCom.getBranch();
+		
+		$('#select-branch').on('change', function(){
+			$('#btn_get').click();
+		})
 	}
-
 })
 </script>
 
@@ -189,10 +191,10 @@ $(document).ready(function() {
 		<!-- Logo Header -->
 		<div class="logo-header">
 			
-			<a href="/" class="logo">
+			<div class="logo">
 <!-- 				<img src="/static/assets/img/logoazzara.svg" alt="navbar brand" class="navbar-brand"> -->
 				<span>HappyMamWorld</span>
-			</a>
+			</div>
 			<button class="navbar-toggler sidenav-toggler ml-auto" type="button" data-toggle="collapse" data-target="collapse" aria-expanded="false" aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon">
 					<i class="fa fa-bars"></i>
@@ -215,7 +217,7 @@ $(document).ready(function() {
 						<form class="navbar-left navbar-form nav-search mr-md-3" style="background-color: transparent;">
 							<div class="form-group">
 								<select class="form-control form-control-sm" id="select-branch" style="border: 1px solid white;background-color: white;">
-									<option value="">============지점 선택==========</option>
+									<option value="">================지점 선택================</option>
 								</select>
 							</div>
 						</form>
@@ -234,18 +236,17 @@ $(document).ready(function() {
 						<li class="nav-item dropdown hidden-caret">
 							<a class="nav-link dropdown-toggle" href="#" id="userMenu" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 								<span><sec:authentication property="principal.name" /> 님</span>
-								<span id="role" style="display:none"><sec:authentication property="principal.user_role" /></span>
 							</a>
 							
 							<ul class="dropdown-menu dropdown-user animated fadeIn" aria-labelledby="userMenu">
 								<sec:authorize access="hasAnyRole('ROLE_USER')">
-								<li id="updateUserInfo_list">
-									<a class="dropdown-item" style="cursor:pointer;">회원정보 변경</a>
-								</li>
-								
-								<li id="updateUserPwd_list">
-									<a class="dropdown-item" style="cursor:pointer;">비밀번호 변경</a>
-								</li>
+									<li id="updateUserInfo_list">
+										<a class="dropdown-item" style="cursor:pointer;">회원정보 변경</a>
+									</li>
+									
+									<li id="updateUserPwd_list">
+										<a class="dropdown-item" style="cursor:pointer;">비밀번호 변경</a>
+									</li>
 								</sec:authorize>
 								<li id="logOut_list">
 									<a class="dropdown-item" href="#" onclick="document.getElementById('logout').submit();">
@@ -303,7 +304,9 @@ $(document).ready(function() {
 								</li>
 							</ul>
 						</li>
-						<li class="nav-item dropdown hidden-caret"></li>
+						<li class="nav-item dropdown hidden-caret" style="display:none;">
+								<input id="role" value="<sec:authentication property="principal.user_role" />" disabled style="display:none;"/>
+						</li>
 				</ul>
 			</div>
 		</nav>

@@ -39,6 +39,7 @@
 <script src="/static/common/js/tui/xlsx.full.min.js"></script>
 <script src="/static/common/js/tui/xlsx.style.min.js"></script>
 <script src="/static/common/js/tui/tui-date-picker.js"></script>
+<script src="/static/common/fullcalendar-6.1.8/dist/index.global.js"></script>
 
 <!-- CSS Files -->
 <link rel="stylesheet" href="/static/assets/css/bootstrap.min.css">

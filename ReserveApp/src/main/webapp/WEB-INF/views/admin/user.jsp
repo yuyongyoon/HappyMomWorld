@@ -39,10 +39,15 @@ $(document).ready(function() {
 			let phoneNumber = $('#input_phone').val();
 			let startDate = $('#input_startDate').val();
 			let endDate = $('#input_endDate').val();
-			let superBranchCode;
+			if($('#role').val() == 'SUPERADMIN'){
+				let superBranchCode = $('#select-branch');
+			}
+			
 			
 			if($('#select-branch').val() != ''){
 				superBranchCode = $('#select-branch').val();
+			} else {
+				superBranchCode = '';
 			}
 			
 			$.doPost({
@@ -486,6 +491,7 @@ $(document).ready(function() {
 											<h4 class="modal-title" id="user_edit_modalTitle">사용자 정보 추가</h4>
 										</div>
 										<div class="modal-body">
+											<form>
 											<div class="col-12">
 												<div class="form-group row pb-0">
 													<div class="col-sm-3">
@@ -506,7 +512,7 @@ $(document).ready(function() {
 														<label class="control-label mt-2" style="border: 0px;">비밀번호</label>
 													</div>
 													<div class="col-sm-9">
-														<input type="password" class="form-control" id="input_userPwd_add" maxlength='12'>
+														<input type="password" class="form-control" id="input_userPwd_add" autoComplete="off" maxlength='12'>
 													</div>
 												</div>
 												<div class="form-group row pb-0">
@@ -514,7 +520,7 @@ $(document).ready(function() {
 														<label class="control-label mt-2">비밀번호 확인</label>
 													</div>
 													<div class="col-sm-9">
-														<input type="password" class="form-control" id="input_checkPwd_add">
+														<input type="password" class="form-control" autoComplete="off" id="input_checkPwd_add">
 													</div>
 												</div>
 												<div class="col-sm-12 pb-0 mt-2" id="checkPwd_msg_add_div">
@@ -565,6 +571,7 @@ $(document).ready(function() {
 													</div>
 												</div>
 											</div>
+											</form>
 										</div>
 										<div class="modal-footer">
 											<button type="button" class="btn btn-secondary" id="btn_addAccount">추가</button>

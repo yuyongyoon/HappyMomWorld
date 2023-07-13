@@ -48,6 +48,12 @@ public class AdminController {
 		return "admin/master";
 	}
 	
+	//지점 관리 화면
+		@RequestMapping(value = "/branch", method = RequestMethod.GET)
+		public String viewBranch(Model model, HttpServletRequest request) throws Exception {
+			return "admin/branch";
+		}
+	
 	//=======================nav 지점 코드 가져오기=====================
 	@RequestMapping(value = "/getBranchInfo", method = RequestMethod.POST)
 	@ResponseBody

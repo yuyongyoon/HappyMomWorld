@@ -1,5 +1,4 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<script src="/static/common/fullcalendar-6.1.8/dist/index.global.js"></script>
 
 <script>
 
