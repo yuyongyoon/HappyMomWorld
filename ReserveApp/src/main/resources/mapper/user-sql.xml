@@ -33,4 +33,11 @@
 			modified_dt = now()
 		WHERE id = #{login_id}
 	</update>
+	
+	<select id="getReservation" parameterType="map" resultType="map">
+		SELECT date, time, staff_num
+		FROM tb_reservation
+		WHERE id like #{login_id}
+	</select>
+	
 </mapper>

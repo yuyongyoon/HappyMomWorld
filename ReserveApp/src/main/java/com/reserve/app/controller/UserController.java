@@ -78,4 +78,15 @@ public class UserController {
 		result.put("msg", msg);
 		return result;
 	}
+	
+	//예약 리스트 가져오기
+	@RequestMapping(value = "/getReservation", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String,Object> getReservation(HttpServletRequest request, @RequestBody Map<String,Object> param) throws Exception {
+		Map<String,Object> result = new HashMap<String,Object>();
+		List<Map<String,Object>> rsvList = userService.getReservation(param);
+		result.put("rsvList", rsvList);
+		//System.out.println("rsvList >> "+rsvList);
+		return result;
+	}
 }

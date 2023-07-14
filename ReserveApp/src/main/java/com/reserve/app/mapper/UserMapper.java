@@ -13,4 +13,6 @@ public interface UserMapper {
 	
 	int updateUserPwd(Map<String, Object> param);
 	
+	List<Map<String, Object>> getReservation(Map<String, Object> param);
+	
 }
