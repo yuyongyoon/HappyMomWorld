@@ -68,7 +68,7 @@ $(document).ready(function() {
 				}
 			});
 		},
-		// reset(사용자 정보 수정 modal)
+		// reset(회원 정보 수정 modal)
 		resetPwd : function(param) {
 			$.doPost({
 				url	 	: "/admin/resetPassword",
@@ -82,7 +82,7 @@ $(document).ready(function() {
 			});
 		},
 		// 회원 정보 추가
-		addAccount : function(param){
+		/* addAccount : function(param){
 			$.doPost({
 				url	 	: "/admin/addAccount",
 				data 	: param,
@@ -99,8 +99,8 @@ $(document).ready(function() {
 					alert('오류가 발생했습니다.');
 				}
 			});
-		},
-		// 사용자 정보 수정
+		}, */
+		// 회원 정보 수정
 		updateAccount : function(param){
 			$.doPost({
 				url	 	: "/admin/updateAccount",
@@ -120,7 +120,7 @@ $(document).ready(function() {
 			});
 		},
 		// 아이디 중복 확인
-		checkId : function(param) {
+		/* checkId : function(param) {
 			$('#checkId_msg_add_div').hide();
 			$.doPost({
 				url	 	: "/admin/checkId",
@@ -139,7 +139,7 @@ $(document).ready(function() {
 					alert('오류가 발생했습니다.');
 				}
 			});
-		}
+		} */
 	}; //ajaxCom END
 	
 	//이벤트 객체 : id값을 주면 클릭 이벤트 발생
@@ -148,12 +148,14 @@ $(document).ready(function() {
 		btn_get : function() {
 			ajaxCom.getUserList();
 		},
-		//추가 버튼(회원 관리 페이지)
-		btn_add : function(){
-			//사용자 정보 추가 modal open
-			$('#user_add_modal').modal('show');
+		//다운로드 버튼(회원 관리 페이지)
+		btn_download : function(){
+			//console.log('회원 정보 다운로드 버튼 클릭');
+			tuiGrid.dataExport(userGrid,'해피맘월드 회원정보.xlsx');
+			//회원 정보 추가 modal open
+			/* $('#user_add_modal').modal('show');
 			
-			// 출산 예정일 input datepicker(사용자 정보 추가 modal)
+			// 출산 예정일 input datepicker(회원 정보 추가 modal)
 			addmodalDatepicker = new tui.DatePicker('#wrapper_add', {
 				language: 'ko',
 				date: '',
@@ -164,7 +166,7 @@ $(document).ready(function() {
 			});
 			
 			// 비번 중복 확인 이벤트
-			$('#input_checkPwd_add').blur(function() {
+			 $('#input_checkPwd_add').blur(function() {
 				let pwd = $('#input_userPwd_add').val();
 				let checkPwd = $('#input_checkPwd_add').val();
 				
@@ -185,10 +187,10 @@ $(document).ready(function() {
 					$('#input_userName_add').focus();// 다음 input로 커서 옮김
 					pwd_check = true;	// 비번 중복확인(완)
 				}
-			});
+			}); */
 		},
-		//추가 버튼(사용자 정보 추가 modal)
-		btn_addAccount : function(){
+		//추가 버튼(회원 정보 추가 modal)
+		/* btn_addAccount : function(){
 			// 필수항목 확인 여부
 			if($('#input_checkId_add').val() == ''){// 아이디 입력 여부
 				alert('아이디를 입력해주세요.');
@@ -218,8 +220,8 @@ $(document).ready(function() {
 			}
 			
 			ajaxCom.addAccount(param);
-		},
-		//저장 버튼(사용자 정보 수정 modal)
+		}, */
+		//저장 버튼(회원 정보 수정 modal)
 		btn_updateAccount : function(){
 			let param = {
 				id			: $('#input_userId_edit').val(),		// id
@@ -233,7 +235,7 @@ $(document).ready(function() {
 
 			ajaxCom.updateAccount(param);
 		},
-		// 초기화 버튼(사용자 정보 수정 modal)
+		// 초기화 버튼(회원 정보 수정 modal)
 		btn_resetPwd : function() {
 			let param = {
 				user_id : $('#input_userId_edit').val()
@@ -241,8 +243,8 @@ $(document).ready(function() {
 			ajaxCom.resetPwd(param);
 			
 		},
-		// 아이디 중복 확인 버튼(사용자 정보 추가 modal)
-		btn_checkId : function(){
+		// 아이디 중복 확인 버튼(회원 정보 추가 modal)
+		/* btn_checkId : function(){
 			if($('#input_checkId_add').val() == '') {
 				alert('ID를 입력해주세요');
 				return false;
@@ -253,9 +255,9 @@ $(document).ready(function() {
 			};
 			
 			ajaxCom.checkId(param);
-		},
-		//닫기 버튼(사용자 정보 추가 modal)
-		btn_addAccountClose : function() {
+		}, */
+		//닫기 버튼(회원 정보 추가 modal)
+		/* btn_addAccountClose : function() {
 			let modalId = $(this).closest(".modal").attr("id");
 			
 			if (confirm("창을 닫으면 수정한 내용이 모두 지워집니다. 닫으시겠습니까?")) {
@@ -267,8 +269,8 @@ $(document).ready(function() {
 			} else {
 				$('#btn_addAccountClose').blur();
 			}
-		},
-		//닫기 버튼(사용자 정보 수정 modal)
+		}, */
+		//닫기 버튼(회원 정보 수정 modal)
 		btn_updateAccountClose : function() {
 			let modalId = $(this).closest(".modal").attr("id");
 			
@@ -311,7 +313,7 @@ $(document).ready(function() {
 		//이벤트
 		{
 			cellclick : function(rowKey,colName,grid){
-				// id클릭 시 modal open(사용자 정보 수정 modal)
+				// id클릭 시 modal open(회원 정보 수정 modal)
 				if(colName=="id"){
 					// 회원 수정 modal 초기 input의 data
 					$('#user_edit_modal').modal('show');
@@ -360,7 +362,7 @@ $(document).ready(function() {
 										<div class="col-sm-6">
 											<div class="button-list float-right">
 												<button type="button" id="btn_get" class="header-btn btn btn-secondary float-left ml-2 mb-2">조회</button>
-												<button type="button" id="btn_add" class="header-btn btn btn-secondary float-left ml-2 mb-2">추가</button>
+												<button type="button" id="btn_download" class="header-btn btn btn-secondary float-left ml-2 mb-2">다운로드</button>
 											</div>
 										</div>
 									</div>
@@ -400,7 +402,7 @@ $(document).ready(function() {
 								<div id="user_grid"></div>
 							</div>
 							
-							<!-- 사용자 정보 수정 modal -->
+							<!-- (id 클릭 시)사용자 정보 수정 modal -->
 							<div class="modal fade" id="user_edit_modal" tabindex="-1" role="dialog" aria-hidden="true">
 								<div class="modal-dialog modal-dialog-centered" role="document">
 									<div class="modal-content">
@@ -488,7 +490,7 @@ $(document).ready(function() {
 								<div class="modal-dialog modal-dialog-centered" role="document">
 									<div class="modal-content">
 										<div class="modal-header">
-											<h4 class="modal-title" id="user_edit_modalTitle">사용자 정보 추가</h4>
+											<h4 class="modal-title" id="user_edit_modalTitle">회원 정보 추가</h4>
 										</div>
 										<div class="modal-body">
 											<form>

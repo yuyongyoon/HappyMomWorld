@@ -91,9 +91,10 @@ $(document).ready(function() {
 					phone_number: $('#input_phoneNumber_info').val(),	// 전화번호
 					due_date	: updateInfo_datePicker.getDate() != null ? cfn_tuiDateFormat(updateInfo_datePicker.getDate()) : '',// 출산 예정일
 					hospital	: $('#input_hospital_info').val()		// 병원 정보
-			}
+			};
 			ajaxCom.updateUserInfo(param);
 		},
+		// 취소 버튼 클릭 시(개인 정보 변경 modal)
 		btn_updateInfo_close : function() {
 			let modalId = $(this).closest(".modal").attr("id");
 			
@@ -112,7 +113,6 @@ $(document).ready(function() {
 					org_pwd : orgPwd,
 					new_pwd : newPwd
 				}
-				
 				ajaxCom.updateUserPwd(param);
 			}
 			
@@ -130,21 +130,7 @@ $(document).ready(function() {
 		}
 	}
 	
-	// 개인 정보 변경 버튼 클릭 시
-	$('#updateUserInfo_list').click(function() {
-		ajaxCom.getUserInfo();
-		$('#nav-updateInfo-modal').modal('show');
-		
-		// 출산 예정일 input datepicker(사용자 정보 추가 modal)
-		updateInfo_datePicker = new tui.DatePicker('#wrapper_info', {
-			language: 'ko',
-			date: $('#input_dueDate_info').val() != '' ? new Date($('#input_dueDate_info').val()) : null,
-			input: {
-				element: '#input_dueDate_info',
-				format: 'yyyy-MM-dd'
-			}
-		});
-	});
+
 	
 	//------------------------------------- 비밀 번호 변경 -------------------------------------
 	
@@ -183,7 +169,26 @@ $(document).ready(function() {
 			$('#btn_get').click();
 		})
 	}
+	
+	// 개인 정보 변경 버튼 클릭 시
+	$('#updateUserInfo_list').on('click', function() {
+		console.log('클릭')
+		ajaxCom.getUserInfo();
+		$('#nav-updateInfo-modal').modal('show');
+		
+		// 출산 예정일 input datepicker(사용자 정보 추가 modal)
+		updateInfo_datePicker = new tui.DatePicker('#wrapper_info', {
+			language: 'ko',
+			date: $('#input_dueDate_info').val() != '' ? new Date($('#input_dueDate_info').val()) : null,
+			input: {
+				element: '#input_dueDate_info',
+				format: 'yyyy-MM-dd'
+			}
+		});
+	});
 })
+
+
 </script>
 
 <div class="wrapper">

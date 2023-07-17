@@ -81,15 +81,14 @@ public class AdminController {
 		return adminService.resetPassword(param);
 	}
 	
-	@RequestMapping(value = "/addAccount", method = RequestMethod.POST)
-	@ResponseBody
-	public Map<String,Object> addUser(HttpServletRequest request, @RequestBody HashMap<String,Object> param) throws Exception {
-		Map<String,Object> result = new HashMap<String,Object>();
-		String msg = adminService.addAccount(param);
-		result.put("msg", msg);
-		return result;
-	}
-	
+	/*
+	 * @RequestMapping(value = "/addAccount", method = RequestMethod.POST)
+	 * 
+	 * @ResponseBody public Map<String,Object> addUser(HttpServletRequest
+	 * request, @RequestBody HashMap<String,Object> param) throws Exception {
+	 * Map<String,Object> result = new HashMap<String,Object>(); String msg =
+	 * adminService.addAccount(param); result.put("msg", msg); return result; }
+	 */	
 	@RequestMapping(value = "/updateAccount", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String,Object> updateUser(HttpServletRequest request, @RequestBody HashMap<String,Object> param) throws Exception {

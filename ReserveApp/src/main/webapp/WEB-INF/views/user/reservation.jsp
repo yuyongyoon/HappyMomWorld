@@ -10,20 +10,21 @@
 					url		:	"/user/getReservation",
 					//data	:
 					success	:	function(result){
+						
 						let add_table  = '';
 						result.rsvList.forEach( (rsv, i) => {
-							//console.log("index : ", i, "rsv : ", rsv);	//test
-							add_table += '\n<tr>\n';
-							add_table += '	<th scope="row">' + (i+1) + '</th>\n';
-							add_table += '	<td>' + rsv.date + '</th>\n';
-							add_table += '	<td>' + rsv.time + '</th>\n';
-							add_table += '	<td>' + rsv.staff_num + '</th>\n';
-							add_table += '	<td><button type="button" id="btn_cancel' + (i+1) + '" class="header-btn btn btn-secondary float-left ml-2 mb-2">취소</button></td>\n';
-							add_table += '	<td><button type="button" id="btn_change' + (i+1) + '" class="header-btn btn btn-secondary float-left ml-2 mb-2">변경</button></td>\n';
-							add_table += '</tr>';
-						});
+								//console.log("index : ", i, "rsv : ", rsv);	//test
+								add_table += '\n<tr>\n';
+								add_table += '	<th scope="row">' + (i+1) + '</th>\n';
+								add_table += '	<td>' + rsv.date + '</th>\n';
+								add_table += '	<td>' + rsv.time + '</th>\n';
+								add_table += '	<td>' + rsv.staff_num + '</th>\n';
+								add_table += '	<td><button type="button" id="btn_cancel' + (i+1) + '" class="header-btn btn btn-secondary float-left ml-2 mb-2">취소</button></td>\n';
+								add_table += '	<td><button type="button" id="btn_change' + (i+1) + '" class="header-btn btn btn-secondary float-left ml-2 mb-2">변경</button></td>\n';
+								add_table += '</tr>';
+							});
 						$('#table-body').append(add_table);
-						console.log(add_table);		//table structure test
+						//console.log(add_table);		//table structure test
 					},
 					error	:	function(xhr,status){
 						alert('오류가 발생했습니다.');
@@ -84,14 +85,6 @@
 							
 							<!-- table -->
 							<div class="row search">
-								<div class="col-sm-3">
-									<label for="input_id" class="search-label float-left mt-2">ID / 이름</label>
-									<input type="text" id="input_id_name" class="form-control form-control-sm mt-2" size="5"/>
-								</div>
-								<div class="col-sm-3">
-									<label for="input_phone" class="search-label float-left mt-2">전화번호</label>
-									<input type="text" id="input_phone" class="form-control form-control-sm mt-2"/>
-								</div>
 								<div class="col-sm-3">
 									<label for="input_startDate" class="search-label float-left mt-2">기간</label>
 									<input type="date" id="input_startDate"  class="form-control form-control-sm mt-2" />

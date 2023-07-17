@@ -1,10 +1,17 @@
 package com.reserve.app.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class LoginController {
@@ -15,4 +22,14 @@ public class LoginController {
 		model.addAttribute("exception",exception);
 		return "login";
 	}
+	
+	@RequestMapping(value = "/addAccount", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String,Object> addUser(HttpServletRequest request, @RequestBody HashMap<String,Object> param) throws Exception {
+		Map<String,Object> result = new HashMap<String,Object>();
+		String msg = loginService.addAccount(param);
+		result.put("msg", msg);
+		return result;
+	}
+
 }
