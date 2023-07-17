@@ -27,8 +27,8 @@ public class LoginController {
 	@ResponseBody
 	public Map<String,Object> addUser(HttpServletRequest request, @RequestBody HashMap<String,Object> param) throws Exception {
 		Map<String,Object> result = new HashMap<String,Object>();
-		String msg = loginService.addAccount(param);
-		result.put("msg", msg);
+//		String msg = loginService.addAccount(param);
+//		result.put("msg", msg);
 		return result;
 	}
 

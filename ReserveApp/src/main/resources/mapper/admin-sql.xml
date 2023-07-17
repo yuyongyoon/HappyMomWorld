@@ -8,6 +8,7 @@
 		WHERE 
 			tb_branch_mng.branch_code != 'b0000'
 			AND tb_user.user_role like 'SUPERADMIN'
+		ORDER BY tb_branch_mng.branch_code
 	</select>
 
 	<select id="getUserList" parameterType="map" resultType="map">
@@ -76,10 +77,36 @@
 	</select>
 	
 	<select id="getBranchList" parameterType="map"  resultType="map">
-		SELECT branch_code, branch_name
+		SELECT seq_no, branch_code as branch_code_col, branch_name, join_code, to_char(created_dt,'YYYY-MM-DD') as created_dt
 		FROM tb_branch_mng
-		WHERE 
+		<where>
 			branch_code != 'b0000'
+			<if test='branchCode!=null and branchCode!=""'>and branch_code like '%'|| #{branchCode} ||'%'</if>
+			<if test='branchName!=null and branchName!=""'>and branch_name like '%'|| #{branchName} ||'%'</if>
+			<if test='joinCode!=null and joinCode!=""'>and join_code like '%'|| #{joinCode} ||'%'</if>
+		</where>
+		ORDER BY branch_code;
 	</select>
 
+	<insert id="addBranchInfo" parameterType="map">
+		insert into tb_branch_mng (
+			branch_code, branch_name, join_code, created_id, created_dt, modified_id, modified_dt
+		)
+		values (
+			#{branch_code_col}, #{branch_name}, #{join_code}, #{login_id}, now(), #{login_id}, now()
+		)
+	</insert>
+	
+	<update id="updateBranchInfo" parameterType="map">
+		update tb_branch_mng
+		set 
+			branch_name = #{branch_name},
+			modified_id = #{login_id},
+			modified_dt = now()
+		where seq_no = #{seq_no} and branch_code = #{branch_code_col}
+	</update>
+	
+	<delete id="deleteBranchInfo" parameterType="map">
+		delete from tb_branch_mng where seq_no=#{seq_no}
+	</delete>
 </mapper>

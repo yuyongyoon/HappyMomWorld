@@ -20,4 +20,11 @@ public interface AdminMapper {
 	List<Map<String, Object>> getBranchInfo(Map<String, Object> param);
 	
 	List<Map<String,Object>> getBranchList(Map<String,Object> param);
+	
+	void addBranchInfo(Map<String,Object> param);
+	
+	void updateBranchInfo(Map<String, Object> param);
+	
+	void deleteBranchInfo(Map<String, Object> param);
+	
 }

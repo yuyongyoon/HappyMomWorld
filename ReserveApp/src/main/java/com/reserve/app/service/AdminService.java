@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.postgresql.util.PSQLException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -97,5 +98,48 @@ public class AdminService {
 	
 	public List<Map<String, Object>> getBranchList(Map<String,Object> param){
 		return mapper.getBranchList(param);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public String saveBranchInfo(Map<String,Object> param) {
+		String msg = "success";
+		
+		List<Map<String,Object>> branchList = (List<Map<String,Object>>)param.get("data");
+
+		try {
+			System.out.println(branchList);
+			for (Map<String,Object> branchData : branchList) {
+				if (branchData.get("status").equals("i")) {
+					int p1 = (int)(Math.random() * 10);
+					int p2 = (int)(Math.random() * 10);
+					char p3 = (char)((int)(Math.random()*26)+97);
+					char p4 = (char)((int)(Math.random()*26)+97);
+					String joinCode = "@" + p3 + Integer.toString(p1) + p4 + Integer.toString(p2);
+					
+					branchData.put("join_code", joinCode);
+					mapper.addBranchInfo(branchData);
+				} else if (branchData.get("status").equals("u")) {
+					mapper.updateBranchInfo(branchData);
+				} else {
+					System.out.println("삭제");
+					mapper.deleteBranchInfo(branchData);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			if (e.getCause() instanceof PSQLException) {
+				PSQLException psqlException = (PSQLException) e.getCause();
+				String sqlState = psqlException.getSQLState();
+				if ("23505".equals(sqlState)) {
+					String errorMsg = "지점 코드가 중복되었습니다. 지점 코드를 변경 후 다시 저장하세요.";
+					msg = errorMsg;
+				} else {
+					msg = "fail";
+				}
+			} else {
+				msg = "fail";
+			}
+		}
+		return msg;
 	}
 }

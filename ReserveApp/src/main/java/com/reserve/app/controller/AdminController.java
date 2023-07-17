@@ -42,10 +42,16 @@ public class AdminController {
 		return "admin/reservationStatus";
 	}
 	
-	//마스터 관리 화면
-	@RequestMapping(value = "/master", method = RequestMethod.GET)
-	public String viewMaster(Model model, HttpServletRequest request) throws Exception {
-		return "admin/master";
+	//예약 마스터 관리 화면
+	@RequestMapping(value = "/reservation_master", method = RequestMethod.GET)
+	public String viewReservationMaster(Model model, HttpServletRequest request) throws Exception {
+		return "admin/reservation_master";
+	}
+	
+	//지점 정보 관리 화면
+	@RequestMapping(value = "/branch_master", method = RequestMethod.GET)
+	public String viewBranchMaster(Model model, HttpServletRequest request) throws Exception {
+		return "admin/branch_master";
 	}
 	
 	//지점 관리 화면
@@ -114,6 +120,15 @@ public class AdminController {
 		Map<String,Object> result = new HashMap<String,Object>();
 		List<Map<String,Object>> branchList = adminService.getBranchList(param);
 		result.put("branchList", branchList);
+		return result;
+	}
+	
+	@RequestMapping(value = "/saveBranchInfo", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String,Object> saveBranchInfo(HttpServletRequest request, @RequestBody Map<String,Object> param) throws Exception {
+		Map<String,Object> result = new HashMap<String,Object>();
+		String msg = adminService.saveBranchInfo(param);
+		result.put("msg", msg);
 		return result;
 	}
 }

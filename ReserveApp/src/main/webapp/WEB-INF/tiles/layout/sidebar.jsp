@@ -24,7 +24,10 @@
 						<a href="/admin/reservationStatus"><i class="far fa-calendar-alt"></i><p>예약 현황 조회</p></a>
 					</li>
 					<li class="nav-item">
-						<a href="/admin/master"><i class="fas fa-cog"></i><p>마스터 관리</p></a>
+						<a href="/admin/reservation_master"><i class="fas fa-cog"></i><p>예약 마스터 관리</p></a>
+					</li>
+					<li class="nav-item">
+						<a href="/admin/branch_master"><i class="fas fa-code-branch"></i><p>지점 정보 관리</p></a>
 					</li>
 				</sec:authorize>
 				
