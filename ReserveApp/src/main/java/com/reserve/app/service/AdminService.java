@@ -94,4 +94,8 @@ public class AdminService {
 		int idCnt = mapper.checkId(param);
 		return idCnt;
 	}
+	
+	public List<Map<String, Object>> getBranchList(Map<String,Object> param){
+		return mapper.getBranchList(param);
+	}
 }

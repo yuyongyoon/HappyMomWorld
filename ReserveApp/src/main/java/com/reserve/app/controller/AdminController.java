@@ -37,9 +37,9 @@ public class AdminController {
 	}
 	
 	//예약 현황 조회 화면
-	@RequestMapping(value = "/search", method = RequestMethod.GET)
+	@RequestMapping(value = "/reservationStatus", method = RequestMethod.GET)
 	public String viewSearch(Model model, HttpServletRequest request) throws Exception {
-		return "admin/search";
+		return "admin/reservationStatus";
 	}
 	
 	//마스터 관리 화면
@@ -49,10 +49,10 @@ public class AdminController {
 	}
 	
 	//지점 관리 화면
-		@RequestMapping(value = "/branch", method = RequestMethod.GET)
-		public String viewBranch(Model model, HttpServletRequest request) throws Exception {
-			return "admin/branch";
-		}
+	@RequestMapping(value = "/branch", method = RequestMethod.GET)
+	public String viewBranch(Model model, HttpServletRequest request) throws Exception {
+		return "admin/branch";
+	}
 	
 	//=======================nav 지점 코드 가져오기=====================
 	@RequestMapping(value = "/getBranchInfo", method = RequestMethod.POST)
@@ -108,4 +108,13 @@ public class AdminController {
 		return result;
 	}
 	
+	//=======================지점 관리 controller=====================
+	@RequestMapping(value = "/getBranchList", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String,Object> getBranchList(HttpServletRequest request, @RequestBody Map<String,Object> param) throws Exception {
+		Map<String,Object> result = new HashMap<String,Object>();
+		List<Map<String,Object>> branchList = adminService.getBranchList(param);
+		result.put("branchList", branchList);
+		return result;
+	}
 }

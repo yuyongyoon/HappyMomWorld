@@ -74,5 +74,12 @@
 		FROM tb_user
 		WHERE 	id = #{add_id}
 	</select>
+	
+	<select id="getBranchList" parameterType="map"  resultType="map">
+		SELECT branch_code, branch_name
+		FROM tb_branch_mng
+		WHERE 
+			branch_code != 'b0000'
+	</select>
 
 </mapper>

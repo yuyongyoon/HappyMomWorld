@@ -27,7 +27,8 @@ public class UserController {
 	@RequestMapping(value = "/calendar", method = RequestMethod.GET)
 	public String viewCalendar(Model model, HttpServletRequest request) throws Exception{
 		return "user/calendar";
-	}	
+	}
+	
 	//예약 확인 화면
 	@RequestMapping(value = "/reservation", method = RequestMethod.GET)
 	public String viewReservation(Model model, HttpServletRequest request) throws Exception{
@@ -58,17 +59,7 @@ public class UserController {
 		result.put("msg", msg);
 		return result;
 	}
-	
-	// 비밀번호 확인
-//	@RequestMapping(value = "/checkOrgPwd", method = RequestMethod.POST)
-//	@ResponseBody
-//	public Map<String,Object> checkId(HttpServletRequest request, @RequestBody Map<String,Object> org_pwd) throws Exception {
-//		Map<String,Object> result = new HashMap<String,Object>();
-//		int pwdCnt = userService.checkOrgPwd(org_pwd);
-//		result.put("pwdCnt : ", pwdCnt);
-//		return result;
-//	}
-	
+
 	// 비밀번호 변경
 	@RequestMapping(value = "/updateUserPwd", method = RequestMethod.POST)
 	@ResponseBody

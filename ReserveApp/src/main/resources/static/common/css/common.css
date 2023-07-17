@@ -55,7 +55,18 @@ input .form-control {
 .searchDiv{
 	margin-bottom: 8px;
 }
-
+.page-inner{
+	height:850px;
+}
+.custom-control.custom-radio.custom-control-inline {
+  margin-top: 6px;
+}
+.custom-control.custom-radio.custom-control-inline > .tui-datepicker-input {
+  margin-top: 0px;
+}
+input[type="checkbox"] {
+    vertical-align: middle;
+  }
 /* .tui-calendar-container{ */
 /* 	width:100% */
 /* } */

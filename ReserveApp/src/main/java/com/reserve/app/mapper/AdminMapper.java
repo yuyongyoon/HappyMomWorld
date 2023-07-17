@@ -19,4 +19,5 @@ public interface AdminMapper {
 	
 	List<Map<String, Object>> getBranchInfo(Map<String, Object> param);
 	
+	List<Map<String,Object>> getBranchList(Map<String,Object> param);
 }

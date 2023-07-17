@@ -61,15 +61,19 @@ function dateTimeFormat(obj) {
 
 class ButtonRenderer {
 	constructor(props) {
-		const el = document.createElement('input');
+		const el = document.createElement('button');
+		const className = 'btn btn-secondary btn-sm reply-btn-action btn-xs';
 		const value = props.columnInfo.renderer.options.value;
 
-		el.type = 'button';
 		el.value = value;
-		el.style = 'padding:2px;background-color:#00558B;border:1px solid gray;color:white;cursor:pointer;font-size:12px;';
+		el.type = 'button';
+		el.textContent = value;
+		el.style = 'margin-top: 3px;';
+		el.className = className
 		el.addEventListener('click', (ev) => {
 			if(props.columnInfo.renderer.options.hasOwnProperty('click')){
-				props.columnInfo.renderer.options.click.call(this,props);	
+				const rowKey = props.rowKey;
+				props.columnInfo.renderer.options.click.call(this, props, rowKey);
 			}
 		});
 
@@ -266,14 +270,7 @@ const tuiGrid = {
 		});
 		grid.on('check', ev => {
 			if(ev.instance.getRow(ev.rowKey).status=="i"){
-				//삭제 confirm 추가
-				confirm('작성중인 데이터가 삭제됩니다. 삭제하시겠습니까?',
-					function(result){
-						if(result == true){
-							ev.instance.removeRow(ev.rowKey);
-						}
-					}
-				)
+				ev.instance.removeRow(ev.rowKey);
 			}else{
 				ev.instance.addRowClassName(ev.rowKey,'tui-grid-cell-del');	
 			}
