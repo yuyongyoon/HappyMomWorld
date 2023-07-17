@@ -7,133 +7,123 @@ $(document).ready(function() {
 	let doubleCheckPwd = false;
 	let updateInfo_datePicker = '';
 	
-	//통신 객체
-	ajaxCom = {
-		// 개인 정보 가져오기
-		getUserInfo : function() {
-			let param = { user_id : $('#input_userId_info').val() };
-			
-			$.doPost({
-				url	 	: "/user/getUserInfo",
-				data 	: param,
-				success	: function(result) {
-					$('#input_phoneNumber_info').val(result.phone_number);
-					$('#input_dueDate_info').val(result.due_date);
-					$('#input_hospital_info').val(result.hospital);
-				},
-				error	: function(xhr,status){
-					alert('오류가 발생했습니다.');
-				}
-			});
-		},
-		// 회원 정보 변경
-		updateUserInfo : function(param) {
-			$.doPost({
-				url	 	: "/user/updateUserInfo",
-				data 	: param,
-				success	: function(result) {
-					if(result.msg == 'success') {
-						alert('정보가 변경되었습니다.');
-						$('#nav-updateInfo-modal').modal('hide');//창 닫기
-					}
-				},
-				error	: function(xhr,status){
-					alert('오류가 발생했습니다.');
-				}
-			});
-		},
-		// 새 비밀번호 변경
-		updateUserPwd : function(param) {
-			$.doPost({
-				url	 	: "/user/updateUserPwd",
-				data 	: param,
-				success	: function(result) {
-					if(result.msg == 'not found Pwd') {
-						alert('기존 비밀번호가 틀렸습니다.');
-						cfn_clearField('nav-updatePwd-modal');
-						return false;
-					} else{
-						cfn_clearField('nav-updatePwd-modal');
-						$('#nav-updatePwd-modal').modal('hide');//창 닫기
-						alert('비밀번호가 변경되었습니다.');
-						doubleCheckPwd = false;
-					}
-				},
-				error	: function(xhr,status){
-					alert('오류가 발생했습니다.');
-				}
-			});
-		},
-		// 지점 data 가져오기
-		getBranch : function(param){
-			$.doPost({
-				url		: "/admin/getBranchInfo",
-				success	: function(result){
-					let opt = '';
-					result.branchList.forEach(i => {
-						opt += '<option value= "'+i.branch_code+'">'+i.branch_name+'</option>';
-					})
-					$('#select-branch').append(opt);
-				},
-				error	: function(xhr,status){
-					alert('오류가 발생했습니다.');
-				}
-			});
-		}
-	}; //ajaxCom END
-	
-	btnCom = {
-		// 정보 저장 버튼 클릭 시(개인 정보 변경 modal)
-		btn_updateInfo_save : function() {
-			let param = {
-					id			: $('#input_userId_info').val(),		// id
-					name 		: $('#input_userName_info').val(),		// 이름
-					phone_number: $('#input_phoneNumber_info').val(),	// 전화번호
-					due_date	: updateInfo_datePicker.getDate() != null ? cfn_tuiDateFormat(updateInfo_datePicker.getDate()) : '',// 출산 예정일
-					hospital	: $('#input_hospital_info').val()		// 병원 정보
-			};
-			ajaxCom.updateUserInfo(param);
-		},
-		// 취소 버튼 클릭 시(개인 정보 변경 modal)
-		btn_updateInfo_close : function() {
-			let modalId = $(this).closest(".modal").attr("id");
-			
-			if (confirm("창을 닫으면 수정한 내용이 모두 지워집니다. 닫으시겠습니까?")) {
-				$('#' + modalId).modal('hide');
-			} else {
-				$('#btn_updateAccountClose').blur();
+	function getUserInfo(){
+		let param = { user_id : $('#input_userId_info').val() };
+		
+		$.doPost({
+			url	 	: "/user/getUserInfo",
+			data 	: param,
+			success	: function(result) {
+				$('#input_phoneNumber_info').val(result.phone_number);
+				$('#input_dueDate_info').val(result.due_date);
+				$('#input_hospital_info').val(result.hospital);
+			},
+			error	: function(xhr,status){
+				alert('오류가 발생했습니다.');
 			}
-		},
-		btn_updatePwd_save : function(){
-			if(doubleCheckPwd){
-				let orgPwd = $('#input_orgPwd_pwd').val();
-				let newPwd = $('#input_newPwd_pwd').val();
-				
-				let param = {
-					org_pwd : orgPwd,
-					new_pwd : newPwd
-				}
-				ajaxCom.updateUserPwd(param);
-			}
-			
-		},
-		btn_updatePwd_close : function() {
-			let modalId = $(this).closest(".modal").attr("id");
-			
-			if (confirm("창을 닫으면 수정한 내용이 모두 지워집니다. 닫으시겠습니까?")) {
-				cfn_clearField('nav-updatePwd-modal');
-				$('#checkNewPwd_msg_div').css('display', 'none');
-				$('#' + modalId).modal('hide');
-			} else {
-				$('#btn_updateAccountClose').blur();
-			}
-		}
+		});
 	}
 	
+	function updateUserInfo(param) {
+		$.doPost({
+			url	 	: "/user/updateUserInfo",
+			data 	: param,
+			success	: function(result) {
+				if(result.msg == 'success') {
+					alert('정보가 변경되었습니다.');
+					$('#nav-updateInfo-modal').modal('hide');//창 닫기
+				}
+			},
+			error	: function(xhr,status){
+				alert('오류가 발생했습니다.');
+			}
+		});
+	}
+	
+	function updateUserPwd(param) {
+		$.doPost({
+			url	 	: "/user/updateUserPwd",
+			data 	: param,
+			success	: function(result) {
+				if(result.msg == 'not found Pwd') {
+					alert('기존 비밀번호가 틀렸습니다.');
+					cfn_clearField('nav-updatePwd-modal');
+					return false;
+				} else{
+					cfn_clearField('nav-updatePwd-modal');
+					$('#nav-updatePwd-modal').modal('hide');//창 닫기
+					alert('비밀번호가 변경되었습니다.');
+					doubleCheckPwd = false;
+				}
+			},
+			error	: function(xhr,status){
+				alert('오류가 발생했습니다.');
+			}
+		});
+	}
+	
+	function getBranch(param){
+		$.doPost({
+			url		: "/admin/getBranchInfo",
+			success	: function(result){
+				let opt = '';
+				result.branchList.forEach(i => {
+					opt += '<option value= "'+i.branch_code+'">'+i.branch_name+'</option>';
+				})
+				$('#select-branch').append(opt);
+			},
+			error	: function(xhr,status){
+				alert('오류가 발생했습니다.');
+			}
+		});
+	}
+	
+	$('#btn_updateInfo_save').click(function(){
+		let param = {
+				id			: $('#input_userId_info').val(),		// id
+				name 		: $('#input_userName_info').val(),		// 이름
+				phone_number: $('#input_phoneNumber_info').val(),	// 전화번호
+				due_date	: updateInfo_datePicker.getDate() != null ? cfn_tuiDateFormat(updateInfo_datePicker.getDate()) : '',// 출산 예정일
+				hospital	: $('#input_hospital_info').val()		// 병원 정보
+		};
+		updateUserInfo(param);
+	})
+	
+	$('#btn_updateInfo_close').click(function() {
+		let modalId = $(this).closest(".modal").attr("id");
+		
+		if (confirm("창을 닫으면 수정한 내용이 모두 지워집니다. 닫으시겠습니까?")) {
+			$('#' + modalId).modal('hide');
+		} else {
+			$('#btn_updateAccountClose').blur();
+		}
+	})
+	
+	$('#btn_updatePwd_save').click(function(){
+		if(doubleCheckPwd){
+			let orgPwd = $('#input_orgPwd_pwd').val();
+			let newPwd = $('#input_newPwd_pwd').val();
+			
+			let param = {
+				org_pwd : orgPwd,
+				new_pwd : newPwd
+			}
+			updateUserPwd(param);
+		}
+	})
+	
+	$('#btn_updatePwd_close').click(function() {
+		let modalId = $(this).closest(".modal").attr("id");
+		
+		if (confirm("창을 닫으면 수정한 내용이 모두 지워집니다. 닫으시겠습니까?")) {
+			cfn_clearField('nav-updatePwd-modal');
+			$('#checkNewPwd_msg_div').css('display', 'none');
+			$('#' + modalId).modal('hide');
+		} else {
+			$('#btn_updateAccountClose').blur();
+		}
+	})
 
-	
-	//------------------------------------- 비밀 번호 변경 -------------------------------------
-	
 	// 비밀번호 변경 버튼 클릭 시
 	$('#updateUserPwd_list').click(function() {
 		$('#nav-updatePwd-modal').modal('show');
@@ -163,7 +153,7 @@ $(document).ready(function() {
 	
 	// 지점 선택
 	if($('#role').val() == 'SUPERADMIN'){
-		ajaxCom.getBranch();
+		getBranch();
 		
 		$('#select-branch').on('change', function(){
 			$('#btn_get').click();
@@ -171,10 +161,9 @@ $(document).ready(function() {
 	}
 	
 	// 개인 정보 변경 버튼 클릭 시
-	$('#updateUserInfo_list').on('click', function() {
-		console.log('클릭')
-		ajaxCom.getUserInfo();
+	$('#updateUserInfo_list').click(function() {
 		$('#nav-updateInfo-modal').modal('show');
+		getUserInfo();
 		
 		// 출산 예정일 input datepicker(사용자 정보 추가 modal)
 		updateInfo_datePicker = new tui.DatePicker('#wrapper_info', {
@@ -187,8 +176,6 @@ $(document).ready(function() {
 		});
 	});
 })
-
-
 </script>
 
 <div class="wrapper">
@@ -400,7 +387,7 @@ $(document).ready(function() {
 								<label for="input_orgPwd_pwd" class="control-label mt-2">기존 비밀번호</label>
 							</div>
 							<div class="col-sm-9">
-								<input type="text" class="form-control" id="input_orgPwd_pwd" />
+								<input type="password" class="form-control" id="input_orgPwd_pwd" />
 							</div>
 						</div>
 						<div class="col-sm-12 pb-0 mt-2" id="checkOrgPwd_msg_div">
@@ -411,7 +398,7 @@ $(document).ready(function() {
 								<label class="control-label mt-2" style="border: 0px;">새 비밀번호</label>
 							</div>
 							<div class="col-sm-9">
-								<input type="text" class="form-control" id="input_newPwd_pwd" maxlength='13'> 
+								<input type="password" class="form-control" id="input_newPwd_pwd" maxlength='13'> 
 							</div>
 						</div>
 						<div class="form-group row pb-0">
@@ -419,7 +406,7 @@ $(document).ready(function() {
 								<label class="control-label mt-2" style="border: 0px;">새 비밀번호 확인</label>
 							</div>
 							<div class="col-sm-9">
-								<input type="text" class="form-control" id="input_checkNewPwd_pwd" maxlength='13'> 
+								<input type="password" class="form-control" id="input_checkNewPwd_pwd" maxlength='13'> 
 							</div>
 						</div>
 						<div class="col-sm-12 pb-0 mt-2" id="checkNewPwd_msg_div">
