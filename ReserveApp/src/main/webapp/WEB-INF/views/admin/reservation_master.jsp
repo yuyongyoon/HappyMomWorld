@@ -6,21 +6,49 @@ table > tr :{
 </style>
 <script>
 $(document).ready(function() {
-	
-	let stdMonthPicker = new tui.DatePicker('#datepicker-month-ko', {
+	let searchMonthPicker = new tui.DatePicker('#datepicker_search', {
 		date: new Date(),
 		language: 'ko',
 		type: 'month',
 		input: {
-			element: '#datepicker-input-ko',
+			element: '#datepicker_input_search',
+			format: 'yyyy-MM'
+		}
+	})
+	
+	let stdMonthPicker = new tui.DatePicker('#datepicker_create', {
+		date: new Date(),
+		language: 'ko',
+		type: 'month',
+		input: {
+			element: '#datepicker_input_create',
 			format: 'yyyy-MM'
 		}
 	});
 	
 	//통신 객체
 	ajaxCom = {
-		saveReservationMasterData: function(param){
+		getReservationMasterData: function(){
+			let param = {
+				rsv_month : searchMonthPicker.getDate().getMonth()+1
+			}
 			
+			$.doPost({
+				url		: "/admin/getReservationMasterData",
+				data	: param,
+				success	: function(result){
+					if(result.masterList == 0) {
+						$('#pills-basic-tab').click();
+					} else {
+						fnCom.createTable(result);
+					}
+				},
+				error	: function(xhr,status){
+					alert('오류가 발생했습니다.');
+				}
+			});
+		},
+		saveReservationMasterData: function(param){
 			$.doPost({
 				url		: "/admin/saveReservationMasterData",
 				data	: {data : param,
@@ -223,6 +251,7 @@ $(document).ready(function() {
 		btn_save: function(){
 			let selectMonth = stdMonthPicker.getDate().getMonth() + 1;
 			let trList = $('#reservation_tbody tr');
+			let workerNum = $('#input_basicWorker').val();
 			
 			if(trList.length <= 0){
 				alert('예약 테이블을 먼저 생성해주세요.');
@@ -235,7 +264,8 @@ $(document).ready(function() {
 				let rsvDate = tr.attr('value');
 				let obj = {
 					rsv_month: selectMonth,
-					rsv_date: rsvDate
+					rsv_date: rsvDate,
+					rsv_worker: workerNum
 				};
 
 				for (var i = 1; i <= 10; i++) {
@@ -252,7 +282,36 @@ $(document).ready(function() {
 
 	//기타 함수 객체
 	fnCom = {
-	
+		createTable: function(list){
+			//테이블 초기화
+			$('#reservation_tbody').find('tr').remove();
+			$('#btn_initCreate').removeAttr('disabled');
+			
+// 			$('#span_1t').text('');
+// 			$('#span_2t').text('');
+// 			$('#span_3t').text('');
+// 			$('#span_4t').text('');
+// 			$('#span_5t').text('');
+// 			$('#span_6t').text('');
+// 			$('#span_7t').text('');
+// 			$('#span_8t').text('');
+// 			$('#span_9t').text('');
+// 			$('#span_10t').text('');
+
+//trData += '<tr value="'+cfn_tuiDateFormat(day)+'">'
+// 					trData += '<td style="width:100px;text-align:center;">' + cfn_tuiDateFormat(day) +'</td>'
+// 					trData += '<td style="text-align:center;">'+$('#input_basicWorker').val()+'</td>'
+			let trData;
+			list.masterList.forEach(function(data){
+				console.log(data)
+				trData += '<tr value="'+data.rsv_date+'">'
+				trData += '<td style="width:100px;text-align:center;">' + data.rsv_date +'</td>'
+				trData += '<td style="text-align:center;">'+data.rsv_worker+'</td>'
+				
+			})
+			
+			$('#reservation_tbody').append(trData);
+		}
 	}; //fnCom END
 	
 	$('#input_basicWorker').blur(function(){
@@ -260,6 +319,12 @@ $(document).ready(function() {
 			$('#input_basicWorker').val(0);
 		}
 	});
+	
+	$('#pills-search-tab').click(function() {
+		ajaxCom.getReservationMasterData();
+	})
+	
+	ajaxCom.getReservationMasterData();
 }); //END $(document).ready
 
 // let checkUnload = true;
@@ -319,24 +384,43 @@ table tbody tr th {
 							
 							<ul class="nav nav-pills nav-success" id="pills-tab" role="tablist">
 								<li class="nav-item">
-									<a class="nav-link active" id="pills-basic-tab" data-toggle="pill" href="#pills-basic" role="tab" aria-controls="pills-basic" aria-selected="true">예약 생성</a>
+									<a class="nav-link active" id="pills-search-tab" data-toggle="pill" href="#pills-search" role="tab" aria-controls="pills-search" aria-selected="true">예약 조회</a>
+								</li>
+								<li class="nav-item">
+									<a class="nav-link" id="pills-basic-tab" data-toggle="pill" href="#pills-basic" role="tab" aria-controls="pills-basic" aria-selected="true">예약 생성</a>
 								</li>
 								<li class="nav-item">
 									<a class="nav-link" id="pills-modify-tab" data-toggle="pill" href="#pills-modify" role="tab" aria-controls="pills-modify" aria-selected="false">예약 수정</a>
 								</li>
 							</ul>
 							<div class="tab-content mt-2 mb-3" id="pills-tabContent">
-								<div class="tab-pane fade show active" id="pills-basic" role="tabpanel" aria-labelledby="pills-basic-tab">
-									<table class="table-sm mt-1 mb-2" style="border-top: 1px lightgray solid; border-bottom: 1px lightgray solid;">
+								<div class="tab-pane fade show active" id="pills-search" role="tabpanel" aria-labelledby="pills-search-tab">
+									<table class="table-sm mt-0 mb-2" style="border-top: 1px lightgray solid; border-bottom: 1px lightgray solid; width:100%;">
+										<tbody>
+											<tr>
+												<th style="width:10%">조회 월</th>
+												<td>
+													<div class="tui-datepicker-input tui-datetime-input tui-has-focus">
+														<input type="text" id="datepicker_input_search" aria-label="Year-Month">
+														<span class="tui-ico-date"></span>
+													</div>
+													<div class="datepicker-cell" id="datepicker_search" style="margin-top: -1px;"></div>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+								<div class="tab-pane fade" id="pills-basic" role="tabpanel" aria-labelledby="pills-basic-tab">
+									<table class="table-sm mt-0 mb-2" style="border-top: 1px lightgray solid; border-bottom: 1px lightgray solid;">
 										<tbody>
 											<tr>
 												<th colspan="1">기준 월</th>
 												<td colspan="4">
 													<div class="tui-datepicker-input tui-datetime-input tui-has-focus">
-														<input type="text" id="datepicker-input-ko" aria-label="Year-Month">
+														<input type="text" id="datepicker_input_create" aria-label="Year-Month">
 														<span class="tui-ico-date"></span>
 													</div>
-													<div class="datepicker-cell" id="datepicker-month-ko" style="margin-top: -1px;"></div>
+													<div class="datepicker-cell" id="datepicker_create" style="margin-top: -1px;"></div>
 												</td>
 												<th>기본 근무자 수</th>
 												<td>

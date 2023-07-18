@@ -109,24 +109,63 @@
 	<delete id="deleteBranchInfo" parameterType="map">
 		delete from tb_branch_mng where seq_no=#{seq_no}
 	</delete>
-	
+
+	<select id="getReservationMasterData" parameterType="map"  resultType="map">
+		SELECT branch_code, rsv_month, rsv_date, rsv_worker, "1t", "2t", "3t", "4t", "5t", "6t", "7t", "8t", "9t", "10t"
+		FROM tb_reservation_master
+		<where>
+			branch_code like #{branch_code}
+			and rsv_month like #{rsv_month}::varchar
+		</where>
+		ORDER BY rsv_month, rsv_date;
+	</select>
+
+<!-- 	<insert id="addReservationMasterData" parameterType="list"> -->
+<!-- 		insert into tb_reservation_master ( -->
+<!-- 			branch_code, rsv_month, rsv_date,  -->
+<!-- 			"1t", "2t", "3t", "4t", "5t",  -->
+<!-- 			"6t", "7t", "8t", "9t", "10t",  -->
+<!-- 			created_id, created_dt, modified_id, modified_dt -->
+<!-- 		) -->
+<!-- 		values  -->
+<!-- 		<foreach collection="list" item="item" separator=","> -->
+<!-- 			( -->
+<!-- 				#{branch_code}, #{item.rsv_month}, #{item.rsv_date}, -->
+<!-- 				#{item.1t}, #{item.2t}, #{item.3t}, #{item.4t}, #{item.5t}, -->
+<!-- 				#{item.6t}, #{item.7t}, #{item.8t}, #{item.9t}, #{item.10t}, -->
+<!-- 				#{login_id}, now(), #{login_id}, now() -->
+<!-- 			) -->
+<!-- 		</foreach> -->
+<!-- 	</insert> -->
 	<insert id="addReservationMasterData" parameterType="list">
-		insert into tb_reservation_master (
-			branch_code, rsv_month, rsv_date, 
-			"1t", "2t", "3t", "4t", "5t", 
-			"6t", "7t", "8t", "9t", "10t", 
-			created_id, created_dt, modified_id, modified_dt
-		)
-		values 
-		<foreach collection="list" item="item" separator=",">
-			(
+		<foreach collection="list" item="item" separator=";">
+			INSERT INTO tb_reservation_master (
+				branch_code, rsv_month, rsv_date, rsv_worker, 
+				"1t", "2t", "3t", "4t", "5t", 
+				"6t", "7t", "8t", "9t", "10t",
+				created_id, created_dt, modified_id, modified_dt
+			)
+			VALUES (
+				#{branch_code}, #{item.rsv_month}, #{item.rsv_date}, #{item.rsv_worker}::int,
+				#{item.1t}, #{item.2t}, #{item.3t}, #{item.4t}, #{item.5t},
+				#{item.6t}, #{item.7t}, #{item.8t}, #{item.9t}, #{item.10t},
+				#{login_id}, now(), #{login_id}, now()
+			);
+			INSERT INTO tb_reservation_count (
+				branch_code, rsv_month, rsv_date, 
+				"1t_cnt", "2t_cnt", "3t_cnt", "4t_cnt", "5t_cnt", 
+				"6t_cnt", "7t_cnt", "8t_cnt", "9t_cnt", "10t_cnt", 
+				created_id, created_dt, modified_id, modified_dt
+			)
+			VALUES (
 				#{branch_code}, #{item.rsv_month}, #{item.rsv_date},
 				#{item.1t}, #{item.2t}, #{item.3t}, #{item.4t}, #{item.5t},
 				#{item.6t}, #{item.7t}, #{item.8t}, #{item.9t}, #{item.10t},
 				#{login_id}, now(), #{login_id}, now()
-			)
+			);
 		</foreach>
 	</insert>
+
 	
 	<delete id="deleteReservationMasterData" parameterType="string">
 		delete from tb_reservation_master 

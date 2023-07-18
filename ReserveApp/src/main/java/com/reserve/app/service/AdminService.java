@@ -132,6 +132,10 @@ public class AdminService {
 		return msg;
 	}
 	
+	public List<Map<String, Object>> getReservationMasterData(Map<String,Object> param){
+		return mapper.getReservationMasterData(param);
+	}
+	
 	@SuppressWarnings("unchecked")
 	public String saveReservationMasterData(Map<String,Object> param) {
 		String msg = "success";
@@ -141,9 +145,10 @@ public class AdminService {
 		try {
 //			mapper.updateReservationMasterData(saveReservationMasterData);
 			
-			//mapper.addReservationMasterData(saveReservationMasterData);
+			mapper.addReservationMasterData(saveReservationMasterData);
 		} catch (Exception e) {
 			e.printStackTrace();
+			msg = "fail";
 		}
 		return msg;
 	}

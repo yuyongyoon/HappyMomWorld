@@ -133,6 +133,15 @@ public class AdminController {
 	}
 	
 	//=======================예약 마스터 관리 controller=====================
+	@RequestMapping(value = "/getReservationMasterData", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String,Object> getReservationMasterData(HttpServletRequest request, @RequestBody Map<String,Object> param) throws Exception {
+		Map<String,Object> result = new HashMap<String,Object>();
+		List<Map<String,Object>> masterList = adminService.getReservationMasterData(param);
+		result.put("masterList", masterList);
+		return result;
+	}
+	
 	@RequestMapping(value = "/saveReservationMasterData", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String,Object> saveReservationMasterData(HttpServletRequest request, @RequestBody Map<String,Object> param) throws Exception {
