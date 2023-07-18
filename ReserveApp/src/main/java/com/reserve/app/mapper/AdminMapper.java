@@ -27,4 +27,7 @@ public interface AdminMapper {
 	
 	void deleteBranchInfo(Map<String, Object> param);
 	
+	void addReservationMasterData(List<Map<String,Object>> param);
+	
+	void deleteReservationMasterData(String stdMonth);
 }

@@ -32,7 +32,6 @@ public class AdminService {
 		SHA512PasswordEncoder sha512Service = new SHA512PasswordEncoder();
 		Map<String, Object> resetPwd = new HashMap<String, Object>();
 		
-		// 4자리 초기화 번호 생성
 		int p1 = (int)(Math.random() * 10);
 		int p2 = (int)(Math.random() * 10);
 		int p3 = (int)(Math.random() * 10);
@@ -45,18 +44,14 @@ public class AdminService {
 			
 		String pwd = "@" + p5 + Integer.toString(p1) + p6+ p7 + Integer.toString(p2) + Integer.toString(p3) + p8 + Integer.toString(p4);
 		
-		//암호화 
 		String encodePwd = sha512Service.encode(pwd);
 
-		//인코딩 체크
 		String rawPassword = pwd;
 		
 		param.put("raw_pw", rawPassword);
 		param.put("user_pw", encodePwd);
 
 		mapper.resetPassword(param);
-		
-		//초기화 번호만 리턴 return
 		resetPwd.put("raw_pw", param.get("raw_pw"));
 		
 		return resetPwd;
@@ -107,7 +102,6 @@ public class AdminService {
 		List<Map<String,Object>> branchList = (List<Map<String,Object>>)param.get("data");
 
 		try {
-			System.out.println(branchList);
 			for (Map<String,Object> branchData : branchList) {
 				if (branchData.get("status").equals("i")) {
 					int p1 = (int)(Math.random() * 10);
@@ -139,6 +133,22 @@ public class AdminService {
 			} else {
 				msg = "fail";
 			}
+		}
+		return msg;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public String saveReservationMasterData(Map<String,Object> param) {
+		String msg = "success";
+		
+		List<Map<String,Object>> saveReservationMasterData = (List<Map<String,Object>>)param.get("data");
+
+		try {
+//			mapper.updateReservationMasterData(saveReservationMasterData);
+			
+			//mapper.addReservationMasterData(saveReservationMasterData);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return msg;
 	}
