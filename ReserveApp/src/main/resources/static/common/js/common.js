@@ -1,4 +1,3 @@
-
 $.extend({
 	doPost : function(options){
 		options.type='POST';

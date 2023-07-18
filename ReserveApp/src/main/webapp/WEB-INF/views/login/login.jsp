@@ -1,169 +1,208 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<html>
-	<head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<title>Login</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 
-		
-		<link rel="icon" href="/static/assets/img/icon.ico" type="image/x-icon"/>
+	<script src="/static/assets/js/core/jquery.3.2.1.min.js"></script>
+	<script src="/static/assets/js/plugin/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
+	<script src="/static/common/js/common.js"></script>
+	<script src="/static/common/js/tui/tui-date-picker.js"></script>
+	<link rel="stylesheet" href="/static/common/css/tui/tui-date-picker.css" />
 	
-		<!-- Fonts and icons -->
-		<script src="/static/assets/js/plugin/webfont/webfont.min.js"></script>
-		<script>
-			$(document).readty(function){
-				let id_check = false;
-				let pwd_check = false;
-				let name_check;
-				
-				ajaxCom = {
-					// 회원가입 버튼
-					signup : function(param){
-						$.doPost({
-							url	 	: "/login/signup",
-							data 	: param,
-							success	: function(result) {
-								if(result.msg == 'success') {
-									alert('등록되었습니다.');
-									cfn_clearField('user_add_modal'); //모달 id 값을 파라미터로 넘겨주세요
-									$('#user_add_modal').modal('hide');//창 닫기
-									ajaxCom.getUserList();	// 조회
-									$('#btn_get').click();
-								}
-							},
-							error	: function(xhr,status){
-								alert('오류가 발생했습니다.');
-							}
-						});
-					},
-					// 아이디 중복 확인
-					checkId : function(param) {
-						$('#checkId_msg_add_div').hide();
-						$.doPost({
-							url	 	: "/login/checkId",
-							data 	: param,
-							success	: function(result) {
-								if(result.idCnt >= 1) {
-									$('#checkId_msg_add').text('중복된 ID가 있습니다. 다른 ID를 입력해주세요.');
-									$('#checkId_msg_add_div').show();
-								} else{
-									$('#input_checkId_add').attr('disabled', true);
-									$("#input_userPwd_add").focus();
-									id_check = true;	// 아이디 중복확인(완)
-								}
-							},
-							error	: function(xhr,status){
-								alert('오류가 발생했습니다.');
-							}
-						});
-					} //*/
-				};//End ajaxCom
-				
-				btnCom = {
-					// 아이디 중복 확인 버튼(회원 가입)
-					btn_checkId_signup : function(){
-						if($('#input_checkId_add').val() == '') {
-							alert('ID를 입력해주세요');
-							return false;
-						}
-						
-						let param = {
-							add_id : $('#input_checkId_add').val()
-						};
-						
-						ajaxCom.checkId(param);
-					}, //*/
-					// 회원가입 버튼
-					btn_signup : function(){
-						// 필수항목 확인 여부
-						if($('#input_checkId_add').val() == ''){// 아이디 입력 여부
-							alert('아이디를 입력해주세요.');
-							return false;
-						} else if(id_check == false){// 아이디 중복 확인 여부
-							alert('아이디 중복 확인해주세요.');
-							return false;
-						} else if($('#input_userPwd_add').val() == '' || $('#input_checkPwd_add').val() == ''){// 비번 입력 여부
-							alert('비밀번호를 입력해주세요.');
-							return false;
-						} else if(pwd_check == false){// 비번 중복 확인 여부
-							alert('비밀번호를 확인해주세요.');
-							return false;
-						} else if($('#input_userName_add').val() == ''){// 이름 입력 여부
-							alert('이름을 입력해주세요.');
-							return false;
-						}
-						// 정보 DB에 추가
-						let param = {
-							id			: $('#input_checkId_add').val(),		// id
-							password	: $('#input_checkPwd_add').val(),		// 비밀번호
-							name 		: $('#input_userName_add').val(),		// 이름
-							phone_number: $('#input_phoneNumber_add').val(),	// 전화번호
-							due_date	: addmodalDatepicker.getDate() != null ? cfn_tuiDateFormat(addmodalDatepicker.getDate()) : '',		// 출산 예정일
-							hospital	: $('#input_hospital_add').val(),		// 병원 정보
-							remark		: $('#input_rmk_add').val()				// 비고
-						}
-						
-						ajaxCom.signup(param);
-					},
-					//취소 버튼
-					btn_cancel_signup : function() {
-						let modalId = $(this).closest(".modal").attr("id");
-						
-						if (confirm("창을 닫으면 수정한 내용이 모두 지워집니다. 닫으시겠습니까?")) {
-							$('#input_checkId_add').attr('disabled', false);
-							cfn_clearField('user_add_modal');
-							$('#checkId_msg_add_div').css('display', 'none');
-							$('#checkPwd_msg_add_div').css('display', 'none');
-							$('#' + modalId).modal('hide');
-						} else {
-							$('#btn_signupClose').blur();
-						}
-					} //*/
-				};//End btnCom
-			}
-			//font
-			WebFont.load({
-				google: {"families":["Open+Sans:300,400,600,700"]},
-				custom: {"families":["Flaticon", "Font Awesome 5 Solid", "Font Awesome 5 Regular", "Font Awesome 5 Brands"], urls: ['/static/assets/css/fonts.css']},
-				active: function() {
-					sessionStorage.fonts = true;
+	<script>
+	$(document).ready(function() {
+		let id_check = false;	// id 중복체크 여부
+		let pwd_check = false;	// 비밀번호 동일 여부 
+		let name_check;
+		
+		const urlSearchParams = new URLSearchParams(window.location.search); 
+		const params = Object.fromEntries(urlSearchParams.entries());
+	
+		if (params.error === 'true' && params.exception === 'Invaild Username or Password') {
+			alert('ID 또는 패스워드를 확인해주세요')
+		}		
+		$('#forgotPwdSpan').click(function() {
+			$('#forgotPwdDiv').css('display','block')
+		});
+		//Datepicker 객체(출산 예정일)
+		const signupDatepicker = new tui.DatePicker('#wrapper_signup', {
+				language: 'ko',
+				date: '',
+				input: {
+					element: '#dueDate_signup',
+					format: 'yyyy-MM-dd'
+				}
+			});;		//출산 예정일 datepicker
+		
+		$('#div_checkId_msg').hide();
+		$('#div_pwdLength_msg').hide();
+		$('#div_checkPwd_msg').hide();
+		
+		// 아이디 중복 확인
+		function checkId(param) {
+			//$('#div_checkId_msg').hide();
+			$.doPost({
+				url	 	: "/checkId",
+				data 	: param,
+				success	: function(result) {
+					if(result.idCnt == 1) {// 아이디 중복일 경우
+						$('#span_checkId_msg').text('입력하신 아이디는 이미 사용중입니다.');
+						$('#div_checkId_msg').show();
+					} else{
+						$('#id_signup').attr('disabled', true);
+						$("#pwd_signup").focus();
+						id_check = true;	// 아이디 중복확인(완)
+					}
+				},
+				error	: function(xhr,status){
+					alert('오류가 발생했습니다.');
 				}
 			});
-		</script>
-		
-		<!-- CSS Files -->
-		<link rel="stylesheet" href="/static/assets/css/bootstrap.min.css">
-		<link rel="stylesheet" href="/static/assets/css/azzara.min.css">
-		
-		<style>
-			html, body {
-				width: 100%;
-				height: 100%;
-				margin: 0;
-				padding: 0;
-				overflow: hidden;
+		}
+		// 회원가입
+		function signup(param){
+			$.doPost({
+				url	 	: "/login/signup",
+				data 	: param,
+				success	: function(result) {
+					if(result.msg == 'success') {
+						alert('등록되었습니다.');
+						location.reload();
+					}
+				},
+				error	: function(xhr,status){
+					alert('오류가 발생했습니다.');
+				}
+			});
+		}
+		// 아이디 중복 확인 버튼(회원 가입)
+		$('#btn_checkId_signup').click(function(){
+			//console.log('중복 확인 버튼 클릭');
+			if($('#id_signup').val() == '') {
+				alert('ID를 입력해주세요');
+				return false;
 			}
+			let param = {
+				id : $('#id_signup').val()
+			};
+			//console.log('입력된 아이디: ', param)
+			checkId(param);
+		});
+		// 회원가입 버튼
+		$('#btn_signup').click(function(){
+			console.log('회원가입 버튼 클릭')
+			// 비밀번호 확인 이벤트
+			 $('#checkPwd_signup').blur(function() {
+				let pwd = $('#pwd_signup').val();
+				let checkPwd = $('#checkPwd_signup').val();
+				
+				if(pwd.length < 7){// 비밀번호 길이가 다른 경우
+					$('#span_pwdLength_msg').text('비밀번호는 8자 입니다.');
+					$('#div_pwdLength_msg').show();
+				}else if(pwd != checkPwd) {
+					$('#checkPwd_signup').val(''); // 비번 초기화
+					$('#span_checkPwd_msg').text('동일한 비밀번호를 입력해주세요.');
+					$('#div_checkPwd_msg').show();
+				} else if(pwd == '' || checkPwd == '' ){
+					$('#span_checkPwd_msg').text('비밀번호를 입력해주세요.');
+					$('#div_checkPwd_msg').show();
+				} else if(pwd == ' ' || checkPwd == ' ') {
+					$('#span_checkPwd_msg').text('비밀번호를 입력해주세요.');
+					$('#div_checkPwd_msg').show();
+				} else {
+					$('#pwd_signup').attr('disabled', true);
+					$('#checkPwd_signup').attr('disabled', true);
+					$('#div_checkPwd_msg ').css('display','none');// 에러 메세지 지우기
+					$('#name_signup').focus();// 다음 input로 커서 옮김
+					pwd_check = true;	// 비밀번호 중복확인(완)
+				}
+			});
+			// 필수항목 확인 여부
+			if($('#id_signup').val() == ''){// 아이디 입력 여부
+				alert('아이디를 입력해주세요.');
+				return false;
+			} else if(id_check == false){// 아이디 중복 확인 여부
+				alert('아이디 중복 확인해주세요.');
+				return false;
+			} else if($('#pwd_signup').val() == '' || $('#checkPwd_signup').val() == ''){// 비번 입력 여부
+				alert('비밀번호를 입력해주세요.');
+				return false;
+			} else if(pwd_check == false){// 비번 중복 확인 여부
+				alert('비밀번호를 확인해주세요.');
+				return false;
+			} else if($('#name_signup').val() == ''){// 이름 입력 여부
+				alert('이름을 입력해주세요.');
+				return false;
+			} else if($('#number_signup').val() == ''){// 이름 입력 여부
+				alert('전화번호를 입력해주세요.');
+				return false;
+			} else if($('#dueDate_signup').val() == ''){// 이름 입력 여부
+				alert('출산 예정일을 입력해주세요.');
+				return false;
+			}
+			
+			// 정보 DB에 추가
+			let param = {
+				id			: $('#id_signup').val(),		// id
+				password	: $('#pwd_signup').val(),		// 비밀번호
+				name 		: $('#name_signup').val(),		// 이름
+				phone_number: $('#number_signup').val(),	// 전화번호
+				due_date	: signupDatepicker.getDate() != null ? cfn_tuiDateFormat(signupDatepicker.getDate()) : '',// 출산 예정일
+				join_code	: $('#joinCode_signup').val(),		// 가입 코드
+			}
+			
+			//signup(param);
+			console.log('param >', param)
+		});
+		//취소 버튼
+		$('#btn_cancel_signup').click(function(){
+			location.reload();
+			/* let modalId = $(this).closest(".modal").attr("id");
+			
+			if (confirm("창을 닫으면 수정한 내용이 모두 지워집니다. 닫으시겠습니까?")) {
+				$('#id_signup').attr('disabled', false);
+				$('#div_checkId_msg').css('display', 'none');
+				$('#div_checkPwd_msg ').css('display', 'none');
+				$('#' + modalId).modal('hide');
+			} else {
+				$('#btn_cancel_signup').blur();
+			} */
+		});
+		
+	});//End ready()
+	</script>
+		
+	<!-- CSS Files -->
+	<link rel="stylesheet" href="/static/assets/css/bootstrap.min.css">
+	<link rel="stylesheet" href="/static/assets/css/azzara.min.css">
+	
+	<style>
+		html, body {
+			width: 100%;
+			height: 100%;
+			margin: 0;
+			padding: 0;
+			overflow: hidden;
+		}
 
-			.wrapper.wrapper-login {
-				position: fixed;
-				top: 0;
-				left: 0;
-				width: 100%;
-				height: 100%;
-				overflow: auto;
-			}
+		.wrapper.wrapper-login {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			overflow: auto;
+		}
 
-			.container.container-login {
-				height: 100%;
-				display: flex;
-				flex-direction: column;
-				justify-content: center;
-				align-items: center;
-			}
-		</style>
-		
-	</head>
+		.container.container-login {
+			height: 100%;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+		}
+	</style>
 	<body class="login">
 		<div class="wrapper wrapper-login">
 			<div class="container container-login animated fadeIn">
@@ -212,6 +251,9 @@
 							<button id="btn_checkId_signup" type="button" class="btn btn-secondary btn-rounded btn-sm">중복 확인</button>
 						</div>
 					</div>
+					<div class="row form-sub m-0" id="div_checkId_msg" >
+						<span class="float-left" id="span_checkId_msg" style="color:red; cursor:pointer; display:flex; justify-content:center;"></span>
+					</div>
 					<div class="form-group form-floating-label">
 						<input id="pwd_signup" name="pwd_signup" type="password" class="form-control input-border-bottom" required>
 						<label for="pwd_signup" class="placeholder">Password</label>
@@ -219,8 +261,8 @@
 							<i class="flaticon-interface"></i>
 						</div>
 					</div>
-					<div class="row form-sub m-0">
-						<span class="float-left" id="pwdLength_msg_singup" style="color:red; cursor:pointer;">비밀번호는 8자 이상입니다.</span>
+					<div class="row form-sub m-0" id="div_pwdLength_msg">
+						<span class="float-left" id="span_pwdLength_msg" style="color:red; cursor:pointer; display:flex; justify-content:center;"></span>
 					</div>
 					<div class="form-group form-floating-label">
 						<input id="checkPwd_signup" name="checkPwd_signup" type="password" class="form-control input-border-bottom" required>
@@ -229,8 +271,8 @@
 							<i class="flaticon-interface"></i>
 						</div>
 					</div>
-					<div class="row form-sub m-0">
-						<span class="float-left" id="checkPwd_msg_singup" style="color:red; cursor:pointer;">비밀번호가 다릅니다.</span>
+					<div class="row form-sub m-0" id="div_checkPwd_msg">
+						<span class="float-left" id="span_checkPwd_msg" style="color:red; cursor:pointer; display:flex; justify-content:center;"></span>
 					</div>
 					<div class="form-group form-floating-label">
 						<input  id="name_signup" name="name_signup" type="text" class="form-control input-border-bottom" required>
@@ -246,15 +288,15 @@
 						</div>
 						<div class="col-sm-9">
 							<div class="tui-datepicker-input tui-datetime-input">
-								<input type="date" id="dueDate_signup" aria-label="Date-Time">	<!-- 나중에 datepicker적용 시 type: date -> text 변경 -->
+								<input type="text" id="dueDate_signup" aria-label="Date-Time">
 								<span class="tui-ico-date"></span>
 							</div>
 							<div id="wrapper_signup" style="margin-top: -1px;"></div>
 						</div>
 					</div>
 					<div class="form-group form-floating-label">
-						<input  id="code_signup" name="code_signup" type="text" class="form-control input-border-bottom" required>
-						<label for="code_signup" class="placeholder">Code</label>
+						<input  id="joinCode_signup" name="joinCode_signup" type="text" class="form-control input-border-bottom" required>
+						<label for="joinCode_signup" class="placeholder">Code</label>
 					</div>
 					<div class="form-action">
 						<a href="#" id="btn_cancel_signup" class="btn btn-danger btn-rounded btn-login mr-3">취소</a>
@@ -263,26 +305,9 @@
 				</div>
 			</div>
 		</div>
-		
-		<script src="/static/assets/js/core/jquery.3.2.1.min.js"></script>
-		<script src="/static/assets/js/plugin/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
-		<script src="/static/assets/js/core/popper.min.js"></script>
-		<script src="/static/assets/js/core/bootstrap.min.js"></script>
-		<script src="/static/assets/js/ready.js"></script>
-		<script>
-			$(document).ready(function() {
-				const urlSearchParams = new URLSearchParams(window.location.search); 
-				const params = Object.fromEntries(urlSearchParams.entries());
-			
-				if (params.error === 'true' && params.exception === 'Invaild Username or Password') {
-					alert('ID 또는 패스워드를 확인해주세요')
-				}
-				
-				$('#forgotPwdSpan').click(function() {
-					$('#forgotPwdDiv').css('display','block')
-				})
-			})
-		</script>
+	<script src="/static/assets/js/core/popper.min.js"></script>
+	<script src="/static/assets/js/core/bootstrap.min.js"></script>
+	<script src="/static/assets/js/ready.min.js"></script>
 	</body>
-</html>
+
 
