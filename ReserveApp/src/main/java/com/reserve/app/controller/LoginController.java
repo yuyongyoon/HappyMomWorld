@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.reserve.app.service.LoginService;
 
 @Controller
-//@RequestMapping(value = "/login")
 public class LoginController {
 	
 	@Autowired
@@ -40,7 +39,7 @@ public class LoginController {
 		return result;
 	}
 	// 아이디 중복 확인
-	@RequestMapping(value = "/checkId", method = RequestMethod.POST)
+	@RequestMapping(value = "/join/checkId", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String,Object> checkId(HttpServletRequest request, @RequestBody Map<String,Object> param) throws Exception {
 		Map<String,Object> result = new HashMap<String,Object>();

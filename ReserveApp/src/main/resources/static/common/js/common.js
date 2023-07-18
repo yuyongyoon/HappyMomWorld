@@ -1,5 +1,8 @@
+console.log('공통 호출')
+
 $.extend({
 	doPost : function(options){
+		console.log(JSON.stringify(options.data))
 		options.type='POST';
 		options.dataType='json';
 		options.timeout=3000000;

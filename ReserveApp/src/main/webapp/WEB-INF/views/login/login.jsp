@@ -1,208 +1,34 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<html>
+	<head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<title>Login</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 
-	<script src="/static/assets/js/core/jquery.3.2.1.min.js"></script>
-	<script src="/static/assets/js/plugin/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
-	<script src="/static/common/js/common.js"></script>
-	<script src="/static/common/js/tui/tui-date-picker.js"></script>
-	<link rel="stylesheet" href="/static/common/css/tui/tui-date-picker.css" />
+		
+		<link rel="icon" href="/static/assets/img/icon.ico" type="image/x-icon"/>
 	
-	<script>
-	$(document).ready(function() {
-		let id_check = false;	// id 중복체크 여부
-		let pwd_check = false;	// 비밀번호 동일 여부 
-		let name_check;
-		
-		const urlSearchParams = new URLSearchParams(window.location.search); 
-		const params = Object.fromEntries(urlSearchParams.entries());
-	
-		if (params.error === 'true' && params.exception === 'Invaild Username or Password') {
-			alert('ID 또는 패스워드를 확인해주세요')
-		}		
-		$('#forgotPwdSpan').click(function() {
-			$('#forgotPwdDiv').css('display','block')
-		});
-		//Datepicker 객체(출산 예정일)
-		const signupDatepicker = new tui.DatePicker('#wrapper_signup', {
-				language: 'ko',
-				date: '',
-				input: {
-					element: '#dueDate_signup',
-					format: 'yyyy-MM-dd'
-				}
-			});;		//출산 예정일 datepicker
-		
-		$('#div_checkId_msg').hide();
-		$('#div_pwdLength_msg').hide();
-		$('#div_checkPwd_msg').hide();
-		
-		// 아이디 중복 확인
-		function checkId(param) {
-			//$('#div_checkId_msg').hide();
-			$.doPost({
-				url	 	: "/checkId",
-				data 	: param,
-				success	: function(result) {
-					if(result.idCnt == 1) {// 아이디 중복일 경우
-						$('#span_checkId_msg').text('입력하신 아이디는 이미 사용중입니다.');
-						$('#div_checkId_msg').show();
-					} else{
-						$('#id_signup').attr('disabled', true);
-						$("#pwd_signup").focus();
-						id_check = true;	// 아이디 중복확인(완)
-					}
-				},
-				error	: function(xhr,status){
-					alert('오류가 발생했습니다.');
+		<!-- Fonts and icons -->
+		<script src="/static/assets/js/plugin/webfont/webfont.min.js"></script>
+		<script>
+			WebFont.load({
+				google: {"families":["Open+Sans:300,400,600,700"]},
+				custom: {"families":["Flaticon", "Font Awesome 5 Solid", "Font Awesome 5 Regular", "Font Awesome 5 Brands"], urls: ['/static/assets/css/fonts.css']},
+				active: function() {
+					sessionStorage.fonts = true;
 				}
 			});
-		}
-		// 회원가입
-		function signup(param){
-			$.doPost({
-				url	 	: "/login/signup",
-				data 	: param,
-				success	: function(result) {
-					if(result.msg == 'success') {
-						alert('등록되었습니다.');
-						location.reload();
-					}
-				},
-				error	: function(xhr,status){
-					alert('오류가 발생했습니다.');
-				}
-			});
-		}
-		// 아이디 중복 확인 버튼(회원 가입)
-		$('#btn_checkId_signup').click(function(){
-			//console.log('중복 확인 버튼 클릭');
-			if($('#id_signup').val() == '') {
-				alert('ID를 입력해주세요');
-				return false;
-			}
-			let param = {
-				id : $('#id_signup').val()
-			};
-			//console.log('입력된 아이디: ', param)
-			checkId(param);
-		});
-		// 회원가입 버튼
-		$('#btn_signup').click(function(){
-			console.log('회원가입 버튼 클릭')
-			// 비밀번호 확인 이벤트
-			 $('#checkPwd_signup').blur(function() {
-				let pwd = $('#pwd_signup').val();
-				let checkPwd = $('#checkPwd_signup').val();
-				
-				if(pwd.length < 7){// 비밀번호 길이가 다른 경우
-					$('#span_pwdLength_msg').text('비밀번호는 8자 입니다.');
-					$('#div_pwdLength_msg').show();
-				}else if(pwd != checkPwd) {
-					$('#checkPwd_signup').val(''); // 비번 초기화
-					$('#span_checkPwd_msg').text('동일한 비밀번호를 입력해주세요.');
-					$('#div_checkPwd_msg').show();
-				} else if(pwd == '' || checkPwd == '' ){
-					$('#span_checkPwd_msg').text('비밀번호를 입력해주세요.');
-					$('#div_checkPwd_msg').show();
-				} else if(pwd == ' ' || checkPwd == ' ') {
-					$('#span_checkPwd_msg').text('비밀번호를 입력해주세요.');
-					$('#div_checkPwd_msg').show();
-				} else {
-					$('#pwd_signup').attr('disabled', true);
-					$('#checkPwd_signup').attr('disabled', true);
-					$('#div_checkPwd_msg ').css('display','none');// 에러 메세지 지우기
-					$('#name_signup').focus();// 다음 input로 커서 옮김
-					pwd_check = true;	// 비밀번호 중복확인(완)
-				}
-			});
-			// 필수항목 확인 여부
-			if($('#id_signup').val() == ''){// 아이디 입력 여부
-				alert('아이디를 입력해주세요.');
-				return false;
-			} else if(id_check == false){// 아이디 중복 확인 여부
-				alert('아이디 중복 확인해주세요.');
-				return false;
-			} else if($('#pwd_signup').val() == '' || $('#checkPwd_signup').val() == ''){// 비번 입력 여부
-				alert('비밀번호를 입력해주세요.');
-				return false;
-			} else if(pwd_check == false){// 비번 중복 확인 여부
-				alert('비밀번호를 확인해주세요.');
-				return false;
-			} else if($('#name_signup').val() == ''){// 이름 입력 여부
-				alert('이름을 입력해주세요.');
-				return false;
-			} else if($('#number_signup').val() == ''){// 이름 입력 여부
-				alert('전화번호를 입력해주세요.');
-				return false;
-			} else if($('#dueDate_signup').val() == ''){// 이름 입력 여부
-				alert('출산 예정일을 입력해주세요.');
-				return false;
-			}
-			
-			// 정보 DB에 추가
-			let param = {
-				id			: $('#id_signup').val(),		// id
-				password	: $('#pwd_signup').val(),		// 비밀번호
-				name 		: $('#name_signup').val(),		// 이름
-				phone_number: $('#number_signup').val(),	// 전화번호
-				due_date	: signupDatepicker.getDate() != null ? cfn_tuiDateFormat(signupDatepicker.getDate()) : '',// 출산 예정일
-				join_code	: $('#joinCode_signup').val(),		// 가입 코드
-			}
-			
-			//signup(param);
-			console.log('param >', param)
-		});
-		//취소 버튼
-		$('#btn_cancel_signup').click(function(){
-			location.reload();
-			/* let modalId = $(this).closest(".modal").attr("id");
-			
-			if (confirm("창을 닫으면 수정한 내용이 모두 지워집니다. 닫으시겠습니까?")) {
-				$('#id_signup').attr('disabled', false);
-				$('#div_checkId_msg').css('display', 'none');
-				$('#div_checkPwd_msg ').css('display', 'none');
-				$('#' + modalId).modal('hide');
-			} else {
-				$('#btn_cancel_signup').blur();
-			} */
-		});
+		</script>
 		
-	});//End ready()
-	</script>
-		
-	<!-- CSS Files -->
-	<link rel="stylesheet" href="/static/assets/css/bootstrap.min.css">
-	<link rel="stylesheet" href="/static/assets/css/azzara.min.css">
-	
-	<style>
-		html, body {
-			width: 100%;
-			height: 100%;
-			margin: 0;
-			padding: 0;
-			overflow: hidden;
-		}
+		<!-- CSS Files -->
+		<link rel="stylesheet" href="/static/assets/css/bootstrap.min.css">
+		<link rel="stylesheet" href="/static/assets/css/azzara.min.css">
+		<link rel="stylesheet" href="/static/common/css/common.css" />
+		<link rel="stylesheet" href="/static/common/css/tui/tui-date-picker.css" />
 
-		.wrapper.wrapper-login {
-			position: fixed;
-			top: 0;
-			left: 0;
-			width: 100%;
-			height: 100%;
-			overflow: auto;
-		}
-
-		.container.container-login {
-			height: 100%;
-			display: flex;
-			flex-direction: column;
-			justify-content: center;
-			align-items: center;
-		}
-	</style>
+		
+	</head>
 	<body class="login">
 		<div class="wrapper wrapper-login">
 			<div class="container container-login animated fadeIn">
@@ -238,7 +64,6 @@
 						<a href="#" id="show-signup" class="link">회원 가입</a>
 					</div>
 			</div>
-			<!---------------------------------회원 가입(작업중)-------------------------------->
 			<div class="container container-signup animated fadeIn">
 				<h3 class="text-center">회원 가입</h3>
 				<div class="signup-form">
@@ -305,9 +130,201 @@
 				</div>
 			</div>
 		</div>
-	<script src="/static/assets/js/core/popper.min.js"></script>
-	<script src="/static/assets/js/core/bootstrap.min.js"></script>
-	<script src="/static/assets/js/ready.min.js"></script>
+		
+		<script src="/static/assets/js/core/jquery.3.2.1.min.js"></script>
+		<script src="/static/assets/js/plugin/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
+		<script src="/static/assets/js/core/popper.min.js"></script>
+		<script src="/static/assets/js/core/bootstrap.min.js"></script>
+		<script src="/static/assets/js/ready.js"></script>
+		<script src="/static/assets/js/ready.js"></script>
+		<script src="/static/common/js/tui/tui-date-picker.js"></script>
+		<script src="/static/common/js/common.js"></script>
+		<script>
+			$(document).ready(function() {
+				const urlSearchParams = new URLSearchParams(window.location.search); 
+				const params = Object.fromEntries(urlSearchParams.entries());
+			
+				if (params.error === 'true' && params.exception === 'Invaild Username or Password') {
+					alert('ID 또는 패스워드를 확인해주세요');
+				}
+				
+				let id_check = false;	// id 중복체크 여부
+				let pwd_check = false;	// 비밀번호 동일 여부 
+				let name_check;
+				
+				//Datepicker 객체(출산 예정일)
+				const signupDatepicker = new tui.DatePicker('#wrapper_signup', {
+					language: 'ko',
+					date: '',
+					input: {
+						element: '#dueDate_signup',
+						format: 'yyyy-MM-dd'
+					}
+				});;		//출산 예정일 datepicker
+				
+				$('#div_checkId_msg').hide();
+				$('#div_pwdLength_msg').hide();
+				$('#div_checkPwd_msg').hide();
+				
+				// 아이디 중복 확인
+				function checkId(param) {
+					//datatype parser 에러 나서 datatype을 json에서 text로 변경
+					$.ajax({
+						url: "/join/checkId",
+						type: "POST",
+						dataType: "text",
+						contentType: "application/json; charset=UTF-8",
+						data: JSON.stringify(param),
+						success: function(result) {
+							if (result.idCnt == 1) {
+								$('#span_checkId_msg').text('입력하신 아이디는 이미 사용중입니다.');
+								$('#div_checkId_msg').show();
+							} else {
+								$('#id_signup').attr('disabled', true);
+								$("#pwd_signup").focus();
+								id_check = true;
+							}
+						},
+						error: function(xhr, status) {
+							alert('오류가 발생했습니다.');
+						}
+					});
+					
+// 					$.doPost({
+// 						url	 	: "/join/checkId",
+// 						data 	: param,
+// 						success	: function(result) {
+// 							if(result.idCnt == 1) {// 아이디 중복일 경우
+// 								$('#span_checkId_msg').text('입력하신 아이디는 이미 사용중입니다.');
+// 								$('#div_checkId_msg').show();
+// 							} else{
+// 								$('#id_signup').attr('disabled', true);
+// 								$("#pwd_signup").focus();
+// 								id_check = true;	// 아이디 중복확인(완)
+// 							}
+// 						},
+// 						error	: function(xhr,status){
+// 							console.log(xhr, status)
+// 							alert('오류가 발생했습니다.');
+// 						}
+// 					});
+				}
+				// 회원가입
+				function signup(param){
+					$.doPost({
+						url	 	: "/login/signup",
+						data 	: param,
+						success	: function(result) {
+							if(result.msg == 'success') {
+								alert('등록되었습니다.');
+								location.reload();
+							}
+						},
+						error	: function(xhr,status){
+							alert('오류가 발생했습니다.');
+						}
+					});
+				}
+				// 아이디 중복 확인 버튼(회원 가입)
+				$('#btn_checkId_signup').click(function(){
+					//console.log('중복 확인 버튼 클릭');
+					if($('#id_signup').val() == '') {
+						alert('ID를 입력해주세요');
+						return false;
+					}
+					
+					let param = {
+						id : $('#id_signup').val()
+					};
+					//console.log('입력된 아이디: ', param)
+					checkId(param);
+				});
+				// 회원가입 버튼
+				$('#btn_signup').click(function(){
+					console.log('회원가입 버튼 클릭')
+					// 비밀번호 확인 이벤트
+					 $('#checkPwd_signup').blur(function() {
+						let pwd = $('#pwd_signup').val();
+						let checkPwd = $('#checkPwd_signup').val();
+						
+						if(pwd.length < 7){// 비밀번호 길이가 다른 경우
+							$('#span_pwdLength_msg').text('비밀번호는 8자 입니다.');
+							$('#div_pwdLength_msg').show();
+						}else if(pwd != checkPwd) {
+							$('#checkPwd_signup').val(''); // 비번 초기화
+							$('#span_checkPwd_msg').text('동일한 비밀번호를 입력해주세요.');
+							$('#div_checkPwd_msg').show();
+						} else if(pwd == '' || checkPwd == '' ){
+							$('#span_checkPwd_msg').text('비밀번호를 입력해주세요.');
+							$('#div_checkPwd_msg').show();
+						} else if(pwd == ' ' || checkPwd == ' ') {
+							$('#span_checkPwd_msg').text('비밀번호를 입력해주세요.');
+							$('#div_checkPwd_msg').show();
+						} else {
+							$('#pwd_signup').attr('disabled', true);
+							$('#checkPwd_signup').attr('disabled', true);
+							$('#div_checkPwd_msg ').css('display','none');// 에러 메세지 지우기
+							$('#name_signup').focus();// 다음 input로 커서 옮김
+							pwd_check = true;	// 비밀번호 중복확인(완)
+						}
+					});
+					// 필수항목 확인 여부
+					if($('#id_signup').val() == ''){// 아이디 입력 여부
+						alert('아이디를 입력해주세요.');
+						return false;
+					} else if(id_check == false){// 아이디 중복 확인 여부
+						alert('아이디 중복 확인해주세요.');
+						return false;
+					} else if($('#pwd_signup').val() == '' || $('#checkPwd_signup').val() == ''){// 비번 입력 여부
+						alert('비밀번호를 입력해주세요.');
+						return false;
+					} else if(pwd_check == false){// 비번 중복 확인 여부
+						alert('비밀번호를 확인해주세요.');
+						return false;
+					} else if($('#name_signup').val() == ''){// 이름 입력 여부
+						alert('이름을 입력해주세요.');
+						return false;
+					} else if($('#number_signup').val() == ''){// 이름 입력 여부
+						alert('전화번호를 입력해주세요.');
+						return false;
+					} else if($('#dueDate_signup').val() == ''){// 이름 입력 여부
+						alert('출산 예정일을 입력해주세요.');
+						return false;
+					}
+					
+					// 정보 DB에 추가
+					let param = {
+						id			: $('#id_signup').val(),		// id
+						password	: $('#pwd_signup').val(),		// 비밀번호
+						name 		: $('#name_signup').val(),		// 이름
+						phone_number: $('#number_signup').val(),	// 전화번호
+						due_date	: signupDatepicker.getDate() != null ? cfn_tuiDateFormat(signupDatepicker.getDate()) : '',// 출산 예정일
+						join_code	: $('#joinCode_signup').val(),		// 가입 코드
+					}
+					
+					//signup(param);
+					console.log('param >', param)
+				});
+				//취소 버튼
+				$('#btn_cancel_signup').click(function(){
+					location.reload();
+					/* let modalId = $(this).closest(".modal").attr("id");
+					
+					if (confirm("창을 닫으면 수정한 내용이 모두 지워집니다. 닫으시겠습니까?")) {
+						$('#id_signup').attr('disabled', false);
+						$('#div_checkId_msg').css('display', 'none');
+						$('#div_checkPwd_msg ').css('display', 'none');
+						$('#' + modalId).modal('hide');
+					} else {
+						$('#btn_cancel_signup').blur();
+					} */
+				});
+				
+				$('#forgotPwdSpan').click(function() {
+					$('#forgotPwdDiv').css('display','block')
+				})
+			})
+		</script>
 	</body>
-
+</html>
 
