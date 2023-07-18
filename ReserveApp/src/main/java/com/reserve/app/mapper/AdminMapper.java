@@ -11,7 +11,7 @@ public interface AdminMapper {
 	
 	void resetPassword(Map<String, Object> insertId);
 	
-	void addAccount(Map<String,Object> param);
+	//void addAccount(Map<String,Object> param);
 
 	void updateAccount(Map<String, Object> param);
 

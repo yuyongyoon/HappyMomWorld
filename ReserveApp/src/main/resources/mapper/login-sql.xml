@@ -4,8 +4,22 @@
 
 	<select id="getUserInfo" parameterType="map" resultType="com.reserve.app.entity.LoginEntity">
 		SELECT id, password, name, user_role, remark, created_id, created_dt, modified_id, modified_dt, user_status, phone_number, due_date, hospital, branch_code
-		FROM tb_user 
+		FROM tb_user
 		where id=#{id} and user_status='Y'
+	</select>
+	
+	<insert id="signup" parameterType="map">
+		INSERT INTO tb_user(id, password, name, phone_number, due_date, user_role, created_id, created_dt, user_status)
+		VALUES (
+			#{id}, #{password}, #{name}, #{phone_number}, #{due_date}, 'USER', #{id}, now(), 'Y'
+		)
+		WHERE tb_branch_mng.join_code = #{join_code};
+	</insert>
+	
+	<select  id="checkId" parameterType="map" resultType="int">
+		SELECT count(id)
+		FROM tb_user
+		WHERE id = #{id}
 	</select>
 	
 </mapper>

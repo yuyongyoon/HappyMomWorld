@@ -10,12 +10,14 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.reserve.app.entity.LoginEntity;
 import com.reserve.app.mapper.LoginMapper;
 import com.reserve.app.util.SHA512PasswordEncoder;
 
 @Service
+@Transactional
 public class LoginService implements UserDetailsService {
 	
 	@Autowired
@@ -38,5 +40,27 @@ public class LoginService implements UserDetailsService {
 		}
 		
 		return loginEntity;
+	}
+	//회원 가입
+	public String signup(Map<String,Object> param) {
+		String msg = "success";
+		
+		try {
+			String orgPassword = param.get("password").toString();
+			SHA512PasswordEncoder sha512Service = new SHA512PasswordEncoder();
+			String encPassword = sha512Service.encode(orgPassword);
+			param.put("encoded_password", encPassword);
+			
+			mapper.signup((Map<String,Object>) param);
+		}catch (Exception e) {
+			e.printStackTrace();
+			msg = "fail";
+		}
+		return msg;
+	}
+	//아이디 중복 확인
+	public int checkId(Map<String,Object> param) {
+		int idCnt = mapper.checkId(param);
+		return idCnt;
 	}
 }

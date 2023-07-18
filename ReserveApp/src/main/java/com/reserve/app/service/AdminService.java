@@ -57,22 +57,17 @@ public class AdminService {
 		return resetPwd;
 	}
 	
-	public String addAccount(Map<String,Object> param) {
-		String msg = "success";
-		
-		try {
-			String orgPassword = param.get("password").toString();
-			SHA512PasswordEncoder sha512Service = new SHA512PasswordEncoder();
-			String encPassword = sha512Service.encode(orgPassword);
-			param.put("encoded_password", encPassword);
-			
-			mapper.addAccount((Map<String,Object>) param);
-		}catch (Exception e) {
-			e.printStackTrace();
-			msg = "fail";
-		}
-		return msg;
-	}
+	/*
+	 * public String addAccount(Map<String,Object> param) { String msg = "success";
+	 * 
+	 * try { String orgPassword = param.get("password").toString();
+	 * SHA512PasswordEncoder sha512Service = new SHA512PasswordEncoder(); String
+	 * encPassword = sha512Service.encode(orgPassword);
+	 * param.put("encoded_password", encPassword);
+	 * 
+	 * mapper.addAccount((Map<String,Object>) param); }catch (Exception e) {
+	 * e.printStackTrace(); msg = "fail"; } return msg; }
+	 */
 
 	public String updateAccount(HashMap<String, Object> param) {
 		String msg = "success";
@@ -86,10 +81,10 @@ public class AdminService {
 		return msg;
 	}
 
-	public int checkId(Map<String,Object> param) {
-		int idCnt = mapper.checkId(param);
-		return idCnt;
-	}
+	/*
+	 * public int checkId(Map<String,Object> param) { int idCnt =
+	 * mapper.checkId(param); return idCnt; }
+	 */
 	
 	public List<Map<String, Object>> getBranchList(Map<String,Object> param){
 		return mapper.getBranchList(param);
