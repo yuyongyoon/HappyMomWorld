@@ -168,46 +168,25 @@
 				
 				// 아이디 중복 확인
 				function checkId(param) {
-					//datatype parser 에러 나서 datatype을 json에서 text로 변경
-					$.ajax({
-						url: "/join/checkId",
-						type: "POST",
-						dataType: "text",
-						contentType: "application/json; charset=UTF-8",
-						data: JSON.stringify(param),
-						success: function(result) {
-							if (result.idCnt == 1) {
+
+					$.doPost({
+						url	 	: "/join/checkId",
+						data 	: param,
+						success	: function(result) {
+							if(result.idCnt == 1) {// 아이디 중복일 경우
 								$('#span_checkId_msg').text('입력하신 아이디는 이미 사용중입니다.');
 								$('#div_checkId_msg').show();
-							} else {
+							} else{
 								$('#id_signup').attr('disabled', true);
 								$("#pwd_signup").focus();
-								id_check = true;
+								id_check = true;	// 아이디 중복확인(완)
 							}
 						},
-						error: function(xhr, status) {
+						error	: function(xhr,status){
+							console.log(xhr, status)
 							alert('오류가 발생했습니다.');
 						}
 					});
-					
-// 					$.doPost({
-// 						url	 	: "/join/checkId",
-// 						data 	: param,
-// 						success	: function(result) {
-// 							if(result.idCnt == 1) {// 아이디 중복일 경우
-// 								$('#span_checkId_msg').text('입력하신 아이디는 이미 사용중입니다.');
-// 								$('#div_checkId_msg').show();
-// 							} else{
-// 								$('#id_signup').attr('disabled', true);
-// 								$("#pwd_signup").focus();
-// 								id_check = true;	// 아이디 중복확인(완)
-// 							}
-// 						},
-// 						error	: function(xhr,status){
-// 							console.log(xhr, status)
-// 							alert('오류가 발생했습니다.');
-// 						}
-// 					});
 				}
 				// 회원가입
 				function signup(param){
