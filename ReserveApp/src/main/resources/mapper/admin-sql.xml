@@ -11,32 +11,82 @@
 		ORDER BY tb_branch_mng.branch_code
 	</select>
 
+<!-- 	<select id="getUserList" parameterType="map" resultType="map"> -->
+<!-- 		SELECT id, name, phone_number, due_date, hospital, user_role, remark, to_char(created_dt,'YYYY-MM-DD') as created_dt, to_char(modified_dt,'YYYY-MM-DD') as modified_dt, branch_code -->
+<!-- 		FROM tb_user -->
+<!-- 		<where> -->
+<!-- 			user_role like 'USER' -->
+<!-- 			<choose> -->
+<!-- 				<when test="super_branch_code == null or super_branch_code == ''"> -->
+<!-- 					and branch_code = #{branch_code} -->
+<!-- 				</when> -->
+<!-- 				<otherwise> -->
+<!-- 					and branch_code = #{super_branch_code} -->
+<!-- 				</otherwise> -->
+<!-- 			</choose> -->
+<!-- 			<if test='userIdOrName != null and userIdOrName != ""'> -->
+<!-- 				and ( -->
+<!-- 					upper(id) like '%' || upper(#{userIdOrName}) || '%'  -->
+<!-- 					or upper(name) like '%' || upper(#{userIdOrName}) || '%' -->
+<!-- 				) -->
+<!-- 			</if> -->
+<!-- 			<if test='name!=null and name!=""'>and upper(name) like '%'||upper(#{name})||'%'</if> -->
+<!-- 			<if test='phoneNumber!=null and phoneNumber!=""'>and phone_number like '%'||upper(#{phoneNumber})||'%'</if> -->
+<!-- 			<if test="startDate != null and startDate != '' and endDate != null and endDate != ''"> -->
+<!-- 				and created_dt BETWEEN to_timestamp(#{startDate}, 'YYYY-MM-DD') AND to_timestamp(#{endDate}, 'YYYY-MM-DD') + INTERVAL '1 day' - INTERVAL '1 second' -->
+<!-- 			</if> -->
+<!-- 		</where> -->
+<!-- 		order by created_dt desc, id asc -->
+<!-- 	</select> -->
+
 	<select id="getUserList" parameterType="map" resultType="map">
-		SELECT id, name, phone_number, due_date, hospital, user_role, remark, to_char(created_dt,'YYYY-MM-DD') as created_dt, to_char(modified_dt,'YYYY-MM-DD') as modified_dt, branch_code
-		FROM tb_user
+		SELECT
+			a.id,
+			a.name,
+			a.phone_number,
+			a.due_date,
+			a.hospital,
+			a.user_role,
+			a.remark,
+			TO_CHAR(a.created_dt, 'YYYY-MM-DD') AS created_dt,
+			a.branch_code,
+			CASE
+				WHEN b.has_reservation = 1 THEN 'Y'
+				ELSE 'N'
+			END AS massage_reserve_cnt
+		FROM tb_user a
+		LEFT OUTER JOIN
+			(
+				SELECT user_id, branch_code, COUNT(*) AS has_reservation
+				FROM tb_reservation_list
+				GROUP BY user_id, branch_code) b ON a.branch_code = b.branch_code AND a.id = b.user_id
 		<where>
-			user_role like 'USER'
+			a.user_role LIKE 'USER'
 			<choose>
 				<when test="super_branch_code == null or super_branch_code == ''">
-					and branch_code = #{branch_code}
+					AND a.branch_code = #{branch_code}
 				</when>
 				<otherwise>
-					and branch_code = #{super_branch_code}
+					AND a.branch_code = #{super_branch_code}
 				</otherwise>
 			</choose>
 			<if test='userIdOrName != null and userIdOrName != ""'>
-				and (
-					upper(id) like '%' || upper(#{userIdOrName}) || '%' 
-					or upper(name) like '%' || upper(#{userIdOrName}) || '%'
+				AND (
+					UPPER(a.id) LIKE '%' || UPPER(#{userIdOrName}) || '%'
+					OR UPPER(a.name) LIKE '%' || UPPER(#{userIdOrName}) || '%'
 				)
 			</if>
-			<if test='name!=null and name!=""'>and upper(name) like '%'||upper(#{name})||'%'</if>
-			<if test='phoneNumber!=null and phoneNumber!=""'>and phone_number like '%'||upper(#{phoneNumber})||'%'</if>
+			<if test='name!=null and name!=""'>
+				AND UPPER(a.name) LIKE '%' || UPPER(#{name}) || '%'
+			</if>
+			<if test='phoneNumber!=null and phoneNumber!=""'>
+				AND a.phone_number LIKE '%' || UPPER(#{phoneNumber}) || '%'
+			</if>
 			<if test="startDate != null and startDate != '' and endDate != null and endDate != ''">
-				and created_dt BETWEEN to_timestamp(#{startDate}, 'YYYY-MM-DD') AND to_timestamp(#{endDate}, 'YYYY-MM-DD') + INTERVAL '1 day' - INTERVAL '1 second'
+				AND a.created_dt BETWEEN TO_TIMESTAMP(#{startDate}, 'YYYY-MM-DD') AND TO_TIMESTAMP(#{endDate}, 'YYYY-MM-DD') + INTERVAL '1 day' - INTERVAL '1 second'
 			</if>
 		</where>
-		order by created_dt desc, id asc
+		ORDER BY a.created_dt DESC, a.id ASC
 	</select>
 	
 	<update id="resetPassword" parameterType="map">

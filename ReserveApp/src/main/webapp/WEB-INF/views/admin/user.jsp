@@ -6,7 +6,6 @@ $(document).ready(function() {
 	let pwd_check = false;
 	let name_check;
 	
-	// DatePicker 객체 생성
 	const today = new Date();
 	const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
 	
@@ -31,9 +30,7 @@ $(document).ready(function() {
 	let updatemodalDatepicker;
 	let addmodalDatepicker;
 	
-	//통신 객체
 	ajaxCom = {
-		// 회원 목록 가져오기
 		getUserList : function() {
 			let userIdOrName = $('#input_id_name').val();
 			let phoneNumber = $('#input_phone').val();
@@ -68,7 +65,6 @@ $(document).ready(function() {
 				}
 			});
 		},
-		// reset(회원 정보 수정 modal)
 		resetPwd : function(param) {
 			$.doPost({
 				url	 	: "/admin/resetPassword",
@@ -81,26 +77,6 @@ $(document).ready(function() {
 				}
 			});
 		},
-		// 회원 정보 추가
-		/* addAccount : function(param){
-			$.doPost({
-				url	 	: "/admin/addAccount",
-				data 	: param,
-				success	: function(result) {
-					if(result.msg == 'success') {
-						alert('등록되었습니다.');
-						cfn_clearField('user_add_modal'); //모달 id 값을 파라미터로 넘겨주세요
-						$('#user_add_modal').modal('hide');//창 닫기
-						ajaxCom.getUserList();	// 조회
-						$('#btn_get').click();
-					}
-				},
-				error	: function(xhr,status){
-					alert('오류가 발생했습니다.');
-				}
-			});
-		}, */
-		// 회원 정보 수정
 		updateAccount : function(param){
 			$.doPost({
 				url	 	: "/admin/updateAccount",
@@ -108,10 +84,9 @@ $(document).ready(function() {
 				success	: function(result) {
 					if(result.msg == 'success') {
 						alert('등록되었습니다.');
-						$('#user_edit_modal').modal('hide');//창 닫기
-						ajaxCom.getUserList();	// 조회
+						$('#user_edit_modal').modal('hide');
+						ajaxCom.getUserList();
 						$('#btn_get').click();
-// 						updatemodalDatepicker.setDate(''); //수정된 날짜 초기화
 					}
 				},
 				error	: function(xhr,status){
@@ -119,109 +94,15 @@ $(document).ready(function() {
 				}
 			});
 		},
-		// 아이디 중복 확인
-		/* checkId : function(param) {
-			$('#checkId_msg_add_div').hide();
-			$.doPost({
-				url	 	: "/admin/checkId",
-				data 	: param,
-				success	: function(result) {
-					if(result.idCnt >= 1) {
-						$('#checkId_msg_add').text('중복된 ID가 있습니다. 다른 ID를 입력해주세요.');
-						$('#checkId_msg_add_div').show();
-					} else{
-						$('#input_checkId_add').attr('disabled', true);
-						$("#input_userPwd_add").focus();
-						id_check = true;	// 아이디 중복확인(완)
-					}
-				},
-				error	: function(xhr,status){
-					alert('오류가 발생했습니다.');
-				}
-			});
-		} */
 	}; //ajaxCom END
 	
-	//이벤트 객체 : id값을 주면 클릭 이벤트 발생
 	btnCom = {
-		//조회 버튼(회원 관리 페이지)
 		btn_get : function() {
 			ajaxCom.getUserList();
 		},
-		//다운로드 버튼(회원 관리 페이지)
 		btn_download : function(){
-			//console.log('회원 정보 다운로드 버튼 클릭');
-			tuiGrid.dataExport(userGrid,'해피맘월드 회원정보.xlsx');
-			//회원 정보 추가 modal open
-			/* $('#user_add_modal').modal('show');
-			
-			// 출산 예정일 input datepicker(회원 정보 추가 modal)
-			addmodalDatepicker = new tui.DatePicker('#wrapper_add', {
-				language: 'ko',
-				date: '',
-				input: {
-					element: '#input_dueDate_add',
-					format: 'yyyy-MM-dd'
-				}
-			});
-			
-			// 비번 중복 확인 이벤트
-			 $('#input_checkPwd_add').blur(function() {
-				let pwd = $('#input_userPwd_add').val();
-				let checkPwd = $('#input_checkPwd_add').val();
-				
-				if(pwd != checkPwd) {
-					$('#input_checkPwd_add').val(''); // 비번 초기화
-					$('#checkPwd_msg_add').text('동일한 비밀번호를 입력해주세요.');
-					$('#checkPwd_msg_add_div').show();
-				} else if(pwd == '' || checkPwd == '' ){
-					$('#checkPwd_msg_add').text('비밀번호를 입력해주세요.');
-					$('#checkPwd_msg_add_div').show();
-				} else if(pwd == ' ' || checkPwd == ' ') {
-					$('#checkNewPwd_msg').text('비밀번호를 입력해주세요.');
-					$('#checkNewPwd_msg_div').show();
-				} else {
-					$('#input_userPwd_add').attr('disabled', true);
-					$('#input_checkPwd_add').attr('disabled', true);
-					$('#checkPwd_msg_add_div').css('display','none');// 에러 메세지 지우기
-					$('#input_userName_add').focus();// 다음 input로 커서 옮김
-					pwd_check = true;	// 비번 중복확인(완)
-				}
-			}); */
+			tuiGrid.dataExport(userGrid,'해피맘월드_회원정보.xlsx');
 		},
-		//추가 버튼(회원 정보 추가 modal)
-		/* btn_addAccount : function(){
-			// 필수항목 확인 여부
-			if($('#input_checkId_add').val() == ''){// 아이디 입력 여부
-				alert('아이디를 입력해주세요.');
-				return false;
-			} else if(id_check == false){// 아이디 중복 확인 여부
-				alert('아이디 중복 확인해주세요.');
-				return false;
-			} else if($('#input_userPwd_add').val() == '' || $('#input_checkPwd_add').val() == ''){// 비번 입력 여부
-				alert('비밀번호를 입력해주세요.');
-				return false;
-			} else if(pwd_check == false){// 비번 중복 확인 여부
-				alert('비밀번호를 확인해주세요.');
-				return false;
-			} else if($('#input_userName_add').val() == ''){// 이름 입력 여부
-				alert('이름을 입력해주세요.');
-				return false;
-			}
-			// 정보 DB에 추가
-			let param = {
-				id			: $('#input_checkId_add').val(),		// id
-				password	: $('#input_checkPwd_add').val(),		// 비밀번호
-				name 		: $('#input_userName_add').val(),		// 이름
-				phone_number: $('#input_phoneNumber_add').val(),	// 전화번호
-				due_date	: addmodalDatepicker.getDate() != null ? cfn_tuiDateFormat(addmodalDatepicker.getDate()) : '',		// 출산 예정일
-				hospital	: $('#input_hospital_add').val(),		// 병원 정보
-				remark		: $('#input_rmk_add').val()				// 비고
-			}
-			
-			ajaxCom.addAccount(param);
-		}, */
-		//저장 버튼(회원 정보 수정 modal)
 		btn_updateAccount : function(){
 			let param = {
 				id			: $('#input_userId_edit').val(),		// id
@@ -243,34 +124,6 @@ $(document).ready(function() {
 			ajaxCom.resetPwd(param);
 			
 		},
-		// 아이디 중복 확인 버튼(회원 정보 추가 modal)
-		/* btn_checkId : function(){
-			if($('#input_checkId_add').val() == '') {
-				alert('ID를 입력해주세요');
-				return false;
-			}
-			
-			let param = {
-				add_id : $('#input_checkId_add').val()
-			};
-			
-			ajaxCom.checkId(param);
-		}, */
-		//닫기 버튼(회원 정보 추가 modal)
-		/* btn_addAccountClose : function() {
-			let modalId = $(this).closest(".modal").attr("id");
-			
-			if (confirm("창을 닫으면 수정한 내용이 모두 지워집니다. 닫으시겠습니까?")) {
-				$('#input_checkId_add').attr('disabled', false);
-				cfn_clearField('user_add_modal');
-				$('#checkId_msg_add_div').css('display', 'none');
-				$('#checkPwd_msg_add_div').css('display', 'none');
-				$('#' + modalId).modal('hide');
-			} else {
-				$('#btn_addAccountClose').blur();
-			}
-		}, */
-		//닫기 버튼(회원 정보 수정 modal)
 		btn_updateAccountClose : function() {
 			let modalId = $(this).closest(".modal").attr("id");
 			
@@ -280,15 +133,9 @@ $(document).ready(function() {
 				$('#btn_updateAccountClose').blur();
 			}
 		}
-	}; //btnCom END
-	
-	
-	//기타 함수 객체
-	fnCom = {
-	}; //fnCom END
+	};
 	
 	const userGrid = tuiGrid.createGrid(
-		//그리드 옵션
 		{
 			gridId : 'user_grid',
 			height : 580,
@@ -302,35 +149,31 @@ $(document).ready(function() {
 				{header : '전화번호',			name : 'phone_number',		width : 150, align:'left', sortable: true},
 				{header : '출산 예정일',		name : 'due_date',			width : 150, align:'left', sortable: true},
 				{header : '출산 병원',			name : 'hospital',			width : 200, align:'left', sortable: true},
-				{header : '마사지 예약 여부',	name : 'massage_reserve',	width : 150, align:'center', formatter: 'listItemText', disabled:true,
+				{header : '마사지 예약 여부',	name : 'massage_reserve_cnt',	width : 150, align:'center', formatter: 'listItemText', disabled:true,
 					editor: { type: 'select', options: { listItems: [{text:'YES', value:'Y'},{text:'NO',value:'N'}]}, sortable: true }
 				},
 				{header : '등록일',		name : 'created_dt',	width : 150,  align:'center', sortable: true},
 				{header : '비고',			name : 'remark',	align:'left'}
 			]
 		},
-		[],//초기 데이터
-		//이벤트
+		[],
 		{
 			cellclick : function(rowKey,colName,grid){
-				// id클릭 시 modal open(회원 정보 수정 modal)
 				if(colName=="id"){
-					// 회원 수정 modal 초기 input의 data
 					$('#user_edit_modal').modal('show');
 					
 					let rowData = userGrid.getRow(rowKey);
 					
-					$('#input_userId_edit').val(rowData.id);				//id
-					$('#input_userName_edit').val(rowData.name);			//이름
-					$('#input_phoneNumber_edit').val(rowData.phone_number);	//전화번호
-					$('#input_hospital_edit').val(rowData.hospital),		// 병원 정보
-					$('#input_role_edit').val(rowData.user_role),		// 회원 구분
-					$('#input_rmk_edit').val(rowData.remark);				//비고
+					$('#input_userId_edit').val(rowData.id);
+					$('#input_userName_edit').val(rowData.name);
+					$('#input_phoneNumber_edit').val(rowData.phone_number);
+					$('#input_hospital_edit').val(rowData.hospital),
+					$('#input_role_edit').val(rowData.user_role),
+					$('#input_rmk_edit').val(rowData.remark);
 					
-					// 출산 예정일 input datepicker(사용자 정보 수정 modal)
 					updatemodalDatepicker = new tui.DatePicker('#wrapper_edit', {
 						language: 'ko',
-						date: rowData.due_date != '' ? new Date(rowData.due_date) : null, //가져온 string을 날짜로 변경..........
+						date: rowData.due_date != '' ? new Date(rowData.due_date) : null,
 						input: {
 							element: '#input_dueDate_edit',
 							format: 'yyyy-MM-dd'
@@ -342,8 +185,7 @@ $(document).ready(function() {
 	);
 	
 	ajaxCom.getUserList();
-}); //END $(document).ready
-	
+});
 </script>
 
 <div class="main-panel">
@@ -369,7 +211,6 @@ $(document).ready(function() {
 								</div>
 							</div>
 							
-							<!-- search -->
 							<div class="row search flex-grow-1">
 								<div class="col-md-3 col-sm-6 searchDiv">
 									<label for="input_id" class="search-label float-left mt-2">ID / 이름</label>
@@ -397,12 +238,10 @@ $(document).ready(function() {
 								</div>
 							</div>
 							
-							<!-- Grid -->
 							<div class="col-md-12">
 								<div id="user_grid"></div>
 							</div>
 							
-							<!-- (id 클릭 시)사용자 정보 수정 modal -->
 							<div class="modal fade" id="user_edit_modal" tabindex="-1" role="dialog" aria-hidden="true">
 								<div class="modal-dialog modal-dialog-centered" role="document">
 									<div class="modal-content">
@@ -485,7 +324,6 @@ $(document).ready(function() {
 								</div>
 							</div>
 							
-							<!-- 회원 정보 추가 modal -->
 							<div class="modal fade" id="user_add_modal" tabindex="-1" role="dialog" aria-hidden="true">
 								<div class="modal-dialog modal-dialog-centered" role="document">
 									<div class="modal-content">

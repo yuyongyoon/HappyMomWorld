@@ -41,12 +41,7 @@ public class UserController {
 	@RequestMapping(value = "/getUserInfo", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String,Object> getUserInfo(HttpServletRequest request, @RequestBody Map<String,Object> param) throws Exception {
-		Map<String,Object> result = new HashMap<String,Object>();
-		List<Map<String,Object>> userList = userService.getUserInfo(param);
-		result.put("name", userList.get(0).get("name").toString());
-		result.put("phone_number", userList.get(0).get("phone_number").toString());
-		result.put("due_date", userList.get(0).get("due_date").toString());
-		result.put("hospital", userList.get(0).get("hospital").toString());
+		Map<String,Object> result = userService.getUserInfo(param);
 		return result;
 	}
 	

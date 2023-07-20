@@ -7,6 +7,112 @@ $(document).ready(function() {
 	let doubleCheckPwd = false;
 	let updateInfo_datePicker = '';
 	
+	$('#btn_updateInfo_save').click(function(){
+		let param = {
+				id			: $('#input_userId_info').val(),		// id
+				name 		: $('#input_userName_info').val(),		// 이름
+				phone_number: $('#input_phoneNumber_info').val(),	// 전화번호
+				due_date	: updateInfo_datePicker.getDate() != null ? cfn_tuiDateFormat(updateInfo_datePicker.getDate()) : '',// 출산 예정일
+				hospital	: $('#input_hospital_info').val()		// 병원 정보
+		};
+		updateUserInfo(param);
+	})
+	
+	$('#btn_updateInfo_close').click(function() {
+		let modalId = $(this).closest(".modal").attr("id");
+		
+		if (confirm("창을 닫으면 수정한 내용이 모두 지워집니다. 닫으시겠습니까?")) {
+			$('#' + modalId).modal('hide');
+		} else {
+			$('#btn_updateAccountClose').blur();
+		}
+	})
+	
+	$('#btn_updatePwd_save').click(function(){
+		
+		if($('#input_orgPwd_pwd').val() == '' || $('#input_newPwd_pwd').val() == '' || $('#input_checkNewPwd_pwd').val() == ''){
+			alert('비밀번호 입력 칸들을 채워주세요.');
+			return false;
+		} else if($('#input_orgPwd_pwd').val() == $('#input_newPwd_pwd').val()){
+			alert('기존 비밀번호와 새 비밀번호가 동일합니다.');
+			$('#input_newPwd_pwd').attr('disabled', false);
+			$('#input_checkNewPwd_pwd').attr('disabled', false);
+			$('#input_newPwd_pwd').val('');
+			$('#input_checkNewPwd_pwd').val('');
+			return false;
+		} else if(doubleCheckPwd){
+			let orgPwd = $('#input_orgPwd_pwd').val();
+			let newPwd = $('#input_newPwd_pwd').val();
+			
+			let param = {
+				org_pwd : orgPwd,
+				new_pwd : newPwd
+			}
+			updateUserPwd(param);
+		}
+	})
+	
+	$('#btn_updatePwd_close').click(function() {
+		let modalId = $(this).closest(".modal").attr("id");
+		
+		if (confirm("창을 닫으면 수정한 내용이 모두 지워집니다. 닫으시겠습니까?")) {
+			cfn_clearField('nav-updatePwd-modal');
+			$('#checkNewPwd_msg_div').css('display', 'none');
+			$('#' + modalId).modal('hide');
+		} else {
+			$('#btn_updateAccountClose').blur();
+		}
+	})
+
+	// 비밀번호 변경 버튼 클릭 시
+	$('#updateUserPwd_list').click(function() {
+		$('#nav-updatePwd-modal').modal('show');
+		//새로운 비밀번호 확인
+		$('#input_checkNewPwd_pwd').blur(function() {
+			let pwd = $('#input_newPwd_pwd').val().trim();
+			let checkPwd = $('#input_checkNewPwd_pwd').val().trim();
+			let pwdPattern = /^.{8,}$/;
+			
+			console.log($('#input_orgPwd_pwd').val().trim() )
+			if($('#input_orgPwd_pwd').val().trim() == ''){
+				$('#checkNewPwd_msg').text('기존 비밀번호를 입력해주세요');
+				$('#checkNewPwd_msg_div').css('display', '');
+				return false;
+			} else if(!pwdPattern.test(pwd)){
+				$('#input_newPwd_pwd').val('');
+				$('#input_checkNewPwd_pwd').val(''); 
+				$('#checkNewPwd_msg').text('비밀번호는 공백을 제외하고 8자 이상입니다.');
+				$('#checkNewPwd_msg_div').css('display', '');
+				return false;
+			} else if(pwd != checkPwd) {// 비밀 번호가 다를 경우
+				$('#input_checkNewPwd_pwd').val(''); // 비번 초기화
+				$('#checkNewPwd_msg').text('비밀 번호가 다릅니다.');
+				$('#checkNewPwd_msg_div').css('display', '');
+				return false;
+			} else { // 비밀 번호가 동일할 경우
+				$('#input_newPwd_pwd').attr('disabled', true);
+				$('#input_checkNewPwd_pwd').attr('disabled', true);
+				$('#checkNewPwd_msg_div').css('display','none');// 에러 메세지 지우기
+				doubleCheckPwd = true;
+			}
+		});
+	});
+	
+	// 지점 선택
+	if($('#role').val() == 'SUPERADMIN'){
+		getBranch();
+		
+		$('#select-branch').on('change', function(){
+			$('#btn_get').click();
+		})
+	}
+	
+	// 개인 정보 변경 버튼 클릭 시
+	$('#updateUserInfo_list').click(function() {
+		$('#nav-updateInfo-modal').modal('show');
+		getUserInfo();
+	});
+	
 	function getUserInfo(){
 		let param = { user_id : $('#input_userId_info').val() };
 		
@@ -17,6 +123,15 @@ $(document).ready(function() {
 				$('#input_phoneNumber_info').val(result.phone_number);
 				$('#input_dueDate_info').val(result.due_date);
 				$('#input_hospital_info').val(result.hospital);
+				
+				updateInfo_datePicker = new tui.DatePicker('#wrapper_info', {
+					language: 'ko',
+					date: $('#input_dueDate_info').val() != '' ? new Date($('#input_dueDate_info').val()) : null,
+					input: {
+						element: '#input_dueDate_info',
+						format: 'yyyy-MM-dd'
+					}
+				});
 			},
 			error	: function(xhr,status){
 				alert('오류가 발생했습니다.');
@@ -31,7 +146,7 @@ $(document).ready(function() {
 			success	: function(result) {
 				if(result.msg == 'success') {
 					alert('정보가 변경되었습니다.');
-					$('#nav-updateInfo-modal').modal('hide');//창 닫기
+					$('#nav-updateInfo-modal').modal('hide');
 				}
 			},
 			error	: function(xhr,status){
@@ -77,104 +192,6 @@ $(document).ready(function() {
 			}
 		});
 	}
-	
-	$('#btn_updateInfo_save').click(function(){
-		let param = {
-				id			: $('#input_userId_info').val(),		// id
-				name 		: $('#input_userName_info').val(),		// 이름
-				phone_number: $('#input_phoneNumber_info').val(),	// 전화번호
-				due_date	: updateInfo_datePicker.getDate() != null ? cfn_tuiDateFormat(updateInfo_datePicker.getDate()) : '',// 출산 예정일
-				hospital	: $('#input_hospital_info').val()		// 병원 정보
-		};
-		updateUserInfo(param);
-	})
-	
-	$('#btn_updateInfo_close').click(function() {
-		let modalId = $(this).closest(".modal").attr("id");
-		
-		if (confirm("창을 닫으면 수정한 내용이 모두 지워집니다. 닫으시겠습니까?")) {
-			$('#' + modalId).modal('hide');
-		} else {
-			$('#btn_updateAccountClose').blur();
-		}
-	})
-	
-	$('#btn_updatePwd_save').click(function(){
-		if(doubleCheckPwd){
-			let orgPwd = $('#input_orgPwd_pwd').val();
-			let newPwd = $('#input_newPwd_pwd').val();
-			
-			let param = {
-				org_pwd : orgPwd,
-				new_pwd : newPwd
-			}
-			updateUserPwd(param);
-		}
-	})
-	
-	$('#btn_updatePwd_close').click(function() {
-		let modalId = $(this).closest(".modal").attr("id");
-		
-		if (confirm("창을 닫으면 수정한 내용이 모두 지워집니다. 닫으시겠습니까?")) {
-			cfn_clearField('nav-updatePwd-modal');
-			$('#checkNewPwd_msg_div').css('display', 'none');
-			$('#' + modalId).modal('hide');
-		} else {
-			$('#btn_updateAccountClose').blur();
-		}
-	})
-
-	// 비밀번호 변경 버튼 클릭 시
-	$('#updateUserPwd_list').click(function() {
-		$('#nav-updatePwd-modal').modal('show');
-		//새로운 비밀번호 확인
-		$('#input_checkNewPwd_pwd').blur(function() {
-			let pwd = $('#input_newPwd_pwd').val();
-			let checkPwd = $('#input_checkNewPwd_pwd').val();
-			
-			if(pwd != checkPwd) {// 비밀 번호가 다를 경우
-				$('#input_checkNewPwd_pwd').val(''); // 비번 초기화
-				$('#checkNewPwd_msg').text('비밀 번호가 다릅니다.');
-				$('#checkNewPwd_msg_div').css('display', '');
-			} else if(pwd == '' || checkPwd == '' ){// 값이 없을 경우
-				$('#checkNewPwd_msg').text('비밀번호를 입력해주세요.');
-				$('#checkNewPwd_msg_div').css('display', 'flex');
-			} else if(pwd == ' ' || checkPwd == ' ') {
-				$('#checkNewPwd_msg').text('비밀번호를 입력해주세요.');
-				$('#checkNewPwd_msg_div').css('display', 'flex');
-			} else { // 비밀 번호가 동일할 경우
-				$('#input_newPwd_pwd').attr('disabled', true);
-				$('#input_checkNewPwd_pwd').attr('disabled', true);
-				$('#checkNewPwd_msg_div').css('display','none');// 에러 메세지 지우기
-				doubleCheckPwd = true;
-			}
-		});
-	});
-	
-	// 지점 선택
-	if($('#role').val() == 'SUPERADMIN'){
-		getBranch();
-		
-		$('#select-branch').on('change', function(){
-			$('#btn_get').click();
-		})
-	}
-	
-	// 개인 정보 변경 버튼 클릭 시
-	$('#updateUserInfo_list').click(function() {
-		$('#nav-updateInfo-modal').modal('show');
-		getUserInfo();
-		
-		// 출산 예정일 input datepicker(사용자 정보 추가 modal)
-		updateInfo_datePicker = new tui.DatePicker('#wrapper_info', {
-			language: 'ko',
-			date: $('#input_dueDate_info').val() != '' ? new Date($('#input_dueDate_info').val()) : null,
-			input: {
-				element: '#input_dueDate_info',
-				format: 'yyyy-MM-dd'
-			}
-		});
-	});
 })
 </script>
 

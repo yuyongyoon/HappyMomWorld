@@ -18,7 +18,7 @@ public class UserService {
 	private UserMapper mapper;
 	
 	// 개인 정보 가져오기
-	public List<Map<String, Object>> getUserInfo(Map<String,Object> param){
+	public Map<String, Object> getUserInfo(Map<String,Object> param){
 		return mapper.getUserInfo(param);
 	}
 	
