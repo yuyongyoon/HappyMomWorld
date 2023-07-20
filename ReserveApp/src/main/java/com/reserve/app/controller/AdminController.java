@@ -61,12 +61,12 @@ public class AdminController {
 	}
 	
 	//=======================nav 지점 코드 가져오기=====================
-	@RequestMapping(value = "/getBranchInfo", method = RequestMethod.POST)
+	@RequestMapping(value = "/getBranchNameList", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String,Object> getBranchInfo(HttpServletRequest request, @RequestBody Map<String,Object> param) throws Exception {
+	public Map<String,Object> getBranchNameList(HttpServletRequest request, @RequestBody Map<String,Object> param) throws Exception {
 		Map<String,Object> result = new HashMap<String,Object>();
-		List<Map<String,Object>> branchList = adminService.getBranchInfo(param);
-		result.put("branchList", branchList);
+		List<Map<String,Object>> branchNameList = adminService.getBranchNameList(param);
+		result.put("branchNameList", branchNameList);
 		return result;
 	}
 	
@@ -87,14 +87,7 @@ public class AdminController {
 		return adminService.resetPassword(param);
 	}
 	
-	/*
-	 * @RequestMapping(value = "/addAccount", method = RequestMethod.POST)
-	 * 
-	 * @ResponseBody public Map<String,Object> addUser(HttpServletRequest
-	 * request, @RequestBody HashMap<String,Object> param) throws Exception {
-	 * Map<String,Object> result = new HashMap<String,Object>(); String msg =
-	 * adminService.addAccount(param); result.put("msg", msg); return result; }
-	 */	
+	
 	@RequestMapping(value = "/updateAccount", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String,Object> updateUser(HttpServletRequest request, @RequestBody HashMap<String,Object> param) throws Exception {
@@ -104,15 +97,7 @@ public class AdminController {
 		return result;
 	}
 
-	/*
-	 * @RequestMapping(value = "/checkId", method = RequestMethod.POST)
-	 * 
-	 * @ResponseBody public Map<String,Object> checkId(HttpServletRequest
-	 * request, @RequestBody Map<String,Object> param) throws Exception {
-	 * Map<String,Object> result = new HashMap<String,Object>(); int checkedId =
-	 * adminService.checkId(param); result.put("idCnt", checkedId); return result; }
-	 */
-	
+
 	//=======================지점 관리 controller=====================
 	@RequestMapping(value = "/getBranchList", method = RequestMethod.POST)
 	@ResponseBody
@@ -137,8 +122,10 @@ public class AdminController {
 	@ResponseBody
 	public Map<String,Object> getReservationMasterData(HttpServletRequest request, @RequestBody Map<String,Object> param) throws Exception {
 		Map<String,Object> result = new HashMap<String,Object>();
+		Map<String,Object> branchInfo = adminService.getBranchInfo(param);
 		List<Map<String,Object>> masterList = adminService.getReservationMasterData(param);
 		result.put("masterList", masterList);
+		result.put("branchInfo", branchInfo);
 		return result;
 	}
 	

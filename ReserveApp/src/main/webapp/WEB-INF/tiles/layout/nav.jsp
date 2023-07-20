@@ -64,10 +64,10 @@ $(document).ready(function() {
 	
 	function getBranch(param){
 		$.doPost({
-			url		: "/admin/getBranchInfo",
+			url		: "/admin/getBranchNameList",
 			success	: function(result){
 				let opt = '';
-				result.branchList.forEach(i => {
+				result.branchNameList.forEach(i => {
 					opt += '<option value= "'+i.branch_code+'">'+i.branch_name+'</option>';
 				})
 				$('#select-branch').append(opt);

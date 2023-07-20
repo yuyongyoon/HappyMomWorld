@@ -20,8 +20,8 @@ public class AdminService {
 	private AdminMapper mapper;
 	
 	// 지점 가져오기
-	public List<Map<String, Object>> getBranchInfo(Map<String,Object> param){
-		return mapper.getBranchInfo(param);
+	public List<Map<String, Object>> getBranchNameList(Map<String,Object> param){
+		return mapper.getBranchNameList(param);
 	}
 	
 	public List<Map<String,Object>> getUserList(Map<String,Object> param) {
@@ -57,18 +57,6 @@ public class AdminService {
 		return resetPwd;
 	}
 	
-	/*
-	 * public String addAccount(Map<String,Object> param) { String msg = "success";
-	 * 
-	 * try { String orgPassword = param.get("password").toString();
-	 * SHA512PasswordEncoder sha512Service = new SHA512PasswordEncoder(); String
-	 * encPassword = sha512Service.encode(orgPassword);
-	 * param.put("encoded_password", encPassword);
-	 * 
-	 * mapper.addAccount((Map<String,Object>) param); }catch (Exception e) {
-	 * e.printStackTrace(); msg = "fail"; } return msg; }
-	 */
-
 	public String updateAccount(HashMap<String, Object> param) {
 		String msg = "success";
 		
@@ -81,11 +69,7 @@ public class AdminService {
 		return msg;
 	}
 
-	/*
-	 * public int checkId(Map<String,Object> param) { int idCnt =
-	 * mapper.checkId(param); return idCnt; }
-	 */
-	
+
 	public List<Map<String, Object>> getBranchList(Map<String,Object> param){
 		return mapper.getBranchList(param);
 	}
@@ -110,7 +94,6 @@ public class AdminService {
 				} else if (branchData.get("status").equals("u")) {
 					mapper.updateBranchInfo(branchData);
 				} else {
-					System.out.println("삭제");
 					mapper.deleteBranchInfo(branchData);
 				}
 			}
@@ -139,17 +122,20 @@ public class AdminService {
 	@SuppressWarnings("unchecked")
 	public String saveReservationMasterData(Map<String,Object> param) {
 		String msg = "success";
-		
 		List<Map<String,Object>> saveReservationMasterData = (List<Map<String,Object>>)param.get("data");
+		Map<String,Object> delInfo = (Map<String,Object>)param.get("delInfo");
 
 		try {
-//			mapper.updateReservationMasterData(saveReservationMasterData);
-			
+			mapper.deleteReservationMasterData(delInfo);
 			mapper.addReservationMasterData(saveReservationMasterData);
 		} catch (Exception e) {
 			e.printStackTrace();
 			msg = "fail";
 		}
 		return msg;
+	}
+
+	public Map<String, Object> getBranchInfo(Map<String, Object> param) throws Exception {
+		return mapper.getBranchInfo(param);
 	}
 }

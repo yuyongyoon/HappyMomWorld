@@ -1,23 +1,52 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <style>
-table > tr :{
+table tbody tr th {
+	min-width: 100px;
+}
+#reservation_tbody input {
+	width: 100%;
+	border: 0px solid;
+	background: transparent;
+	color: white;
 	text-align: center;
 }
+#reservation_tbody td[input_val] {
+	background-color: #EC7357;
+}
+#reservation_tbody td[input_val="0"] {
+	background-color: #bfc1c7;
+}
+#reservation_tbody td[input_val="1"] {
+	background-color: #f5c542;
+}
+#reservation_tbody td[input_val="2"] {
+	background-color: #a85ae6;
+}
+#reservation_tbody td[input_val="3"] {
+	background-color: #8FBC94;
+}
+#reservation_tbody td[input_val="4"] {
+	background-color: #6AAFE6;
+}
+#reservation_tbody td[input_val="5"] {
+	background-color: #EE7785;
+}
+#reservation_tbody td[input_val="6"] {
+	background-color: #d9534f;
+}
+#reservation_tbody td[input_val="7"] {
+	background-color: #17a2b8;
+}
+
 </style>
+
 <script>
+let checkUnload = true;
+
 $(document).ready(function() {
-	let searchMonthPicker = new tui.DatePicker('#datepicker_search', {
-		date: new Date(),
-		language: 'ko',
-		type: 'month',
-		input: {
-			element: '#datepicker_input_search',
-			format: 'yyyy-MM'
-		}
-	})
-	
-	let stdMonthPicker = new tui.DatePicker('#datepicker_create', {
-		date: new Date(),
+	const  today = new Date();
+	const stdMonthPicker = new tui.DatePicker('#datepicker_create', {
+		date: today,
 		language: 'ko',
 		type: 'month',
 		input: {
@@ -26,11 +55,47 @@ $(document).ready(function() {
 		}
 	});
 	
+	let firstDayForRangePicker = new Date(stdMonthPicker.getDate().getFullYear(), today.getMonth(), 1);
+	let lastDayForRangePicker = new Date(stdMonthPicker.getDate().getFullYear(), today.getMonth() + 1, 0);
+
+	let searchPicker = tui.DatePicker.createRangePicker({
+		startpicker: {
+			date: firstDayForRangePicker,
+			input: '#input_startDate',
+			container: '#startDate-container'
+		},
+		endpicker: {
+			date: lastDayForRangePicker,
+			input: '#input_endDate',
+			container: '#endDate-container'
+		},
+		language: 'ko',
+		format: 'YYYY-MM-dd',
+		selectableRanges: [
+			[firstDayForRangePicker, lastDayForRangePicker]
+		]
+	});
+	
 	//통신 객체
 	ajaxCom = {
 		getReservationMasterData: function(){
-			let param = {
-				rsv_month : searchMonthPicker.getDate().getMonth()+1
+			if($('#role').val() == 'SUPERADMIN'){
+				$('#btn_save').css('display', 'none');
+				$('#tdBtn').css('display', 'none');
+				$('.search-filter').css('display', 'none');
+			}
+			
+			let param;
+			
+			if($('#select-branch').val() != '' && $('#role').val() == 'SUPERADMIN'){
+				param = {
+					rsv_month : $('#datepicker_input_create').val(),
+					super_branch_code : $('#select-branch').val()
+				}
+			}else {
+				param = {
+					rsv_month : $('#datepicker_input_create').val()
+				}
 			}
 			
 			$.doPost({
@@ -38,9 +103,16 @@ $(document).ready(function() {
 				data	: param,
 				success	: function(result){
 					if(result.masterList == 0) {
-						$('#pills-basic-tab').click();
+						$('#reservation_tbody').find('tr').remove();
+						$('#btn_initCreate').css('display', '');
+						$('#btn_clearFilter').css('display', 'none');
 					} else {
+						$('#btn_initCreate').css('display', 'none');
+						$('#btn_tableReset').css('display', 'none');
+						$('.search-filter').css('display', 'none');
+						$('#btn_clearFilter').css('display', 'none');
 						fnCom.createTable(result);
+						fnCom.inputBranchInfo(result);
 					}
 				},
 				error	: function(xhr,status){
@@ -49,16 +121,21 @@ $(document).ready(function() {
 			});
 		},
 		saveReservationMasterData: function(param){
+			let deleteInfo = {
+				stdMonth : $('#datepicker_input_create').val()
+			}
 			$.doPost({
 				url		: "/admin/saveReservationMasterData",
-				data	: {data : param,
-							stdMonth : stdMonthPicker.getDate().getMonth() + 1
+				data	: { data : param,
+							delInfo : deleteInfo
 						},
 				success	: function(result){
 					if(result.msg == 'success') {
+						checkUnload = false;
+						$('#btn_tableReset').css('display','none');
 						alert('저장 되었습니다.');
 					} else {
-// 						alert(result.msg);
+						alert('오류가 발생하였습니다.');
 					}
 				},
 				error	: function(xhr,status){
@@ -70,23 +147,33 @@ $(document).ready(function() {
 	
 	//이벤트 객체 : id값을 주면 클릭 이벤트 발생
 	btnCom = {
+		btn_get: function(){
+			ajaxCom.getReservationMasterData();
+		},
+		btn_changeFilter: function(){
+			if ($('.search-filter').css('display') == 'none') {
+				$('.search-filter').css('display', '');
+				$('#btn_clearFilter').css('display', '');
+				cfn_tableResize('table_div', 600);
+			} else {
+				$('.search-filter').css('display', 'none');
+				$('#btn_clearFilter').css('display', 'none');
+				cfn_tableResize('table_div', 350);
+			}
+			
+		},
 		btn_initCreate: function() {
+			$('#reservation_tbody').find('tr').remove();
+			$('#btn_tableReset').css('display','');
 			
 			if($('#input_basicWorker').val() == null || $('#input_basicWorker').val() == ''){
 				alert('기본 근무자 수를 입력해주세요.');
 				return false;
 			}
 			
-			$('#span_1t').text($('#input_1t').val());
-			$('#span_2t').text($('#input_2t').val());
-			$('#span_3t').text($('#input_3t').val());
-			$('#span_4t').text($('#input_4t').val());
-			$('#span_5t').text($('#input_5t').val());
-			$('#span_6t').text($('#input_6t').val());
-			$('#span_7t').text($('#input_7t').val());
-			$('#span_8t').text($('#input_8t').val());
-			$('#span_9t').text($('#input_9t').val());
-			$('#span_10t').text($('#input_10t').val());
+			for(let i = 0; i <= 10; i++) {
+				$('#span_'+i+'t').text($('#input_'+i+'t').val());
+			}
 			
 			let stdMonth = stdMonthPicker.getDate();
 			let startOfMonth = new Date(stdMonth.getFullYear(), stdMonth.getMonth(), 1); // 기준 월의 시작일
@@ -95,81 +182,24 @@ $(document).ready(function() {
 			let currentDate = new Date(startOfMonth);
 
 			while (currentDate <= endOfMonth) {
-					datesArray.push(new Date(currentDate));
+				datesArray.push(new Date(currentDate));
 				currentDate.setDate(currentDate.getDate() + 1);
 			}
 
 			let trData;
 			
-			if($('#input_basicWorker').val() > 0) {
-				datesArray.forEach(day => {
-					trData += '<tr value="'+cfn_tuiDateFormat(day)+'">'
-					trData += '<td style="width:100px;text-align:center;">' + cfn_tuiDateFormat(day) +'</td>'
-					trData += '<td style="text-align:center;">'+$('#input_basicWorker').val()+'</td>'
-					trData += '<td style="text-align:center;background:#6aca71" value="1t"><input type="number" style="width:100%;text-align:center;border:0px solid;background:transparent;color:white;" value="'+$('#input_basicWorker').val()+'"></td>'
-					trData += '<td style="text-align:center;background:#6aca71" value="2t"><input type="number" style="width:100%;text-align:center;border:0px solid;background:transparent;color:white;" value="'+$('#input_basicWorker').val()+'"></td>'
-					trData += '<td style="text-align:center;background:#6aca71" value="3t"><input type="number" style="width:100%;text-align:center;border:0px solid;background:transparent;color:white;" value="'+$('#input_basicWorker').val()+'"></td>'
-					trData += '<td style="text-align:center;background:#6aca71" value="4t"><input type="number" style="width:100%;text-align:center;border:0px solid;background:transparent;color:white;" value="'+$('#input_basicWorker').val()+'"></td>'
-					trData += '<td style="text-align:center;background:#6aca71" value="5t"><input type="number" style="width:100%;text-align:center;border:0px solid;background:transparent;color:white;" value="'+$('#input_basicWorker').val()+'"></td>'
-					trData += '<td style="text-align:center;background:#6aca71" value="6t"><input type="number" style="width:100%;text-align:center;border:0px solid;background:transparent;color:white;" value="'+$('#input_basicWorker').val()+'"></td>'
-					trData += '<td style="text-align:center;background:#6aca71" value="7t"><input type="number" style="width:100%;text-align:center;border:0px solid;background:transparent;color:white;" value="'+$('#input_basicWorker').val()+'"></td>'
-					trData += '<td style="text-align:center;background:#6aca71" value="8t"><input type="number" style="width:100%;text-align:center;border:0px solid;background:transparent;color:white;" value="'+$('#input_basicWorker').val()+'"></td>'
-					trData += '<td style="text-align:center;background:#6aca71" value="9t"><input type="number" style="width:100%;text-align:center;border:0px solid;background:transparent;color:white;" value="'+$('#input_basicWorker').val()+'"></td>'
-					trData += '<td style="text-align:center;background:#6aca71" value="10t"><input type="number" style="width:100%;text-align:center;border:0px solid;background:transparent;color:white;" value="'+$('#input_basicWorker').val()+'"></td>'	
-					trData += '</tr>'
-				})
-			} else {
-				datesArray.forEach(day => {
-					trData += '<tr value="'+cfn_tuiDateFormat(day)+'">'
-					trData += '<td style="width:100px;text-align:center;">' + cfn_tuiDateFormat(day) +'</td>'
-					trData += '<td style="text-align:center;">'+$('#input_basicWorker').val()+'</td>'
-					trData += '<td style="text-align:center;background:lightgray" value="1t"><input type="number" style="width:100%;text-align:center;border:0px solid;background:transparent;color:white;" value="'+$('#input_basicWorker').val()+'"></td>'
-					trData += '<td style="text-align:center;background:lightgray" value="2t"><input type="number" style="width:100%;text-align:center;border:0px solid;background:transparent;color:white;" value="'+$('#input_basicWorker').val()+'"></td>'
-					trData += '<td style="text-align:center;background:lightgray" value="3t"><input type="number" style="width:100%;text-align:center;border:0px solid;background:transparent;color:white;" value="'+$('#input_basicWorker').val()+'"></td>'
-					trData += '<td style="text-align:center;background:lightgray" value="4t"><input type="number" style="width:100%;text-align:center;border:0px solid;background:transparent;color:white;" value="'+$('#input_basicWorker').val()+'"></td>'
-					trData += '<td style="text-align:center;background:lightgray" value="5t"><input type="number" style="width:100%;text-align:center;border:0px solid;background:transparent;color:white;" value="'+$('#input_basicWorker').val()+'"></td>'
-					trData += '<td style="text-align:center;background:lightgray" value="6t"><input type="number" style="width:100%;text-align:center;border:0px solid;background:transparent;color:white;" value="'+$('#input_basicWorker').val()+'"></td>'
-					trData += '<td style="text-align:center;background:lightgray" value="7t"><input type="number" style="width:100%;text-align:center;border:0px solid;background:transparent;color:white;" value="'+$('#input_basicWorker').val()+'"></td>'
-					trData += '<td style="text-align:center;background:lightgray" value="8t"><input type="number" style="width:100%;text-align:center;border:0px solid;background:transparent;color:white;" value="'+$('#input_basicWorker').val()+'"></td>'
-					trData += '<td style="text-align:center;background:lightgray" value="9t"><input type="number" style="width:100%;text-align:center;border:0px solid;background:transparent;color:white;" value="'+$('#input_basicWorker').val()+'"></td>'
-					trData += '<td style="text-align:center;background:lightgray" value="10t"><input type="number" style="width:100%;text-align:center;border:0px solid;background:transparent;color:white;" value="'+$('#input_basicWorker').val()+'"></td>'	
-					trData += '</tr>'
-				})
-			}
+			datesArray.forEach(day => {
+				trData += '<tr value="'+cfn_tuiDateFormat(day)+'">'
+				trData += '<td>' + cfn_tuiDateFormat(day) +'</td>'
+				trData += '<td>'+$('#input_basicWorker').val()+'</td>'
+				for(let i = 1; i <= 10; i++){
+					trData += '<td value="'+i+'t" input_val="'+$('#input_basicWorker').val()+'"><input type="number" min="0" value="'+$('#input_basicWorker').val()+'"></td>'
+				}
+				trData += '</tr>'
+			})
 			
 			$('#reservation_tbody').append(trData);
-			$('#btn_initCreate').attr('disabled', 'true');
-			$("#pills-basic-tab").removeClass('active');
-			$('#pills-modify-tab').click();
-		},
-		btn_resetInputTime: function(){
-			$('#input_1t').val('');
-			$('#input_2t').val('');
-			$('#input_3t').val('');
-			$('#input_4t').val('');
-			$('#input_5t').val('');
-			$('#input_6t').val('');
-			$('#input_7t').val('');
-			$('#input_8t').val('');
-			$('#input_9t').val('');
-			$('#input_10t').val('');
-		},
-		btn_reset: function(){
-			$('#reservation_tbody').find('tr').remove();
-			$('#btn_initCreate').removeAttr('disabled');
-			
-			$('#span_1t').text('');
-			$('#span_2t').text('');
-			$('#span_3t').text('');
-			$('#span_4t').text('');
-			$('#span_5t').text('');
-			$('#span_6t').text('');
-			$('#span_7t').text('');
-			$('#span_8t').text('');
-			$('#span_9t').text('');
-			$('#span_10t').text('');
-			
-			$('#pills-basic-tab').click();
+			$('#btn_initCreate').css('display', 'none');
 		},
 		btn_modifyByday: function(){
 			let editDay = [];
@@ -187,6 +217,7 @@ $(document).ready(function() {
 				return false;
 			}
 			
+			
 			editDay.forEach(function(day) {
 				let rows = $("#reservation_tbody tr");
 
@@ -200,18 +231,18 @@ $(document).ready(function() {
 						inputColumns.each(function() {
 							let column = $(this);
 							let input = column.find("input");
-							let inputValue = $("#input_workerForDay").val();
-							input.val(inputValue);
 							
-							if (parseInt(inputValue) == 0) {
-								column.css("background-color", "lightgray");
-							} else {
-								column.css("background-color", "#6aca71");
+							let inputValue = $("#input_workerForDay").val();
+							let inputMinValue = input.attr('min');
+							
+							if (inputValue >= inputMinValue) {
+								input.val(inputValue);
+								column.attr('input_val', inputValue);
 							}
 						});
 					}
-				})
-			})
+				});
+			});
 		},
 		btn_modifyByTime: function(){
 			let editTime = [];
@@ -226,30 +257,78 @@ $(document).ready(function() {
 
 			let inputWorkerForTimeVal = $('#input_workerForTime').val();
 
-			if (inputWorkerForTimeVal < 0 || inputWorkerForTimeVal === '') {
+			if (inputWorkerForTimeVal < 0 || inputWorkerForTimeVal == '') {
 				alert('근무자 수를 입력해주세요.');
 				return false;
 			}
 
-			let tdList = $("td");
+			let tdList = $('#reservation_tbody td');
 			tdList.each(function() {
 				let td = $(this);
-				let tdValue = td.attr("value");
+				let tdValue = td.attr('value');
 
 				if (editTime.includes(tdValue)) {
-					let input = td.find("input");
-					input.val(inputWorkerForTimeVal);
-
-					if (inputWorkerForTimeVal == 0) {
-						td.css("background-color", "lightgray");
-					} else {
-						td.css("background-color", "#6aca71");
+					let input = td.find('input');
+					let inputMinValue = input.attr('min');
+					
+					if (inputWorkerForTimeVal >= inputMinValue) {
+						input.val(inputWorkerForTimeVal);
+						td.attr('input_val', inputWorkerForTimeVal);
 					}
 				}
 			});
 		},
+		btn_modifyByRange : function(){
+			let startDt = $('#input_startDate').val();
+			let endDt = $('#input_endDate').val();
+			let inputWorker = $('#input_workerForRange').val();
+			let editDay = [];
+			let editTime = [];
+			
+			$("input[name='selectRangeDay']:checked").each(function() {
+				editDay.push(Number($(this).val()));
+			});
+
+			$("input[name='selectRangeTime']:checked").each(function() {
+				editTime.push($(this).val());
+			});
+
+			
+			let rows = $("#reservation_tbody tr").filter(function() {
+				let dateValue = $(this).attr("value");
+				let date = new Date(dateValue);
+				let startDate = new Date(startDt);
+				let endDate = new Date(endDt);
+
+				return date >= startDate && date <= endDate;
+			});
+
+			rows.each(function() {
+				let row = $(this);
+				let dayOfWeek = new Date(row.attr("value")).getDay();
+				let inputColumns = row.find("td:nth-child(n+3):nth-child(-n+12)");
+
+				let isDayMatched = editDay.length == 0 || editDay.includes(dayOfWeek);
+
+				inputColumns.each(function() {
+					let column = $(this);
+					let timeValue = column.attr('value');
+					let isTimeMatched = editTime.length === 0 || editTime.includes(timeValue);
+
+					if (isDayMatched && isTimeMatched) {
+						let input = column.find('input');
+						let inputMinValue = input.attr('min');
+
+						if (inputWorker >= inputMinValue) {
+							input.val(inputWorker);
+							column.attr('input_val', inputWorker);
+						}
+					}
+				});
+			});
+		},
 		btn_save: function(){
-			let selectMonth = stdMonthPicker.getDate().getMonth() + 1;
+			let selectMonth = $('#datepicker_input_create').val();
 			let trList = $('#reservation_tbody tr');
 			let workerNum = $('#input_basicWorker').val();
 			
@@ -277,40 +356,78 @@ $(document).ready(function() {
 			});
 			
 			ajaxCom.saveReservationMasterData(data);
+		},
+		btn_clearFilter: function(){
+			$("input[name='selectDay']").prop('checked', false);
+			$("input[name='selectTime']").prop('checked', false);
+			$("input[name='selectRangeDay']").prop('checked', false);
+			$("input[name='selectRangeTime']").prop('checked', false);
+
+			$("#input_workerForDay").val('');
+			$("#input_workerForTime").val('');
+			$("#input_workerForRange").val('');
+			
+			fnCom.setRangePicker();
+		},
+		btn_tableReset: function(){
+			if (confirm('입력된 내용들이 사라집니다.')) {
+				$('#reservation_tbody').find('tr').remove();
+			}
+			$('#btn_initCreate').css('display','');
+			$('#btn_tableReset').css('display','none');
 		}
 	}; //btnCom END
 
 	//기타 함수 객체
 	fnCom = {
 		createTable: function(list){
-			//테이블 초기화
 			$('#reservation_tbody').find('tr').remove();
-			$('#btn_initCreate').removeAttr('disabled');
 			
-// 			$('#span_1t').text('');
-// 			$('#span_2t').text('');
-// 			$('#span_3t').text('');
-// 			$('#span_4t').text('');
-// 			$('#span_5t').text('');
-// 			$('#span_6t').text('');
-// 			$('#span_7t').text('');
-// 			$('#span_8t').text('');
-// 			$('#span_9t').text('');
-// 			$('#span_10t').text('');
-
-//trData += '<tr value="'+cfn_tuiDateFormat(day)+'">'
-// 					trData += '<td style="width:100px;text-align:center;">' + cfn_tuiDateFormat(day) +'</td>'
-// 					trData += '<td style="text-align:center;">'+$('#input_basicWorker').val()+'</td>'
+			for(let i = 0; i <=10; i++){
+				$('#span_'+i+'t').text(list.branchInfo[i+'t_name']);
+			}
+			
 			let trData;
 			list.masterList.forEach(function(data){
-				console.log(data)
 				trData += '<tr value="'+data.rsv_date+'">'
-				trData += '<td style="width:100px;text-align:center;">' + data.rsv_date +'</td>'
-				trData += '<td style="text-align:center;">'+data.rsv_worker+'</td>'
-				
+				trData += '<td>' + data.rsv_date +'</td>'
+				trData += '<td>'+data.rsv_worker+'</td>'
+				for(let i = 1; i <= 10; i++){
+					trData += '<td value="'+i+'t" input_val="'+data[i+'t']+'"><input type="number" min="'+data[i+'t_cnt']+'" value="'+data[i+'t']+'"></td>'
+				}
+				trData += '</tr>'
 			})
-			
 			$('#reservation_tbody').append(trData);
+		},
+		inputBranchInfo: function(data){
+			$('#input_basicWorker').val(data.branchInfo.worker_num);
+			
+			for(let i = 0; i <= 10; i++){
+				$('#input_'+i+'t').val(data.branchInfo[i+'t_name']);
+			}
+			
+		},
+		setRangePicker(){
+			firstDayForRangePicker = new Date(stdMonthPicker.getDate().getFullYear(), stdMonthPicker.getDate().getMonth(), 1);
+			lastDayForRangePicker = new Date(stdMonthPicker.getDate().getFullYear(), stdMonthPicker.getDate().getMonth() + 1, 0);
+			
+			searchPicker = tui.DatePicker.createRangePicker({
+				startpicker: {
+					date: firstDayForRangePicker,
+					input: '#input_startDate',
+					container: '#startDate-container'
+				},
+				endpicker: {
+					date: lastDayForRangePicker,
+					input: '#input_endDate',
+					container: '#endDate-container'
+				},
+				language: 'ko',
+				format: 'YYYY-MM-dd',
+				selectableRanges: [
+					[firstDayForRangePicker, lastDayForRangePicker]
+				]
+			});
 		}
 	}; //fnCom END
 	
@@ -320,43 +437,52 @@ $(document).ready(function() {
 		}
 	});
 	
-	$('#pills-search-tab').click(function() {
+	stdMonthPicker.on('change', function(){
 		ajaxCom.getReservationMasterData();
+		fnCom.setRangePicker();
 	})
-	
+
 	ajaxCom.getReservationMasterData();
+	cfn_tableResize('table_div', 350);
+	
 }); //END $(document).ready
 
-// let checkUnload = true;
-// $(window).on("beforeunload", function(){
-// 	if(checkUnload) {
-// 		return '변경사항이 저장되지 않을 수 있습니다.';
-// 	}
-// });
-	
+
+$(window).on("beforeunload", function(){
+	if(checkUnload) {
+		return '변경사항이 저장되지 않을 수 있습니다.';
+	}
+});
 	
 $(document).on('input', '#reservation_tbody input[type="number"]', function() {
 	let value = $(this).val();
 	let parentTd = $(this).parent();
-	
+
 	if (value == null || value === '' || value == 0) {
-		parentTd.css('background', 'lightgray');
-		$(this).css('background', 'transparent');
-		$(this).css('color', 'white')
-	} else if (value >= 1) {
-		parentTd.css('background', '#6aca71');
-		$(this).css('background', 'transparent');
-		$(this).css('color', 'white');
+		parentTd.css('background-color', '#bfc1c7');
+	} else if (value == 1) {
+		parentTd.css('background-color', '#f5c542');
+	} else if (value == 2) {
+		parentTd.css('background-color', '#a85ae6');
+	} else if (value == 3) {
+		parentTd.css('background-color', '#8FBC94');
+	} else if (value == 4) {
+		parentTd.css('background-color', '#6AAFE6');
+	} else if (value == 5) {
+		parentTd.css('background-color', '#EE7785');
+	} else if (value == 6) {
+		parentTd.css('background-color', '#d9534f');
+	} else if(value == 7) {
+		parentTd.css('background-color', '#17a2b8');
+	} else {
+		parentTd.css('background-color', '#EC7357');
 	}
 });
 
 
+
 </script>
-<style>
-table tbody tr th {
-	min-width: 100px;
-}
-</style>
+
 <div class="main-panel">
 	<div class="content">
 		<div class="page-inner">
@@ -372,49 +498,16 @@ table tbody tr th {
 										</div>
 										<div class="col-sm-6">
 											<div class="button-list float-right">
-												
 												<button type="button" id="btn_get" class="header-btn btn btn-secondary float-left ml-2 mb-2">조회</button>
 												<button type="button" id="btn_save" class="header-btn btn btn-secondary float-left ml-2 mb-2">저장</button>
-												<button type="button" id="btn_reset" class="header-btn btn btn-secondary float-left ml-2 mb-2">초기화</button>
 											</div>
 										</div>
 									</div>
-								</div>
-							</div>
-							
-							<ul class="nav nav-pills nav-success" id="pills-tab" role="tablist">
-								<li class="nav-item">
-									<a class="nav-link active" id="pills-search-tab" data-toggle="pill" href="#pills-search" role="tab" aria-controls="pills-search" aria-selected="true">예약 조회</a>
-								</li>
-								<li class="nav-item">
-									<a class="nav-link" id="pills-basic-tab" data-toggle="pill" href="#pills-basic" role="tab" aria-controls="pills-basic" aria-selected="true">예약 생성</a>
-								</li>
-								<li class="nav-item">
-									<a class="nav-link" id="pills-modify-tab" data-toggle="pill" href="#pills-modify" role="tab" aria-controls="pills-modify" aria-selected="false">예약 수정</a>
-								</li>
-							</ul>
-							<div class="tab-content mt-2 mb-3" id="pills-tabContent">
-								<div class="tab-pane fade show active" id="pills-search" role="tabpanel" aria-labelledby="pills-search-tab">
-									<table class="table-sm mt-0 mb-2" style="border-top: 1px lightgray solid; border-bottom: 1px lightgray solid; width:100%;">
+									
+									<table class="table-sm mt-0 mb-2" style="border-top: 1px lightgray solid; border-bottom: 1px lightgray solid; width:100%">
 										<tbody>
 											<tr>
-												<th style="width:10%">조회 월</th>
-												<td>
-													<div class="tui-datepicker-input tui-datetime-input tui-has-focus">
-														<input type="text" id="datepicker_input_search" aria-label="Year-Month">
-														<span class="tui-ico-date"></span>
-													</div>
-													<div class="datepicker-cell" id="datepicker_search" style="margin-top: -1px;"></div>
-												</td>
-											</tr>
-										</tbody>
-									</table>
-								</div>
-								<div class="tab-pane fade" id="pills-basic" role="tabpanel" aria-labelledby="pills-basic-tab">
-									<table class="table-sm mt-0 mb-2" style="border-top: 1px lightgray solid; border-bottom: 1px lightgray solid;">
-										<tbody>
-											<tr>
-												<th colspan="1">기준 월</th>
+												<th colspan="1" style="width: 130px;">기준 월</th>
 												<td colspan="4">
 													<div class="tui-datepicker-input tui-datetime-input tui-has-focus">
 														<input type="text" id="datepicker_input_create" aria-label="Year-Month">
@@ -424,69 +517,66 @@ table tbody tr th {
 												</td>
 												<th>기본 근무자 수</th>
 												<td>
-													<input type="number" id="input_basicWorker" class="form-control form-control-sm" style="width:100%" min="0">
+													<input type="number" id="input_basicWorker" class="form-control form-control-sm" style="width:50%" min="0">
 												</td>
 											</tr>
 											<tr>
+												<td colspan="11" style="text-align: center;" id="tdBtn">
+													<button type="button" id="btn_initCreate" class="header-btn btn btn-warning btn-sm">생성</button>
+													<button type="button" id="btn_tableReset" class="header-btn btn btn-warning btn-sm">테이블 초기화</button>
+													<button type="button" id="btn_changeFilter" class="header-btn btn btn-warning btn-sm">필터</button>
+													<button type="button" id="btn_clearFilter" class="header-btn btn btn-warning btn-sm">필터 초기화</button>
+												</td>
+											</tr>
+											<tr class="search-filter" style="border-top: 1px solid lightgray;">
 												<th rowspan="2">시간대 설정</th>
 												<th style="width: 30px;text-align: center;">1 Time</th>
 												<td>
-													<input type="text" id="input_1t" class="form-control form-control-sm" style="width:100%" value="09:00 ~ 10:00">
+													<input type="text" id="input_1t" class="form-control form-control-sm" style="width:100%" disabled>
 												</td>
 												<th style="width: 30px;text-align: center;">2 Time</th>
 												<td>
-													<input type="text" id="input_2t" class="form-control form-control-sm" style="width:100%" value="10:00 ~ 11:00">
+													<input type="text" id="input_2t" class="form-control form-control-sm" style="width:100%" disabled>
 												</td>
 												<th style="width: 30px;text-align: center;">3 Time</th>
 												<td>
-													<input type="text" id="input_3t" class="form-control form-control-sm" style="width:100%" value="11:00 ~ 12:00">
+													<input type="text" id="input_3t" class="form-control form-control-sm" style="width:100%" disabled>
 												</td>
 												<th style="width: 30px;text-align: center;">4 Time</th>
 												<td>
-													<input type="text" id="input_4t" class="form-control form-control-sm" style="width:100%" value="12:00 ~ 13:00">
+													<input type="text" id="input_4t" class="form-control form-control-sm" style="width:100%" disabled>
 												</td>
 												<th style="width: 30px;text-align: center;">5 Time</th>
 												<td>
-													<input type="text" id="input_5t" class="form-control form-control-sm" style="width:100%" value="13:00 ~ 14:00">
+													<input type="text" id="input_5t" class="form-control form-control-sm" style="width:100%" disabled>
 												</td>
 											</tr>
-											<tr>
+											<tr class="search-filter" style="border-bottom: 1px solid lightgray">
 												<th style="width: 30px;text-align: center;">6 Time</th>
 												<td>
-													<input type="text" id="input_6t" class="form-control form-control-sm" style="width:100%" value="14:00 ~ 15:00">
+													<input type="text" id="input_6t" class="form-control form-control-sm" style="width:100%" disabled>
 												</td>
 												<th style="width: 30px;text-align: center;">7 Time</th>
 												<td>
-													<input type="text" id="input_7t" class="form-control form-control-sm" style="width:100%" value="15:00 ~ 16:00">
+													<input type="text" id="input_7t" class="form-control form-control-sm" style="width:100%" disabled>
 												</td>
 												<th style="width: 30px;text-align: center;">8 Time</th>
 												<td>
-													<input type="text" id="input_8t" class="form-control form-control-sm" style="width:100%" value="16:00 ~ 17:00">
+													<input type="text" id="input_8t" class="form-control form-control-sm" style="width:100%" disabled>
 												</td>
 												<th style="width: 30px;text-align: center;">9 Time</th>
 												<td>
-													<input type="text" id="input_9t" class="form-control form-control-sm" style="width:100%" value="17:00 ~ 18:00">
+													<input type="text" id="input_9t" class="form-control form-control-sm" style="width:100%" disabled>
 												</td>
 												<th style="width: 30px;text-align: center;">10 Time</th>
 												<td>
-													<input type="text" id="input_10t" class="form-control form-control-sm" style="width:100%" value="18:00 ~ 19:00">
+													<input type="text" id="input_10t" class="form-control form-control-sm" style="width:100%" disabled>
 												</td>
 											</tr>
-											<tr>
-												<td colspan="11" style="text-align: center;">
-													<button type="button" id="btn_initCreate" class="header-btn btn btn-warning btn-sm">생성</button>
-													<button type="button" id="btn_resetInputTime" class="header-btn btn btn-warning btn-sm">시간 설정 초기화</button>
-												</td>
-											</tr>
-										</tbody>
-									</table>
-								</div>
-								<div class="tab-pane fade" id="pills-modify" role="tabpanel" aria-labelledby="pills-modify-tab">
-									<table class="table-sm mt-1 mb-2" style="border-top: 1px lightgray solid; border-bottom: 1px lightgray solid; width:100%">
-										<tbody>
-											<tr>
+											
+											<tr class="search-filter" style="border-bottom: 1px solid lightgray">
 												<th>요일별 일괄 수정</th>
-												<td colspan="2">
+												<td colspan="7">
 													<div class="custom-control custom-checkbox custom-control-inline">
 														<input type="checkbox" id="checkbox_1" name="selectDay" class="custom-control-input" value="1">
 														<label class="custom-control-label" for="checkbox_1">월</label>
@@ -518,15 +608,15 @@ table tbody tr th {
 												</td>
 												<th>변경할 근무자 수</th>
 												<td>
-													<input type="number" id="input_workerForDay" class="form-control form-control-sm" style="width:100%">
+													<input type="number" id="input_workerForDay" class="form-control form-control-sm" style="width:100%" min="0">
 												</td>
 												<td style="text-align: center;">
 													<button type="button" id="btn_modifyByday" class="header-btn btn btn-warning btn-sm">적용</button>
 												</td>
 											</tr>
-											<tr>
+											<tr class="search-filter" style="border-bottom: 1px solid lightgray">
 												<th>Time별 일괄 수정</th>
-												<td colspan="2">
+												<td colspan="7">
 													<div class="custom-control custom-checkbox custom-control-inline">
 														<input type="checkbox" id="checkbox_1t" name="selectTime" class="custom-control-input" value="1t">
 														<label class="custom-control-label" for="checkbox_1t">1 Time</label>
@@ -570,10 +660,111 @@ table tbody tr th {
 												</td>
 												<th>변경할 근무자 수</th>
 												<td>
-													<input type="number" id="input_workerForTime" class="form-control form-control-sm" style="width:100%">
+													<input type="number" id="input_workerForTime" class="form-control form-control-sm" style="width:100%" min="0">
 												</td>
 												<td style="text-align: center;">
 													<button type="button" id="btn_modifyByTime" class="header-btn btn btn-warning btn-sm">적용</button>
+												</td>
+											</tr>
+											<tr class="search-filter">
+												<th rowspan="3">날짜범위 조건 수정</th>
+												<th>범위</th>
+												<td>
+													<div class="tui-datepicker-input tui-datetime-input">
+														<input id="input_startDate" type="text" aria-label="Date">
+														<span class="tui-ico-date"></span>
+														<div id="startDate-container" style="margin-left: -1px;"></div>
+													</div>
+												</td>
+												<td>
+													<div class="tui-datepicker-input tui-datetime-input">
+														<input id="input_endDate" type="text" aria-label="Date">
+														<span class="tui-ico-date"></span>
+														<div id="endDate-container" style="margin-left: -1px;"></div>
+													</div>
+												</td>
+											</tr>
+											<tr class="search-filter">
+												<td colspan="7">
+													<div class="custom-control custom-checkbox custom-control-inline">
+														<input type="checkbox" id="checkbox_range_1" name="selectRangeDay" class="custom-control-input" value="1">
+														<label class="custom-control-label" for="checkbox_range_1">월</label>
+													</div>
+													<div class="custom-control custom-checkbox custom-control-inline">
+														<input type="checkbox" id="checkbox_range_2" name="selectRangeDay" class="custom-control-input" value="2">
+														<label class="custom-control-label" for="checkbox_range_2">화</label>
+													</div>
+													<div class="custom-control custom-checkbox custom-control-inline">
+														<input type="checkbox" id="checkbox_range_3" name="selectRangeDay" class="custom-control-input" value="3">
+														<label class="custom-control-label" for="checkbox_range_3">수</label>
+													</div>
+													<div class="custom-control custom-checkbox custom-control-inline">
+														<input type="checkbox" id="checkbox_range_4" name="selectRangeDay" class="custom-control-input" value="4">
+														<label class="custom-control-label" for="checkbox_range_4">목</label>
+													</div>
+													<div class="custom-control custom-checkbox custom-control-inline">
+														<input type="checkbox" id="checkbox_range_5" name="selectRangeDay" class="custom-control-input" value="5">
+														<label class="custom-control-label" for="checkbox_range_5">금</label>
+													</div>
+													<div class="custom-control custom-checkbox custom-control-inline">
+														<input type="checkbox" id="checkbox_range_6" name="selectRangeDay" class="custom-control-input" value="6">
+														<label class="custom-control-label" for="checkbox_range_6">토</label>
+													</div>
+													<div class="custom-control custom-checkbox custom-control-inline">
+														<input type="checkbox" id="checkbox_range_0" name="selectRangeDay" class="custom-control-input" value="0">
+														<label class="custom-control-label" for="checkbox_range_0">일</label>
+													</div>
+												</td>
+											</tr>
+											<tr class="search-filter">
+												<td colspan="7">
+													<div class="custom-control custom-checkbox custom-control-inline">
+														<input type="checkbox" id="checkbox_range_1t" name="selectRangeTime" class="custom-control-input" value="1t">
+														<label class="custom-control-label" for="checkbox_range_1t">1 Time</label>
+													</div>
+													<div class="custom-control custom-checkbox custom-control-inline">
+														<input type="checkbox" id="checkbox_range_2t" name="selectRangeTime" class="custom-control-input" value="2t">
+														<label class="custom-control-label" for="checkbox_range_2t">2 Time</label>
+													</div>
+													<div class="custom-control custom-checkbox custom-control-inline">
+														<input type="checkbox" id="checkbox_range_3t" name="selectRangeTime" class="custom-control-input" value="3t">
+														<label class="custom-control-label" for="checkbox_range_3t">3 Time</label>
+													</div>
+													<div class="custom-control custom-checkbox custom-control-inline">
+														<input type="checkbox" id="checkbox_range_4t" name="selectRangeTime" class="custom-control-input" value="4t">
+														<label class="custom-control-label" for="checkbox_range_4t">4 Time</label>
+													</div>
+													<div class="custom-control custom-checkbox custom-control-inline">
+														<input type="checkbox" id="checkbox_range_5t" name="selectRangeTime" class="custom-control-input" value="5t">
+														<label class="custom-control-label" for="checkbox_range_5t">5 Time</label>
+													</div>
+													<div class="custom-control custom-checkbox custom-control-inline">
+														<input type="checkbox" id="checkbox_range_6t" name="selectRangeTime" class="custom-control-input" value="6t">
+														<label class="custom-control-label" for="checkbox_range_6t">6 Time</label>
+													</div>
+													<div class="custom-control custom-checkbox custom-control-inline">
+														<input type="checkbox" id="checkbox_range_7t" name="selectRangeTime" class="custom-control-input" value="7t">
+														<label class="custom-control-label" for="checkbox_range_7t">7 Time</label>
+													</div>
+													<div class="custom-control custom-checkbox custom-control-inline">
+														<input type="checkbox" id="checkbox_range_8t" name="selectRangeTime" class="custom-control-input" value="8t">
+														<label class="custom-control-label" for="checkbox_range_8t">8 Time</label>
+													</div>
+													<div class="custom-control custom-checkbox custom-control-inline">
+														<input type="checkbox" id="checkbox_range_9t" name="selectRangeTime" class="custom-control-input" value="9t">
+														<label class="custom-control-label" for="checkbox_range_9t">9 Time</label>
+													</div>
+													<div class="custom-control custom-checkbox custom-control-inline">
+														<input type="checkbox" id="checkbox_range_10t" name="selectRangeTime" class="custom-control-input" value="10t">
+														<label class="custom-control-label" for="checkbox_range_10t">10 Time</label>
+													</div>
+												</td>
+												<th>변경할 근무자 수</th>
+												<td>
+													<input type="number" id="input_workerForRange" class="form-control form-control-sm" style="width:100%" min="0">
+												</td>
+												<td style="text-align: center;">
+													<button type="button" id="btn_modifyByRange" class="header-btn btn btn-warning btn-sm">적용</button>
 												</td>
 											</tr>
 										</tbody>
@@ -581,11 +772,7 @@ table tbody tr th {
 								</div>
 							</div>
 							
-							
-
-							
-							
-							<div class="col-md-12 mt-3" style="max-height: 450px;overflow-y: scroll;">
+							<div class="col-md-12 mt-3" id="table_div" style="overflow-y: scroll;">
 								<div class="table-responsive" >
 									<table class="table table-bordered" id="table_reserve">
 										<thead>
@@ -609,7 +796,6 @@ table tbody tr th {
 									</table>
 								</div>
 							</div>
-							
 						</div>
 					</div>
 				</div>	

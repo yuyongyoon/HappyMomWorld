@@ -10,14 +10,12 @@ public interface AdminMapper {
 	List<Map<String,Object>> getUserList(Map<String,Object> param);
 	
 	void resetPassword(Map<String, Object> insertId);
-	
-	//void addAccount(Map<String,Object> param);
 
 	void updateAccount(Map<String, Object> param);
 
 	int checkId(Map<String,Object> param);
 	
-	List<Map<String, Object>> getBranchInfo(Map<String, Object> param);
+	List<Map<String, Object>> getBranchNameList(Map<String, Object> param);
 	
 	List<Map<String,Object>> getBranchList(Map<String,Object> param);
 	
@@ -31,5 +29,7 @@ public interface AdminMapper {
 	
 	void addReservationMasterData(List<Map<String,Object>> param);
 	
-	void deleteReservationMasterData(String stdMonth);
+	void deleteReservationMasterData(Map<String,Object> stdMonth);
+	
+	Map<String, Object> getBranchInfo(Map<String,Object> getBranchInfo);
 }

@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.reserve.app.mapper.AdminMapper">
 
-	<select id="getBranchInfo" parameterType="map"  resultType="map">
+	<select id="getBranchNameList" parameterType="map"  resultType="map">
 		SELECT tb_branch_mng.branch_code, branch_name
 		FROM tb_branch_mng, tb_user
 		WHERE 
@@ -94,8 +94,15 @@
 		)
 		values (
 			#{branch_code_col}, #{branch_name}, #{join_code}, #{login_id}, now(), #{login_id}, now()
+		);
+		insert into tb_branch_info (
+			branch_code, branch_name, created_id, created_dt, modified_id, modified_dt
+		)
+		values (
+			#{branch_code_col}, #{branch_name}, #{login_id}, now(), #{login_id}, now()
 		)
 	</insert>
+
 	
 	<update id="updateBranchInfo" parameterType="map">
 		update tb_branch_mng
@@ -111,64 +118,90 @@
 	</delete>
 
 	<select id="getReservationMasterData" parameterType="map"  resultType="map">
-		SELECT branch_code, rsv_month, rsv_date, rsv_worker, "1t", "2t", "3t", "4t", "5t", "6t", "7t", "8t", "9t", "10t"
-		FROM tb_reservation_master
+		SELECT
+			a.branch_code,
+			a.rsv_month,
+			a.rsv_date,
+			a.rsv_worker,
+			a."1t",
+			COUNT(b.select_time) FILTER (WHERE b.select_time = '1t') AS "1t_cnt",
+			a."2t",
+			COUNT(b.select_time) FILTER (WHERE b.select_time = '2t') AS "2t_cnt",
+			a."3t",
+			COUNT(b.select_time) FILTER (WHERE b.select_time = '3t') AS "3t_cnt",
+			a."4t",
+			COUNT(b.select_time) FILTER (WHERE b.select_time = '4t') AS "4t_cnt",
+			a."5t",
+			COUNT(b.select_time) FILTER (WHERE b.select_time = '5t') AS "5t_cnt",
+			a."6t",
+			COUNT(b.select_time) FILTER (WHERE b.select_time = '6t') AS "6t_cnt",
+			a."7t",
+			COUNT(b.select_time) FILTER (WHERE b.select_time = '7t') AS "7t_cnt",
+			a."8t",
+			COUNT(b.select_time) FILTER (WHERE b.select_time = '8t') AS "8t_cnt",
+			a."9t",
+			COUNT(b.select_time) FILTER (WHERE b.select_time = '9t') AS "9t_cnt",
+			a."10t",
+			COUNT(b.select_time) FILTER (WHERE b.select_time = '10t') AS "10t_cnt"
+		FROM tb_reservation_master a
+			LEFT OUTER JOIN tb_reservation_list b on   a.branch_code = b.branch_code AND a.rsv_month = b.rsv_month AND a.rsv_date = b.rsv_date
 		<where>
-			branch_code like #{branch_code}
-			and rsv_month like #{rsv_month}::varchar
+			<choose>
+				<when test="super_branch_code == null or super_branch_code == ''">
+					a.branch_code = #{branch_code} and a.rsv_month = #{rsv_month}
+				</when>
+				<otherwise>
+					a.branch_code = #{super_branch_code} and a.rsv_month = #{rsv_month}
+				</otherwise>
+			</choose>
 		</where>
-		ORDER BY rsv_month, rsv_date;
+		
+		
+		GROUP BY
+			a.branch_code,
+			a.rsv_month,
+			a.rsv_date,
+			a.rsv_worker
+		ORDER BY
+			a.rsv_month,
+			a.rsv_date
 	</select>
 
-<!-- 	<insert id="addReservationMasterData" parameterType="list"> -->
-<!-- 		insert into tb_reservation_master ( -->
-<!-- 			branch_code, rsv_month, rsv_date,  -->
-<!-- 			"1t", "2t", "3t", "4t", "5t",  -->
-<!-- 			"6t", "7t", "8t", "9t", "10t",  -->
-<!-- 			created_id, created_dt, modified_id, modified_dt -->
-<!-- 		) -->
-<!-- 		values  -->
-<!-- 		<foreach collection="list" item="item" separator=","> -->
-<!-- 			( -->
-<!-- 				#{branch_code}, #{item.rsv_month}, #{item.rsv_date}, -->
-<!-- 				#{item.1t}, #{item.2t}, #{item.3t}, #{item.4t}, #{item.5t}, -->
-<!-- 				#{item.6t}, #{item.7t}, #{item.8t}, #{item.9t}, #{item.10t}, -->
-<!-- 				#{login_id}, now(), #{login_id}, now() -->
-<!-- 			) -->
-<!-- 		</foreach> -->
-<!-- 	</insert> -->
 	<insert id="addReservationMasterData" parameterType="list">
-		<foreach collection="list" item="item" separator=";">
-			INSERT INTO tb_reservation_master (
-				branch_code, rsv_month, rsv_date, rsv_worker, 
-				"1t", "2t", "3t", "4t", "5t", 
-				"6t", "7t", "8t", "9t", "10t",
-				created_id, created_dt, modified_id, modified_dt
-			)
-			VALUES (
-				#{branch_code}, #{item.rsv_month}, #{item.rsv_date}, #{item.rsv_worker}::int,
+		insert into tb_reservation_master (
+			branch_code, rsv_month, rsv_date, rsv_worker,
+			"1t", "2t", "3t", "4t", "5t", 
+			"6t", "7t", "8t", "9t", "10t", 
+			created_id, created_dt, modified_id, modified_dt
+		)
+		values 
+		<foreach collection="list" item="item" separator=",">
+			(
+				#{branch_code}, #{item.rsv_month}, #{item.rsv_date},#{item.rsv_worker}::int,
 				#{item.1t}, #{item.2t}, #{item.3t}, #{item.4t}, #{item.5t},
 				#{item.6t}, #{item.7t}, #{item.8t}, #{item.9t}, #{item.10t},
 				#{login_id}, now(), #{login_id}, now()
-			);
-			INSERT INTO tb_reservation_count (
-				branch_code, rsv_month, rsv_date, 
-				"1t_cnt", "2t_cnt", "3t_cnt", "4t_cnt", "5t_cnt", 
-				"6t_cnt", "7t_cnt", "8t_cnt", "9t_cnt", "10t_cnt", 
-				created_id, created_dt, modified_id, modified_dt
 			)
-			VALUES (
-				#{branch_code}, #{item.rsv_month}, #{item.rsv_date},
-				#{item.1t}, #{item.2t}, #{item.3t}, #{item.4t}, #{item.5t},
-				#{item.6t}, #{item.7t}, #{item.8t}, #{item.9t}, #{item.10t},
-				#{login_id}, now(), #{login_id}, now()
-			);
 		</foreach>
 	</insert>
 
-	
 	<delete id="deleteReservationMasterData" parameterType="string">
 		delete from tb_reservation_master 
 		where branch_code=#{branch_code} and rsv_month=#{stdMonth}
 	</delete>
+	
+	<select id="getBranchInfo" parameterType="map"  resultType="map">
+		SELECT worker_num, "1t_name", "2t_name", "3t_name", "4t_name", "5t_name", "6t_name", "7t_name", "8t_name", "9t_name", "10t_name"
+		FROM tb_branch_info
+		<where>
+			<choose>
+				<when test="super_branch_code == null or super_branch_code == ''">
+					and branch_code = #{branch_code}
+				</when>
+				<otherwise>
+					and branch_code = #{super_branch_code}
+				</otherwise>
+			</choose>
+		</where>
+	</select>
 </mapper>
