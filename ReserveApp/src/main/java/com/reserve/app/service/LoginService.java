@@ -41,26 +41,49 @@ public class LoginService implements UserDetailsService {
 		
 		return loginEntity;
 	}
-	//회원 가입
-	public String signup(Map<String,Object> param) {
-		String msg = "success";
-		
+	// 회원 가입
+	public Map<String,Object> signup(Map<String,Object> param) {
+		Map<String,Object> result = new HashMap<String,Object>();
+				
 		try {
+			// 비빌번호 암호화
 			String orgPassword = param.get("password").toString();
 			SHA512PasswordEncoder sha512Service = new SHA512PasswordEncoder();
 			String encPassword = sha512Service.encode(orgPassword);
 			param.put("encoded_password", encPassword);
+			//가입 코드 확인
+			int codeCnt = checkCode(param);
 			
-			mapper.signup((Map<String,Object>) param);
+			if(codeCnt < 1) {// 가입 코드 미확인
+				result.put("msg", "notFoundCode");
+			} else {//가입 코드 확인
+				mapper.signup((Map<String,Object>) param);
+				result.put("msg", "success");
+				System.out.println("등록");
+			}
 		}catch (Exception e) {
 			e.printStackTrace();
-			msg = "fail";
+			result.put("msg", "fail");
 		}
-		return msg;
+		return result;
 	}
-	//아이디 중복 확인
-	public int checkId(Map<String,Object> param) {
+	// 아이디 중복 확인
+	public Map<String,Object> checkId(HashMap<String, Object> param) {
+		Map<String,Object> result = new HashMap<String,Object>();
 		int idCnt = mapper.checkId(param);
-		return idCnt;
+		System.out.println("idCnt :"+idCnt);
+		
+		if(idCnt < 1) {// 아이디 중복X
+			result.put("msg", "success");
+		}else {
+			result.put("msg", "fail");
+		}
+		return result;
+	}
+	// 가입 코드 확인
+	public int checkCode(Map<String,Object> param) {
+		int codeCnt = mapper.checkCode(param);
+		System.out.println("codeCnt: "+codeCnt);
+		return codeCnt;
 	}
 }

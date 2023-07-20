@@ -14,6 +14,7 @@ public interface LoginMapper {
 	
 	void signup(Map<String,Object> param);
 	
-	int checkId(Map<String, Object>param);
-
+	int checkId(Map<String,Object> param);
+	
+	int checkCode(Map<String,Object> param);
 }
