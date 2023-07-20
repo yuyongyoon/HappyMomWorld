@@ -56,7 +56,7 @@ input .form-control {
 	margin-bottom: 8px;
 }
 .page-inner{
-	height:850px;
+	padding-bottom: 0px;
 }
 .custom-control.custom-radio.custom-control-inline {
   margin-top: 6px;

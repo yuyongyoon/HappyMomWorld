@@ -1,8 +1,5 @@
-console.log('공통 호출')
-
 $.extend({
 	doPost : function(options){
-		console.log(JSON.stringify(options.data))
 		options.type='POST';
 		options.dataType='json';
 		options.timeout=3000000;
@@ -45,7 +42,15 @@ function cfn_gridResize(parentid,top){
 	let height = window.innerHeight-top;
 	$(window).resize(function(){
 		height = window.innerHeight-top;
-		$('#main-content #'+parentid).css('height',height+'px');	
+		$('.page-inner #'+parentid).css('height',height+'px');	
+	}).resize();
+}
+
+function cfn_tableResize(parentid,top){
+	let height = window.innerHeight-top;
+	$(window).resize(function(){
+		height = window.innerHeight-top;
+		$('.page-inner #'+parentid).css('max-height',height+'px');	
 	}).resize();
 }
 

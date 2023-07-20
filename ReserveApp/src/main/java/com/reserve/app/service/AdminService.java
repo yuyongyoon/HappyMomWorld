@@ -20,8 +20,8 @@ public class AdminService {
 	private AdminMapper mapper;
 	
 	// 지점 가져오기
-	public List<Map<String, Object>> getBranchInfo(Map<String,Object> param){
-		return mapper.getBranchInfo(param);
+	public List<Map<String, Object>> getBranchNameList(Map<String,Object> param){
+		return mapper.getBranchNameList(param);
 	}
 	
 	public List<Map<String,Object>> getUserList(Map<String,Object> param) {
@@ -32,7 +32,6 @@ public class AdminService {
 		SHA512PasswordEncoder sha512Service = new SHA512PasswordEncoder();
 		Map<String, Object> resetPwd = new HashMap<String, Object>();
 		
-		// 4자리 초기화 번호 생성
 		int p1 = (int)(Math.random() * 10);
 		int p2 = (int)(Math.random() * 10);
 		int p3 = (int)(Math.random() * 10);
@@ -45,35 +44,19 @@ public class AdminService {
 			
 		String pwd = "@" + p5 + Integer.toString(p1) + p6+ p7 + Integer.toString(p2) + Integer.toString(p3) + p8 + Integer.toString(p4);
 		
-		//암호화 
 		String encodePwd = sha512Service.encode(pwd);
 
-		//인코딩 체크
 		String rawPassword = pwd;
 		
 		param.put("raw_pw", rawPassword);
 		param.put("user_pw", encodePwd);
 
 		mapper.resetPassword(param);
-		
-		//초기화 번호만 리턴 return
 		resetPwd.put("raw_pw", param.get("raw_pw"));
 		
 		return resetPwd;
 	}
 	
-	/*
-	 * public String addAccount(Map<String,Object> param) { String msg = "success";
-	 * 
-	 * try { String orgPassword = param.get("password").toString();
-	 * SHA512PasswordEncoder sha512Service = new SHA512PasswordEncoder(); String
-	 * encPassword = sha512Service.encode(orgPassword);
-	 * param.put("encoded_password", encPassword);
-	 * 
-	 * mapper.addAccount((Map<String,Object>) param); }catch (Exception e) {
-	 * e.printStackTrace(); msg = "fail"; } return msg; }
-	 */
-
 	public String updateAccount(HashMap<String, Object> param) {
 		String msg = "success";
 		
@@ -86,11 +69,7 @@ public class AdminService {
 		return msg;
 	}
 
-	/*
-	 * public int checkId(Map<String,Object> param) { int idCnt =
-	 * mapper.checkId(param); return idCnt; }
-	 */
-	
+
 	public List<Map<String, Object>> getBranchList(Map<String,Object> param){
 		return mapper.getBranchList(param);
 	}
@@ -102,7 +81,6 @@ public class AdminService {
 		List<Map<String,Object>> branchList = (List<Map<String,Object>>)param.get("data");
 
 		try {
-			System.out.println(branchList);
 			for (Map<String,Object> branchData : branchList) {
 				if (branchData.get("status").equals("i")) {
 					int p1 = (int)(Math.random() * 10);
@@ -116,7 +94,6 @@ public class AdminService {
 				} else if (branchData.get("status").equals("u")) {
 					mapper.updateBranchInfo(branchData);
 				} else {
-					System.out.println("삭제");
 					mapper.deleteBranchInfo(branchData);
 				}
 			}
@@ -136,5 +113,29 @@ public class AdminService {
 			}
 		}
 		return msg;
+	}
+	
+	public List<Map<String, Object>> getReservationMasterData(Map<String,Object> param){
+		return mapper.getReservationMasterData(param);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public String saveReservationMasterData(Map<String,Object> param) {
+		String msg = "success";
+		List<Map<String,Object>> saveReservationMasterData = (List<Map<String,Object>>)param.get("data");
+		Map<String,Object> delInfo = (Map<String,Object>)param.get("delInfo");
+
+		try {
+			mapper.deleteReservationMasterData(delInfo);
+			mapper.addReservationMasterData(saveReservationMasterData);
+		} catch (Exception e) {
+			e.printStackTrace();
+			msg = "fail";
+		}
+		return msg;
+	}
+
+	public Map<String, Object> getBranchInfo(Map<String, Object> param) throws Exception {
+		return mapper.getBranchInfo(param);
 	}
 }
