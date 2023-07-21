@@ -126,6 +126,12 @@ $(document).ready(function() {
 						$('#td_time').css('display', 'none');
 						$('.td_range').css('display', 'none');
 						$('.td_filter').css('display', 'none');
+						
+						$('#reservation_tbody tr').each(function() {
+							$(this).find('td').each(function() {
+								$(this).find('input').prop('disabled', true);
+							});
+						});
 					}
 				},
 				error	: function(xhr,status){

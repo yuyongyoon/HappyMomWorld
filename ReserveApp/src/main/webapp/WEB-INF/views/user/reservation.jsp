@@ -53,7 +53,7 @@
 
 		}; //fnCom END
 		
-	ajaxCom.getReservation();
+// 	ajaxCom.getReservation();
 
 	}); //END $(document).ready
 	
