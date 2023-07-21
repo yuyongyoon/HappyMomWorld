@@ -3,7 +3,7 @@
 <mapper namespace="com.reserve.app.mapper.UserMapper">
 	
 	<select id="getUserInfo" parameterType="map" resultType="map">
-		SELECT id, name, phone_number, due_date, hospital, to_char(created_dt,'YYYY-MM-DD') as created_dt, to_char(modified_dt,'YYYY-MM-DD') as modified_dt, branch_code
+		SELECT id, name, phone_number, due_date, to_char(created_dt,'YYYY-MM-DD') as created_dt, to_char(modified_dt,'YYYY-MM-DD') as modified_dt, branch_code
 		FROM tb_user
 		WHERE id like #{login_id}
 		ORDER BY created_dt desc, id asc
@@ -14,7 +14,6 @@
 		SET name = #{name},
 			phone_number = #{phone_number},
 			due_date = #{due_date},
-			hospital = #{hospital},
 			modified_id = #{login_id}, 
 			modified_dt = now()
 		WHERE id = #{id}

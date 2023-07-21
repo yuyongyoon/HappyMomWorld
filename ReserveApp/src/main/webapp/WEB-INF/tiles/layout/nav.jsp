@@ -13,7 +13,6 @@ $(document).ready(function() {
 				name 		: $('#input_userName_info').val(),		// 이름
 				phone_number: $('#input_phoneNumber_info').val(),	// 전화번호
 				due_date	: updateInfo_datePicker.getDate() != null ? cfn_tuiDateFormat(updateInfo_datePicker.getDate()) : '',// 출산 예정일
-				hospital	: $('#input_hospital_info').val()		// 병원 정보
 		};
 		updateUserInfo(param);
 	})
@@ -122,7 +121,6 @@ $(document).ready(function() {
 			success	: function(result) {
 				$('#input_phoneNumber_info').val(result.phone_number);
 				$('#input_dueDate_info').val(result.due_date);
-				$('#input_hospital_info').val(result.hospital);
 				
 				updateInfo_datePicker = new tui.DatePicker('#wrapper_info', {
 					language: 'ko',
@@ -371,14 +369,6 @@ $(document).ready(function() {
 									<span class="tui-ico-date"></span>
 								</div>
 								<div id="wrapper_info" style="margin-top: -1px;"></div>
-							</div>
-						</div>
-						<div class="form-group row pb-0">
-							<div class="col-sm-3">
-								<label class="control-label mt-2" style="border: 0px;">출산 병원</label>
-							</div>
-							<div class="col-sm-9">
-								<input type="text" class="form-control" id="input_hospital_info">
 							</div>
 						</div>
 					</div>

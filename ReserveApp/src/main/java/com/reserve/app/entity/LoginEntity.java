@@ -18,7 +18,6 @@ public class LoginEntity implements UserDetails {
 	private String name;
 	private String phone_number;
 	private String due_date;
-	private String hospital;
 	private String branch_code;
 	
 	@Override
@@ -100,14 +99,6 @@ public class LoginEntity implements UserDetails {
 		this.due_date = due_date;
 	}
 	
-	public String getHospital() {
-		return hospital;
-	}
-	
-	public void setHospital(String hospital) {
-		this.hospital = hospital;
-	}
-	
 	public String getBranch_code() {
 		return branch_code;
 	}
@@ -119,13 +110,12 @@ public class LoginEntity implements UserDetails {
 	@Override
 	public String toString() {
 		return "LoginEntity [id=" + id + ", password=" + password + ", user_role=" + user_role + ", name=" + name
-				+ ", phone_number=" + phone_number + ", due_date=" + due_date + ", hospital=" + hospital
-				+ ", branch_code=" + branch_code + "]";
+				+ ", phone_number=" + phone_number + ", due_date=" + due_date + ", branch_code=" + branch_code + "]";
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(branch_code, due_date, hospital, id, name, password, phone_number, user_role);
+		return Objects.hash(branch_code, due_date, id, name, password, phone_number, user_role);
 	}
 
 	@Override
@@ -138,7 +128,7 @@ public class LoginEntity implements UserDetails {
 			return false;
 		LoginEntity other = (LoginEntity) obj;
 		return Objects.equals(branch_code, other.branch_code) && Objects.equals(due_date, other.due_date)
-				&& Objects.equals(hospital, other.hospital) && Objects.equals(id, other.id)
+				&& Objects.equals(id, other.id)
 				&& Objects.equals(name, other.name) && Objects.equals(password, other.password)
 				&& Objects.equals(phone_number, other.phone_number) && Objects.equals(user_role, other.user_role);
 	}

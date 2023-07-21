@@ -97,7 +97,6 @@ $(document).ready(function() {
 				{header : '예약날짜',				name : 'id',			width : 100,  align:'left',	sortable: true},
 				{header : '예약시간',				name : 'name',				width : 150, align:'left', sortable: true},
 				{header : '이름',					name : 'phone_number',		width : 150, align:'left', sortable: true},
-				{header : '전화번호',				name : 'hospital',			width : 200, align:'left', sortable: true},
 				{header : '예약변경',		name : 'change',	width : 150, align:'center', 
 					renderer: {
 						type : ButtonRenderer,

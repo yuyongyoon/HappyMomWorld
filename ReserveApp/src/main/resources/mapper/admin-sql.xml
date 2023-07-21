@@ -17,7 +17,6 @@
 			a.name,
 			a.phone_number,
 			a.due_date,
-			a.hospital,
 			a.user_role,
 			a.remark,
 			TO_CHAR(a.created_dt, 'YYYY-MM-DD') AS created_dt,
@@ -71,10 +70,10 @@
 	
 	<insert id="addAccount" parameterType="map">
 		insert into tb_user (
-			id, password, name, phone_number, due_date, hospital, user_role, remark, created_id, created_dt, modified_id, modified_dt, branch_code, user_status
+			id, password, name, phone_number, due_date, user_role, remark, created_id, created_dt, modified_id, modified_dt, branch_code, user_status
 		)
 		values (
-			#{id}, #{encoded_password}, #{name}, #{phone_number}, #{due_date}, #{hospital}, 'USER', #{remark}, #{login_id}, now(), #{login_id}, now(), #{branch_code}, 'Y'
+			#{id}, #{encoded_password}, #{name}, #{phone_number}, #{due_date}, 'USER', #{remark}, #{login_id}, now(), #{login_id}, now(), #{branch_code}, 'Y'
 		)
 	</insert>
 	
@@ -84,7 +83,6 @@
 			name = #{name},
 			phone_number = #{phone_number},
 			due_date = #{due_date},
-			hospital = #{hospital},
 			user_status = #{user_status},
 			remark = #{remark}, 
 			modified_id = #{login_id}, 

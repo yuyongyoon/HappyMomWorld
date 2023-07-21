@@ -152,6 +152,11 @@ $(document).ready(function() {
 					if(result.msg == 'success') {
 						checkUnload = false;
 						$('#btn_tableReset').css('display','none');
+						$('#select_filter').val('none');
+						$('#td_day').css('display', 'none');
+						$('#td_time').css('display', 'none');
+						$('.td_range').css('display', 'none');
+						cfn_tableResize('table_div', 300);
 						alert('저장 되었습니다.');
 					} else {
 						alert('오류가 발생하였습니다.');
@@ -301,7 +306,17 @@ $(document).ready(function() {
 			$("input[name='selectRangeTime']:checked").each(function() {
 				editTime.push($(this).val());
 			});
-
+			
+			
+			if(editDay.length == 0 && editTime.length == 0) {
+				alert('지정 조건을 선택해주세요.');
+				return false;
+			}
+			
+			if(inputWorker == '') {
+				alert('변경할 근무자 수를 입력해주세요.');
+				return false;
+			}
 			
 			let rows = $("#reservation_tbody tr").filter(function() {
 				let dateValue = $(this).attr("value");
@@ -551,7 +566,7 @@ $(document).on('input', '#reservation_tbody input[type="number"]', function() {
 												<td class="td_filter">
 													<div class="form-group">
 														<select class="form-control form-control-sm" id="select_filter">
-															<option value="">기준 선택</option>
+															<option value="none">기준 선택</option>
 															<option value="day">요일</option>
 															<option value="time">시간</option>
 															<option value="range">사용자 지정</option>
