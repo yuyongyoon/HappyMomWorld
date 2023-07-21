@@ -132,7 +132,7 @@
 			</div>
 		</div>
 	</body>
-			<script src="/static/assets/js/core/jquery.3.2.1.min.js"></script>
+		<script src="/static/assets/js/core/jquery.3.2.1.min.js"></script>
 		<script src="/static/assets/js/plugin/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
 		<script src="/static/assets/js/core/popper.min.js"></script>
 		<script src="/static/assets/js/core/bootstrap.min.js"></script>
@@ -140,11 +140,11 @@
 		<script src="/static/common/js/tui/tui-date-picker.js"></script>
 		<script src="/static/common/js/common.js"></script>
 		<script>
-		let id_check = false;		// id 확인 여부
-		let pwd_check = false;		// 확인용 비밀번호 확인 여부
-		let name_check = false;		// 이름 확인 여부
-		let number_check = false;	// 전화번호 확인 여부
-		let code_check = false;		// 가입코드 확인 여부
+		let id_check = false;		
+		let pwd_check = false;		
+		let name_check = false;		
+		let number_check = false;	
+		let code_check = false;		
 		
 		$(document).ready(function() {
 			
@@ -158,7 +158,7 @@
 				$('#forgotPwdDiv').css('display','block');
 			});
 			
-			//Datepicker 객체(출산 예정일)
+			
 			const signupDatepicker = new tui.DatePicker('#wrapper_signup', {
 					language: 'ko',
 					date: '',
@@ -231,8 +231,6 @@
 			
 			// 회원가입 Button
 			$('#btn_signup').click(function(){
-				console.log('id_check: ',id_check)
-				console.log('pwd_check: ',pwd_check)
 				//2~3자리 - 3~4자리 - 4자리
 				let telPattern = /([0-9]{1}[0-9]{1})-(\d{3,4})-(\d{4})/;
 				

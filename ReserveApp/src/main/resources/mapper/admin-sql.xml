@@ -11,34 +11,6 @@
 		ORDER BY tb_branch_mng.branch_code
 	</select>
 
-<!-- 	<select id="getUserList" parameterType="map" resultType="map"> -->
-<!-- 		SELECT id, name, phone_number, due_date, hospital, user_role, remark, to_char(created_dt,'YYYY-MM-DD') as created_dt, to_char(modified_dt,'YYYY-MM-DD') as modified_dt, branch_code -->
-<!-- 		FROM tb_user -->
-<!-- 		<where> -->
-<!-- 			user_role like 'USER' -->
-<!-- 			<choose> -->
-<!-- 				<when test="super_branch_code == null or super_branch_code == ''"> -->
-<!-- 					and branch_code = #{branch_code} -->
-<!-- 				</when> -->
-<!-- 				<otherwise> -->
-<!-- 					and branch_code = #{super_branch_code} -->
-<!-- 				</otherwise> -->
-<!-- 			</choose> -->
-<!-- 			<if test='userIdOrName != null and userIdOrName != ""'> -->
-<!-- 				and ( -->
-<!-- 					upper(id) like '%' || upper(#{userIdOrName}) || '%'  -->
-<!-- 					or upper(name) like '%' || upper(#{userIdOrName}) || '%' -->
-<!-- 				) -->
-<!-- 			</if> -->
-<!-- 			<if test='name!=null and name!=""'>and upper(name) like '%'||upper(#{name})||'%'</if> -->
-<!-- 			<if test='phoneNumber!=null and phoneNumber!=""'>and phone_number like '%'||upper(#{phoneNumber})||'%'</if> -->
-<!-- 			<if test="startDate != null and startDate != '' and endDate != null and endDate != ''"> -->
-<!-- 				and created_dt BETWEEN to_timestamp(#{startDate}, 'YYYY-MM-DD') AND to_timestamp(#{endDate}, 'YYYY-MM-DD') + INTERVAL '1 day' - INTERVAL '1 second' -->
-<!-- 			</if> -->
-<!-- 		</where> -->
-<!-- 		order by created_dt desc, id asc -->
-<!-- 	</select> -->
-
 	<select id="getUserList" parameterType="map" resultType="map">
 		SELECT
 			a.id,
@@ -51,7 +23,7 @@
 			TO_CHAR(a.created_dt, 'YYYY-MM-DD') AS created_dt,
 			a.branch_code,
 			CASE
-				WHEN b.has_reservation = 1 THEN 'Y'
+				WHEN b.has_reservation >= 1 THEN 'Y'
 				ELSE 'N'
 			END AS massage_reserve_cnt
 		FROM tb_user a

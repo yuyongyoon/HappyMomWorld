@@ -44,7 +44,7 @@ table tbody tr th {
 let checkUnload = true;
 
 $(document).ready(function() {
-	const  today = new Date();
+	const today = new Date();
 	const stdMonthPicker = new tui.DatePicker('#datepicker_create', {
 		date: today,
 		language: 'ko',
@@ -76,15 +76,13 @@ $(document).ready(function() {
 		]
 	});
 	
-	//통신 객체
+	$('#td_day').css('display', 'none');
+	$('#td_time').css('display', 'none');
+	$('.td_range').css('display', 'none');
+	$('.td_filter').css('display', 'none');
+	
 	ajaxCom = {
 		getReservationMasterData: function(){
-			if($('#role').val() == 'SUPERADMIN'){
-				$('#btn_save').css('display', 'none');
-				$('#tdBtn').css('display', 'none');
-				$('.search-filter').css('display', 'none');
-			}
-			
 			let param;
 			
 			if($('#select-branch').val() != '' && $('#role').val() == 'SUPERADMIN'){
@@ -92,7 +90,7 @@ $(document).ready(function() {
 					rsv_month : $('#datepicker_input_create').val(),
 					super_branch_code : $('#select-branch').val()
 				}
-			}else {
+			} else {
 				param = {
 					rsv_month : $('#datepicker_input_create').val()
 				}
@@ -105,14 +103,29 @@ $(document).ready(function() {
 					if(result.masterList == 0) {
 						$('#reservation_tbody').find('tr').remove();
 						$('#btn_initCreate').css('display', '');
+						$('#btn_tableReset').css('display', 'none');
 						$('#btn_clearFilter').css('display', 'none');
+						$('.td_filter').css('display', 'none');
+						$('#td_day').css('display', 'none');
+						$('#td_time').css('display', 'none');
+						$('.td_range').css('display', 'none');
+						$('.td_filter').css('display', 'none');
 					} else {
 						$('#btn_initCreate').css('display', 'none');
 						$('#btn_tableReset').css('display', 'none');
-						$('.search-filter').css('display', 'none');
-						$('#btn_clearFilter').css('display', 'none');
+						$('#btn_clearFilter').css('display', '');
+						$('.td_filter').css('display', '');
+						$('#input_basicWorker').val(result.branchInfo.worker_num);
 						fnCom.createTable(result);
-						fnCom.inputBranchInfo(result);
+					}
+					
+					if($('#role').val() == 'SUPERADMIN'){
+						$('#btn_initCreate').css('display', 'none');
+						$('#btn_clearFilter').css('display', 'none');
+						$('#td_day').css('display', 'none');
+						$('#td_time').css('display', 'none');
+						$('.td_range').css('display', 'none');
+						$('.td_filter').css('display', 'none');
 					}
 				},
 				error	: function(xhr,status){
@@ -150,18 +163,6 @@ $(document).ready(function() {
 		btn_get: function(){
 			ajaxCom.getReservationMasterData();
 		},
-		btn_changeFilter: function(){
-			if ($('.search-filter').css('display') == 'none') {
-				$('.search-filter').css('display', '');
-				$('#btn_clearFilter').css('display', '');
-				cfn_tableResize('table_div', 600);
-			} else {
-				$('.search-filter').css('display', 'none');
-				$('#btn_clearFilter').css('display', 'none');
-				cfn_tableResize('table_div', 350);
-			}
-			
-		},
 		btn_initCreate: function() {
 			$('#reservation_tbody').find('tr').remove();
 			$('#btn_tableReset').css('display','');
@@ -176,8 +177,8 @@ $(document).ready(function() {
 			}
 			
 			let stdMonth = stdMonthPicker.getDate();
-			let startOfMonth = new Date(stdMonth.getFullYear(), stdMonth.getMonth(), 1); // 기준 월의 시작일
-			let endOfMonth = new Date(stdMonth.getFullYear(), stdMonth.getMonth() + 1, 0); // 기준 월의 마지막일
+			let startOfMonth = new Date(stdMonth.getFullYear(), stdMonth.getMonth(), 1);
+			let endOfMonth = new Date(stdMonth.getFullYear(), stdMonth.getMonth() + 1, 0);
 			let datesArray = [];
 			let currentDate = new Date(startOfMonth);
 
@@ -200,6 +201,8 @@ $(document).ready(function() {
 			
 			$('#reservation_tbody').append(trData);
 			$('#btn_initCreate').css('display', 'none');
+			$('.td_filter').css('display','');
+			$('#btn_clearFilter').css('display', '');
 		},
 		btn_modifyByday: function(){
 			let editDay = [];
@@ -372,9 +375,9 @@ $(document).ready(function() {
 		btn_tableReset: function(){
 			if (confirm('입력된 내용들이 사라집니다.')) {
 				$('#reservation_tbody').find('tr').remove();
+				$('#btn_initCreate').css('display','');
+				$('#btn_tableReset').css('display','none');
 			}
-			$('#btn_initCreate').css('display','');
-			$('#btn_tableReset').css('display','none');
 		}
 	}; //btnCom END
 
@@ -398,14 +401,6 @@ $(document).ready(function() {
 				trData += '</tr>'
 			})
 			$('#reservation_tbody').append(trData);
-		},
-		inputBranchInfo: function(data){
-			$('#input_basicWorker').val(data.branchInfo.worker_num);
-			
-			for(let i = 0; i <= 10; i++){
-				$('#input_'+i+'t').val(data.branchInfo[i+'t_name']);
-			}
-			
 		},
 		setRangePicker(){
 			firstDayForRangePicker = new Date(stdMonthPicker.getDate().getFullYear(), stdMonthPicker.getDate().getMonth(), 1);
@@ -441,10 +436,33 @@ $(document).ready(function() {
 		ajaxCom.getReservationMasterData();
 		fnCom.setRangePicker();
 	})
-
-	ajaxCom.getReservationMasterData();
-	cfn_tableResize('table_div', 350);
 	
+	$('#select_filter').on('change', function(){
+		if($('#select_filter').val()=='day'){
+			$('#td_day').css('display', '');
+			$('#td_time').css('display', 'none');
+			$('.td_range').css('display', 'none');
+			cfn_tableResize('table_div', 350);
+		} else if($('#select_filter').val()=='time') {
+			$('#td_day').css('display', 'none');
+			$('#td_time').css('display', '');
+			$('.td_range').css('display', 'none');
+			cfn_tableResize('table_div', 350);
+		} else if($('#select_filter').val()=='range') {
+			$('#td_day').css('display', 'none');
+			$('#td_time').css('display', 'none');
+			$('.td_range').css('display', '');
+			cfn_tableResize('table_div', 430);
+		} else {
+			$('#td_day').css('display', 'none');
+			$('#td_time').css('display', 'none');
+			$('.td_range').css('display', 'none');
+			cfn_tableResize('table_div', 300);
+		}
+	})
+	
+	ajaxCom.getReservationMasterData();
+	cfn_tableResize('table_div', 300);
 }); //END $(document).ready
 
 
@@ -503,13 +521,13 @@ $(document).on('input', '#reservation_tbody input[type="number"]', function() {
 											</div>
 										</div>
 									</div>
-									
+
 									<table class="table-sm mt-0 mb-2" style="border-top: 1px lightgray solid; border-bottom: 1px lightgray solid; width:100%">
 										<tbody>
 											<tr>
-												<th colspan="1" style="width: 130px;">기준 월</th>
-												<td colspan="4">
-													<div class="tui-datepicker-input tui-datetime-input tui-has-focus">
+												<th colspan="1" style="width: 150px;">기준 월</th>
+												<td colspan="1">
+													<div class="tui-datepicker-input tui-datetime-input tui-has-focus" style="margin-bottom: 6px;">
 														<input type="text" id="datepicker_input_create" aria-label="Year-Month">
 														<span class="tui-ico-date"></span>
 													</div>
@@ -519,64 +537,29 @@ $(document).on('input', '#reservation_tbody input[type="number"]', function() {
 												<td>
 													<input type="number" id="input_basicWorker" class="form-control form-control-sm" style="width:50%" min="0">
 												</td>
-											</tr>
-											<tr>
-												<td colspan="11" style="text-align: center;" id="tdBtn">
+												<td id="td_tableBtnList" style="text-align:center;">
 													<button type="button" id="btn_initCreate" class="header-btn btn btn-warning btn-sm">생성</button>
 													<button type="button" id="btn_tableReset" class="header-btn btn btn-warning btn-sm">테이블 초기화</button>
-													<button type="button" id="btn_changeFilter" class="header-btn btn btn-warning btn-sm">필터</button>
+												</td>
+												<th class="td_filter">적용 기준</th>
+												<td class="td_filter">
+													<div class="form-group">
+														<select class="form-control form-control-sm" id="select_filter">
+															<option value="">기준 선택</option>
+															<option value="day">요일</option>
+															<option value="time">시간</option>
+															<option value="range">사용자 지정</option>
+														</select>
+													</div>
+												</td>
+												<td style="text-align:center;">
 													<button type="button" id="btn_clearFilter" class="header-btn btn btn-warning btn-sm">필터 초기화</button>
 												</td>
 											</tr>
-											<tr class="search-filter" style="border-top: 1px solid lightgray;">
-												<th rowspan="2">시간대 설정</th>
-												<th style="width: 30px;text-align: center;">1 Time</th>
-												<td>
-													<input type="text" id="input_1t" class="form-control form-control-sm" style="width:100%" disabled>
-												</td>
-												<th style="width: 30px;text-align: center;">2 Time</th>
-												<td>
-													<input type="text" id="input_2t" class="form-control form-control-sm" style="width:100%" disabled>
-												</td>
-												<th style="width: 30px;text-align: center;">3 Time</th>
-												<td>
-													<input type="text" id="input_3t" class="form-control form-control-sm" style="width:100%" disabled>
-												</td>
-												<th style="width: 30px;text-align: center;">4 Time</th>
-												<td>
-													<input type="text" id="input_4t" class="form-control form-control-sm" style="width:100%" disabled>
-												</td>
-												<th style="width: 30px;text-align: center;">5 Time</th>
-												<td>
-													<input type="text" id="input_5t" class="form-control form-control-sm" style="width:100%" disabled>
-												</td>
-											</tr>
-											<tr class="search-filter" style="border-bottom: 1px solid lightgray">
-												<th style="width: 30px;text-align: center;">6 Time</th>
-												<td>
-													<input type="text" id="input_6t" class="form-control form-control-sm" style="width:100%" disabled>
-												</td>
-												<th style="width: 30px;text-align: center;">7 Time</th>
-												<td>
-													<input type="text" id="input_7t" class="form-control form-control-sm" style="width:100%" disabled>
-												</td>
-												<th style="width: 30px;text-align: center;">8 Time</th>
-												<td>
-													<input type="text" id="input_8t" class="form-control form-control-sm" style="width:100%" disabled>
-												</td>
-												<th style="width: 30px;text-align: center;">9 Time</th>
-												<td>
-													<input type="text" id="input_9t" class="form-control form-control-sm" style="width:100%" disabled>
-												</td>
-												<th style="width: 30px;text-align: center;">10 Time</th>
-												<td>
-													<input type="text" id="input_10t" class="form-control form-control-sm" style="width:100%" disabled>
-												</td>
-											</tr>
 											
-											<tr class="search-filter" style="border-bottom: 1px solid lightgray">
+											<tr id="td_day" style="border-bottom: 1px solid lightgray">
 												<th>요일별 일괄 수정</th>
-												<td colspan="7">
+												<td colspan="4">
 													<div class="custom-control custom-checkbox custom-control-inline">
 														<input type="checkbox" id="checkbox_1" name="selectDay" class="custom-control-input" value="1">
 														<label class="custom-control-label" for="checkbox_1">월</label>
@@ -614,9 +597,9 @@ $(document).on('input', '#reservation_tbody input[type="number"]', function() {
 													<button type="button" id="btn_modifyByday" class="header-btn btn btn-warning btn-sm">적용</button>
 												</td>
 											</tr>
-											<tr class="search-filter" style="border-bottom: 1px solid lightgray">
+											<tr id="td_time" style="border-bottom: 1px solid lightgray">
 												<th>Time별 일괄 수정</th>
-												<td colspan="7">
+												<td colspan="4">
 													<div class="custom-control custom-checkbox custom-control-inline">
 														<input type="checkbox" id="checkbox_1t" name="selectTime" class="custom-control-input" value="1t">
 														<label class="custom-control-label" for="checkbox_1t">1 Time</label>
@@ -666,17 +649,15 @@ $(document).on('input', '#reservation_tbody input[type="number"]', function() {
 													<button type="button" id="btn_modifyByTime" class="header-btn btn btn-warning btn-sm">적용</button>
 												</td>
 											</tr>
-											<tr class="search-filter">
-												<th rowspan="3">날짜범위 조건 수정</th>
-												<th>범위</th>
-												<td>
+											<tr class="td_range">
+												<th rowspan="3">사용자 지정 조건 수정</th>
+												<td colspan="7">
 													<div class="tui-datepicker-input tui-datetime-input">
 														<input id="input_startDate" type="text" aria-label="Date">
 														<span class="tui-ico-date"></span>
 														<div id="startDate-container" style="margin-left: -1px;"></div>
 													</div>
-												</td>
-												<td>
+													<span style="margin-left: 10px;margin-right: 10px;margin-top: 30px;vertical-align: bottom;">~</span>
 													<div class="tui-datepicker-input tui-datetime-input">
 														<input id="input_endDate" type="text" aria-label="Date">
 														<span class="tui-ico-date"></span>
@@ -684,7 +665,7 @@ $(document).on('input', '#reservation_tbody input[type="number"]', function() {
 													</div>
 												</td>
 											</tr>
-											<tr class="search-filter">
+											<tr class="td_range">
 												<td colspan="7">
 													<div class="custom-control custom-checkbox custom-control-inline">
 														<input type="checkbox" id="checkbox_range_1" name="selectRangeDay" class="custom-control-input" value="1">
@@ -716,8 +697,8 @@ $(document).on('input', '#reservation_tbody input[type="number"]', function() {
 													</div>
 												</td>
 											</tr>
-											<tr class="search-filter">
-												<td colspan="7">
+											<tr class="td_range">
+												<td colspan="4">
 													<div class="custom-control custom-checkbox custom-control-inline">
 														<input type="checkbox" id="checkbox_range_1t" name="selectRangeTime" class="custom-control-input" value="1t">
 														<label class="custom-control-label" for="checkbox_range_1t">1 Time</label>

@@ -9,9 +9,9 @@
 	</select>
 	
 	<insert id="signup" parameterType="map">
-		INSERT INTO tb_user(id, password, name, phone_number, due_date, user_role, created_id, created_dt, user_status, join_code, branch_code)
+		INSERT INTO tb_user(id, password, name, phone_number, due_date, user_role, created_id, created_dt, user_status, branch_code)
 		VALUES (
-			#{id}, #{encoded_password}, #{name}, #{phone_number}, #{due_date}, 'USER', #{id}, now(), 'Y', #{join_code},
+			#{id}, #{encoded_password}, #{name}, #{phone_number}, #{due_date}, 'USER', #{id}, now(), 'Y',
 			(select branch_code from tb_branch_mng	where join_code = #{join_code}) 
 		)		
 	</insert>

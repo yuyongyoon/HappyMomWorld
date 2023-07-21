@@ -109,7 +109,6 @@ $(document).ready(function() {
 				name 		: $('#input_userName_edit').val(),		// 이름
 				phone_number: $('#input_phoneNumber_edit').val(),	// 전화번호
 				due_date	: updatemodalDatepicker.getDate() != null ? cfn_tuiDateFormat(updatemodalDatepicker.getDate()) : '',	// 출산 예정일
-				hospital	: $('#input_hospital_edit').val(),		// 병원 정보
 				user_status	: $('#input_enabled_edit').val(),		// 사용 여부
 				remark		: $('#input_rmk_edit').val()			// 비고
 			}
@@ -148,7 +147,6 @@ $(document).ready(function() {
 				{header : '이름',				name : 'name',				width : 150, align:'left', sortable: true},
 				{header : '전화번호',			name : 'phone_number',		width : 150, align:'left', sortable: true},
 				{header : '출산 예정일',		name : 'due_date',			width : 150, align:'left', sortable: true},
-				{header : '출산 병원',			name : 'hospital',			width : 200, align:'left', sortable: true},
 				{header : '마사지 예약 여부',	name : 'massage_reserve_cnt',	width : 150, align:'center', formatter: 'listItemText', disabled:true,
 					editor: { type: 'select', options: { listItems: [{text:'YES', value:'Y'},{text:'NO',value:'N'}]}, sortable: true }
 				},
@@ -167,7 +165,6 @@ $(document).ready(function() {
 					$('#input_userId_edit').val(rowData.id);
 					$('#input_userName_edit').val(rowData.name);
 					$('#input_phoneNumber_edit').val(rowData.phone_number);
-					$('#input_hospital_edit').val(rowData.hospital),
 					$('#input_role_edit').val(rowData.user_role),
 					$('#input_rmk_edit').val(rowData.remark);
 					
@@ -288,14 +285,6 @@ $(document).ready(function() {
 												</div>
 												<div class="form-group row pb-0">
 													<div class="col-sm-2">
-														<label class="control-label mt-2" style="border: 0px;">병원</label>
-													</div>
-													<div class="col-sm-10">
-														<input type="text" class="form-control" id="input_hospital_edit">
-													</div>
-												</div>
-												<div class="form-group row pb-0">
-													<div class="col-sm-2">
 														<label class="control-label mt-2" style="border: 0px;">사용 여부</label>
 													</div>
 													<div class="col-sm-10">
@@ -392,14 +381,6 @@ $(document).ready(function() {
 															<span class="tui-ico-date"></span>
 														</div>
 														<div id="wrapper_add" style="margin-top: -1px;"></div>
-													</div>
-												</div>
-												<div class="form-group row pb-0">
-													<div class="col-sm-3">
-														<label class="control-label mt-2" style="border: 0px;">병원</label>
-													</div>
-													<div class="col-sm-9">
-														<input type="text" class="form-control" id="input_hospital_add">
 													</div>
 												</div>
 												<div class="form-group row pb-0">
