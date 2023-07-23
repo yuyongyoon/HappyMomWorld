@@ -64,7 +64,8 @@ $(document).ready(function() {
 	})
 
 	// 비밀번호 변경 버튼 클릭 시
-	$('#updateUserPwd_list').click(function() {
+	$('.updateUserPwd_list').click(function() {
+		console.log('클릭')
 		$('#nav-updatePwd-modal').modal('show');
 		//새로운 비밀번호 확인
 		$('#input_checkNewPwd_pwd').blur(function() {
@@ -242,7 +243,7 @@ $(document).ready(function() {
 					
 						<li class="nav-item dropdown hidden-caret">
 							<a class="nav-link dropdown-toggle" href="#" id="userMenu" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-								<span><sec:authentication property="principal.name" /> 님</span>
+								<i class="fas fa-user"></i><span style="margin-left:10px"><sec:authentication property="principal.name" /> 님</span>
 							</a>
 							
 							<ul class="dropdown-menu dropdown-user animated fadeIn" aria-labelledby="userMenu">
@@ -251,10 +252,17 @@ $(document).ready(function() {
 										<a class="dropdown-item" style="cursor:pointer;">회원정보 변경</a>
 									</li>
 									
-									<li id="updateUserPwd_list">
+									<li class="updateUserPwd_list">
 										<a class="dropdown-item" style="cursor:pointer;">비밀번호 변경</a>
 									</li>
 								</sec:authorize>
+								
+								<sec:authorize access="hasAnyRole('ROLE_ADMIN','ROLE_SUPERADMIN')">
+									<li class="updateUserPwd_list">
+										<a class="dropdown-item" style="cursor:pointer;">비밀번호 변경</a>
+									</li>
+								</sec:authorize>
+								
 								<li id="logOut_list">
 									<a class="dropdown-item" href="#" onclick="document.getElementById('logout').submit();">
 										<span>로그아웃</span>
@@ -320,10 +328,9 @@ $(document).ready(function() {
 				
 			</div>
 		</nav>
-		<!-- End Navbar -->
 	</div>
+	
 	<sec:authorize access="hasAnyRole('ROLE_USER')">
-		<!-- 개인 정보 변경 modal -->
 		<div class="modal fade" id="nav-updateInfo-modal" tabindex="-1" role="dialog" aria-hidden="true">
 		<div class="modal-dialog modal-dialog-centered" role="document">
 			<div class="modal-content">
@@ -382,47 +389,48 @@ $(document).ready(function() {
 		</div>
 	</div>
 	</sec:authorize>
-	<sec:authorize access="hasAnyRole('ROLE_USER')">
-		<!-- 비밀 번호 변경 modal -->
-		<div class="modal fade" id="nav-updatePwd-modal" tabindex="-1" role="dialog" aria-hidden="true">
+
+	<div class="modal fade" id="nav-updatePwd-modal" tabindex="-1" role="dialog" aria-hidden="true">
 		<div class="modal-dialog modal-dialog-centered" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
 					<h4 class="modal-title" id="updatePwd_modalTitle">비밀 번호 변경</h4>
 				</div>
 				<div class="modal-body">
-					<div class="col-12">
-						<div class="form-group row pb-0">
-							<div class="col-sm-3">
-								<label for="input_orgPwd_pwd" class="control-label mt-2">기존 비밀번호</label>
+					<form>
+						<div class="col-12">
+							<div class="form-group row pb-0">
+								<div class="col-sm-3">
+									<label for="input_orgPwd_pwd" class="control-label mt-2">기존 비밀번호</label>
+								</div>
+								<div class="col-sm-9">
+									<input type="password" class="form-control" id="input_orgPwd_pwd" autoComplete="off"/>
+								</div>
 							</div>
-							<div class="col-sm-9">
-								<input type="password" class="form-control" id="input_orgPwd_pwd" />
+							<div class="col-sm-12 pb-0 mt-2" id="checkOrgPwd_msg_div">
+								<span id="checkOrgPwd_msg" style="color: red; display: flex;justify-content: center;"></span>
+							</div>
+							<div class="form-group row pb-0">
+								<div class="col-sm-3">
+									<label class="control-label mt-2" style="border: 0px;">새 비밀번호</label>
+								</div>
+								<div class="col-sm-9">
+									<input type="password" class="form-control" id="input_newPwd_pwd" maxlength='13' autoComplete="off"> 
+								</div>
+							</div>
+							<div class="form-group row pb-0">
+								<div class="col-sm-3">
+									<label class="control-label mt-2" style="border: 0px;">새 비밀번호 확인</label>
+								</div>
+								<div class="col-sm-9">
+									<input type="password" class="form-control" id="input_checkNewPwd_pwd" maxlength='13' autoComplete="off"> 
+								</div>
+							</div>
+							<div class="col-sm-12 pb-0 mt-2" id="checkNewPwd_msg_div">
+								<span id="checkNewPwd_msg" style="color: red; display: flex;justify-content: center;"></span>
 							</div>
 						</div>
-						<div class="col-sm-12 pb-0 mt-2" id="checkOrgPwd_msg_div">
-							<span id="checkOrgPwd_msg" style="color: red; display: flex;justify-content: center;"></span>
-						</div>
-						<div class="form-group row pb-0">
-							<div class="col-sm-3">
-								<label class="control-label mt-2" style="border: 0px;">새 비밀번호</label>
-							</div>
-							<div class="col-sm-9">
-								<input type="password" class="form-control" id="input_newPwd_pwd" maxlength='13'> 
-							</div>
-						</div>
-						<div class="form-group row pb-0">
-							<div class="col-sm-3">
-								<label class="control-label mt-2" style="border: 0px;">새 비밀번호 확인</label>
-							</div>
-							<div class="col-sm-9">
-								<input type="password" class="form-control" id="input_checkNewPwd_pwd" maxlength='13'> 
-							</div>
-						</div>
-						<div class="col-sm-12 pb-0 mt-2" id="checkNewPwd_msg_div">
-							<span id="checkNewPwd_msg" style="color: red; display: flex;justify-content: center;"></span>
-						</div>
-					</div>
+					</form>
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-secondary" id="btn_updatePwd_save">비밀번호 변경</button>
@@ -431,4 +439,4 @@ $(document).ready(function() {
 			</div>
 		</div>
 	</div>
-	</sec:authorize>
+	

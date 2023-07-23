@@ -19,7 +19,6 @@ public class AdminService {
 	@Autowired
 	private AdminMapper mapper;
 	
-	// 지점 가져오기
 	public List<Map<String, Object>> getBranchNameList(Map<String,Object> param){
 		return mapper.getBranchNameList(param);
 	}
@@ -122,12 +121,14 @@ public class AdminService {
 	@SuppressWarnings("unchecked")
 	public String saveReservationMasterData(Map<String,Object> param) {
 		String msg = "success";
-		List<Map<String,Object>> saveReservationMasterData = (List<Map<String,Object>>)param.get("data");
-		Map<String,Object> delInfo = (Map<String,Object>)param.get("delInfo");
-
 		try {
+			List<Map<String,Object>> saveReservationMasterData = (List<Map<String,Object>>)param.get("data");
+			Map<String,Object> delInfo = (Map<String,Object>)param.get("delInfo");
+			Map<String,Object> branchReservationInfo = (Map<String,Object>)param.get("branchReservationInfo");
+			
 			mapper.deleteReservationMasterData(delInfo);
 			mapper.addReservationMasterData(saveReservationMasterData);
+			mapper.addbranchReservationInfo(branchReservationInfo);
 		} catch (Exception e) {
 			e.printStackTrace();
 			msg = "fail";
@@ -135,7 +136,33 @@ public class AdminService {
 		return msg;
 	}
 
-	public Map<String, Object> getBranchInfo(Map<String, Object> param) throws Exception {
-		return mapper.getBranchInfo(param);
+	public Map<String, Object> getBranchReservationInfo(Map<String, Object> param) throws Exception {
+		int cntBranchReservationInfo = mapper.getCntBranchReservationInfo(param);
+		
+		if(cntBranchReservationInfo == 0) {
+			param.put("rsv_month", "2023-00"); //기본값 하드코딩
+			return mapper.getBranchReservationInfo(param);
+		} else {
+			return mapper.getBranchReservationInfo(param);
+		}
+	}
+	
+	public String saveBranchReservationInfo(Map<String,Object> param) {
+		String msg = "success";
+		
+		try {
+			int branchReservationInfo = mapper.getCntbranchReservationInfo(param);
+			
+			if(branchReservationInfo > 0) {
+				mapper.updatebranchReservationInfo(param);
+			} else {
+				mapper.addbranchReservationInfo(param);
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			msg = "fail";
+		}
+		return msg;
 	}
 }

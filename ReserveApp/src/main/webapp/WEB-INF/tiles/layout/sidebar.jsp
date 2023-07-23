@@ -21,7 +21,7 @@
 						<a href="/admin/user"><i class="fas fa-user-alt"></i><p>회원 관리</p></a>
 					</li>
 					<li class="nav-item">
-						<a href="/admin/reservationStatus"><i class="far fa-calendar-alt"></i><p>예약 현황 조회</p></a>
+						<a href="/admin/reservation_status"><i class="far fa-calendar-alt"></i><p>예약 현황 조회</p></a>
 					</li>
 					<li class="nav-item">
 						<a href="/admin/reservation_master"><i class="fas fa-cog"></i><p>예약 마스터 관리</p></a>
@@ -33,7 +33,7 @@
 				
 				<sec:authorize access="hasAnyRole('ROLE_SUPERADMIN')">
 					<li class="nav-item">
-						<a href="/admin/branch"><i class="fas fa-code-branch"></i><p>지점 관리</p></a>
+						<a href="/admin/branch_manager"><i class="fas fa-code-branch"></i><p>지점 관리</p></a>
 					</li>
 				</sec:authorize>
 				
@@ -53,8 +53,8 @@
 <script>
 $(document).ready(function() {
 	$('.sidebar .nav-item').click(function() {
-		$('.sidebar .nav-item').removeClass('active'); // .sidebar .nav-item에서 active 클래스 제거
-		$(this).addClass('active'); // 클릭한 .sidebar .nav-item에 active 클래스 추가
+		$('.sidebar .nav-item').removeClass('active');
+		$(this).addClass('active');
 	});
 });
 </script>

@@ -142,7 +142,6 @@
 			a.branch_code,
 			a.rsv_month,
 			a.rsv_date,
-			a.rsv_worker,
 			a."1t",
 			COUNT(b.select_time) FILTER (WHERE b.select_time = '1t') AS "1t_cnt",
 			a."2t",
@@ -175,13 +174,10 @@
 				</otherwise>
 			</choose>
 		</where>
-		
-		
 		GROUP BY
 			a.branch_code,
 			a.rsv_month,
-			a.rsv_date,
-			a.rsv_worker
+			a.rsv_date
 		ORDER BY
 			a.rsv_month,
 			a.rsv_date
@@ -189,7 +185,7 @@
 
 	<insert id="addReservationMasterData" parameterType="list">
 		insert into tb_reservation_master (
-			branch_code, rsv_month, rsv_date, rsv_worker,
+			branch_code, rsv_month, rsv_date,
 			"1t", "2t", "3t", "4t", "5t", 
 			"6t", "7t", "8t", "9t", "10t", 
 			created_id, created_dt, modified_id, modified_dt
@@ -197,7 +193,7 @@
 		values 
 		<foreach collection="list" item="item" separator=",">
 			(
-				#{branch_code}, #{item.rsv_month}, #{item.rsv_date},#{item.rsv_worker}::int,
+				#{branch_code}, #{item.rsv_month}, #{item.rsv_date},
 				#{item.1t}, #{item.2t}, #{item.3t}, #{item.4t}, #{item.5t},
 				#{item.6t}, #{item.7t}, #{item.8t}, #{item.9t}, #{item.10t},
 				#{login_id}, now(), #{login_id}, now()
@@ -210,10 +206,11 @@
 		where branch_code=#{branch_code} and rsv_month=#{stdMonth}
 	</delete>
 	
-	<select id="getBranchInfo" parameterType="map"  resultType="map">
-		SELECT worker_num, "1t_name", "2t_name", "3t_name", "4t_name", "5t_name", "6t_name", "7t_name", "8t_name", "9t_name", "10t_name"
-		FROM tb_branch_info
+	<select id="getCntBranchReservationInfo" parameterType="map"  resultType="int">
+		SELECT count(branch_code)
+		FROM tb_reservation_info
 		<where>
+			rsv_month like #{rsv_month}
 			<choose>
 				<when test="super_branch_code == null or super_branch_code == ''">
 					and branch_code = #{branch_code}
@@ -224,4 +221,70 @@
 			</choose>
 		</where>
 	</select>
+	
+	<select id="getBranchReservationInfo" parameterType="map"  resultType="map">
+		SELECT worker_num, t1_name, t2_name, t3_name, t4_name, t5_name, t6_name, t7_name, t8_name, t9_name, t10_name
+		FROM tb_reservation_info
+		<where>
+			AND rsv_month like #{rsv_month}
+			<choose>
+				<when test="super_branch_code == null or super_branch_code == ''">
+					AND branch_code = #{branch_code}
+				</when>
+				<otherwise>
+					AND branch_code = #{super_branch_code}
+				</otherwise>
+			</choose>
+		</where>
+	</select>
+	
+	<select id="getCntbranchReservationInfo" parameterType="map"  resultType="int">
+		SELECT count(branch_code)
+		FROM tb_reservation_info
+		<where>
+			rsv_month like #{rsv_month}
+			<choose>
+				<when test="super_branch_code == null or super_branch_code == ''">
+					and branch_code = #{branch_code}
+				</when>
+				<otherwise>
+					and branch_code = #{super_branch_code}
+				</otherwise>
+			</choose>
+		</where>
+	</select>
+	
+	<insert id="addbranchReservationInfo" parameterType="map">
+		INSERT into tb_reservation_info (
+			branch_code, rsv_month, worker_num,
+			t1_name, t2_name, t3_name, t4_name, t5_name,
+			t6_name, t7_name, t8_name, t9_name, t10_name,
+			created_id, created_dt, modified_id, modified_dt
+		)
+		VALUES (
+			#{branch_code}, #{rsv_month}, #{worker_num}::int,
+			#{t1_name}, #{t2_name}, #{t3_name}, #{t4_name}, #{t5_name},
+			#{t6_name}, #{t7_name}, #{t8_name}, #{t9_name}, #{t10_name},
+			#{login_id}, now(), #{login_id}, now()
+		)
+	</insert>
+	
+	<update id="updatebranchReservationInfo" parameterType="map">
+		UPDATE tb_reservation_info
+		SET 
+			worker_num = #{worker_num}::int,
+			t1_name = #{t1_name},
+			t2_name = #{t2_name},
+			t3_name = #{t3_name},
+			t4_name = #{t4_name},
+			t5_name = #{t5_name},
+			t6_name = #{t6_name},
+			t7_name = #{t7_name},
+			t8_name = #{t8_name},
+			t9_name = #{t9_name},
+			t10_name = #{t10_name},
+			modified_id = #{login_id},
+			modified_dt = now()
+		WHERE branch_code = #{branch_code} and rsv_month = #{rsv_month}
+	</update>
 </mapper>

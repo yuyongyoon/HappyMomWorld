@@ -29,7 +29,15 @@ public interface AdminMapper {
 	
 	void addReservationMasterData(List<Map<String,Object>> param);
 	
-	void deleteReservationMasterData(Map<String,Object> stdMonth);
+	void deleteReservationMasterData(Map<String,Object> param);
 	
-	Map<String, Object> getBranchInfo(Map<String,Object> getBranchInfo);
+	int getCntBranchReservationInfo(Map<String,Object> param);
+	
+	Map<String, Object> getBranchReservationInfo(Map<String,Object> param);
+	
+	int getCntbranchReservationInfo(Map<String,Object> param);
+	
+	int addbranchReservationInfo(Map<String,Object> param);
+	
+	int updatebranchReservationInfo(Map<String,Object> param);
 }

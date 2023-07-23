@@ -8,6 +8,9 @@
 		<put-attribute name="sidebar"	value="/WEB-INF/tiles/layout/sidebar.jsp" />
 	</definition>
 	
+	<!-- 에러 페이지 -->
+	<definition name="error" 		template="/WEB-INF/views/error/error.jsp"/>
+	
 	<!-- 로그인 -->
 	<definition name="login" 		template="/WEB-INF/views/login/login.jsp"/>
 

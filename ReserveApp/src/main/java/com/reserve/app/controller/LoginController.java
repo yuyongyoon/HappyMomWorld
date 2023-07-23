@@ -1,11 +1,17 @@
 package com.reserve.app.controller;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,6 +27,17 @@ public class LoginController {
 
 	@Autowired
 	LoginService loginService;
+	
+	@RequestMapping(value = "/", method = RequestMethod.GET)
+	public void redirectUrl(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+		Set<String> roles = AuthorityUtils.authorityListToSet(authentication.getAuthorities());
+		
+		if (roles.contains("ROLE_ADMIN") || roles.contains("ROLE_SUPERADMIN")) {
+			response.sendRedirect("/admin/dashboard");
+		} else {
+			response.sendRedirect("/user/calendar");
+		}
+	}
 
 	// 로그인
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
@@ -46,18 +63,4 @@ public class LoginController {
 		Map<String, Object> result = loginService.checkId(param);
 		return result; 
 	}
-	// 가입 코드 확인
-	/*
-	 * @RequestMapping(value = "/join/checkCode", method = RequestMethod.POST)
-	 * 
-	 * @ResponseBody public void checkCode(HttpServletRequest request, @RequestBody
-	 * String code) throws Exception {
-	 * 
-	 * Map<String,Object> result = new HashMap<String,Object>(); int checkedCode =
-	 * loginService.checkCode(code); result.put("codeCnt", checkedCode);
-	 * System.out.println("codeCnt :"+checkedCode); return result; int result =
-	 * loginService.checkCode(code); return result;
-	 * 
-	 * }
-	 */
 }

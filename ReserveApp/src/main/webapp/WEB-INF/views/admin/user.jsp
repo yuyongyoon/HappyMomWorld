@@ -58,6 +58,8 @@ $(document).ready(function() {
 					
 				},
 				success	: function(result) {
+					console.log(result.userList.length)
+					$('#userCnt').text(result.userList.length);
 					userGrid.resetData(result.userList);
 				},
 				error	: function(xhr,status){
@@ -105,17 +107,16 @@ $(document).ready(function() {
 		},
 		btn_updateAccount : function(){
 			let param = {
-				id			: $('#input_userId_edit').val(),		// id
-				name 		: $('#input_userName_edit').val(),		// 이름
-				phone_number: $('#input_phoneNumber_edit').val(),	// 전화번호
-				due_date	: updatemodalDatepicker.getDate() != null ? cfn_tuiDateFormat(updatemodalDatepicker.getDate()) : '',	// 출산 예정일
-				user_status	: $('#input_enabled_edit').val(),		// 사용 여부
-				remark		: $('#input_rmk_edit').val()			// 비고
+				id			: $('#input_userId_edit').val(),
+				name 		: $('#input_userName_edit').val(),
+				phone_number: $('#input_phoneNumber_edit').val(),
+				due_date	: updatemodalDatepicker.getDate() != null ? cfn_tuiDateFormat(updatemodalDatepicker.getDate()) : '',
+				user_status	: $('#input_enabled_edit').val(),
+				remark		: $('#input_rmk_edit').val()
 			}
 
 			ajaxCom.updateAccount(param);
 		},
-		// 초기화 버튼(회원 정보 수정 modal)
 		btn_resetPwd : function() {
 			let param = {
 				user_id : $('#input_userId_edit').val()
@@ -137,7 +138,7 @@ $(document).ready(function() {
 	const userGrid = tuiGrid.createGrid(
 		{
 			gridId : 'user_grid',
-			height : 580,
+			height: 500,
 			scrollX : true,
 			scrollY : true,
 			readOnlyColorFlag : false,
@@ -180,8 +181,10 @@ $(document).ready(function() {
 			}
 		}
 	);
-	
+
 	ajaxCom.getUserList();
+	//
+// 	cfn_gridResize('card-body', 100)
 });
 </script>
 
@@ -232,6 +235,12 @@ $(document).ready(function() {
 										<span class="tui-ico-date"></span>
 										<div id="endDate-container" style="margin-left: -1px;"></div>
 									</div>
+								</div>
+							</div>
+							
+							<div class="sub-titlebar">
+								<div class="float-right mt-1 mb-1 mr-2">
+									조회 건수: <span id="userCnt"></span>건
 								</div>
 							</div>
 							

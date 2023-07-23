@@ -37,9 +37,9 @@ public class AdminController {
 	}
 	
 	//예약 현황 조회 화면
-	@RequestMapping(value = "/reservationStatus", method = RequestMethod.GET)
-	public String viewSearch(Model model, HttpServletRequest request) throws Exception {
-		return "admin/reservationStatus";
+	@RequestMapping(value = "/reservation_status", method = RequestMethod.GET)
+	public String viewReservationStatus(Model model, HttpServletRequest request) throws Exception {
+		return "admin/reservation_status";
 	}
 	
 	//예약 마스터 관리 화면
@@ -55,9 +55,9 @@ public class AdminController {
 	}
 	
 	//지점 관리 화면
-	@RequestMapping(value = "/branch", method = RequestMethod.GET)
-	public String viewBranch(Model model, HttpServletRequest request) throws Exception {
-		return "admin/branch";
+	@RequestMapping(value = "/branch_manager", method = RequestMethod.GET)
+	public String viewBranchManager(Model model, HttpServletRequest request) throws Exception {
+		return "admin/branch_manager";
 	}
 	
 	//=======================nav 지점 코드 가져오기=====================
@@ -122,10 +122,10 @@ public class AdminController {
 	@ResponseBody
 	public Map<String,Object> getReservationMasterData(HttpServletRequest request, @RequestBody Map<String,Object> param) throws Exception {
 		Map<String,Object> result = new HashMap<String,Object>();
-		Map<String,Object> branchInfo = adminService.getBranchInfo(param);
 		List<Map<String,Object>> masterList = adminService.getReservationMasterData(param);
+		Map<String,Object> branchReservationInfo = adminService.getBranchReservationInfo(param);
 		result.put("masterList", masterList);
-		result.put("branchInfo", branchInfo);
+		result.put("branchReservationInfo", branchReservationInfo);
 		return result;
 	}
 	
@@ -134,6 +134,15 @@ public class AdminController {
 	public Map<String,Object> saveReservationMasterData(HttpServletRequest request, @RequestBody Map<String,Object> param) throws Exception {
 		Map<String,Object> result = new HashMap<String,Object>();
 		String msg = adminService.saveReservationMasterData(param);
+		result.put("msg", msg);
+		return result;
+	}
+	
+	@RequestMapping(value = "/saveBranchReservationInfo", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String,Object> saveBranchReservationInfo(HttpServletRequest request, @RequestBody Map<String,Object> param) throws Exception {
+		Map<String,Object> result = new HashMap<String,Object>();
+		String msg = adminService.saveBranchReservationInfo(param);
 		result.put("msg", msg);
 		return result;
 	}

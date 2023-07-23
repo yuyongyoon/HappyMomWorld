@@ -36,29 +36,37 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		http
 			.authorizeRequests()
-				.antMatchers("/admin/**").hasAnyRole("ADMIN", "SUPERADMIN")
+				.antMatchers("/admin//dashboard").hasAnyRole("ADMIN", "SUPERADMIN")
+				.antMatchers("/admin/user").hasAnyRole("ADMIN", "SUPERADMIN")
+				.antMatchers("/admin/reservation_status").hasAnyRole("ADMIN", "SUPERADMIN")
+				.antMatchers("/admin//admin/reservation_master").hasAnyRole("ADMIN", "SUPERADMIN")
+				.antMatchers("/admin//admin/branch_master").hasAnyRole("ADMIN", "SUPERADMIN")
+				.antMatchers("/admin/branch_manager").hasAnyRole("SUPERADMIN")
 				.antMatchers("/login").permitAll()
 				.antMatchers("/join/**").permitAll()
+				.antMatchers("/static/**").permitAll()
 				.anyRequest().authenticated()
 			.and()
 				.formLogin()
 				.loginPage("/login")
 				.loginProcessingUrl("/loginProc")
-				.usernameParameter("id") // id parameter
-				.passwordParameter("password") // pass parameter
-				.successHandler(loginSuccessHandler) // 커스텀 핸들러 등록
-				.failureHandler(loginFailureHandler)	// login fail handler
+				.usernameParameter("id")
+				.passwordParameter("password")
+				.successHandler(loginSuccessHandler)
+				.failureHandler(loginFailureHandler)
 				.permitAll()
 			.and()
 				.logout()
-				.logoutRequestMatcher(new AntPathRequestMatcher("/logout")) // logout call URL
-				.logoutSuccessUrl("/login") // forward url : logout success 
-				.invalidateHttpSession(true) // session init.
+				.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+				.logoutSuccessUrl("/login")
+				.invalidateHttpSession(true)
 			.and()
-				.exceptionHandling() // error 
-				.accessDeniedPage("/login_error") // forward url : error occurs 
-				;
-
+			.exceptionHandling()
+			.authenticationEntryPoint((request, response, authException) -> {
+				response.sendRedirect("/login");
+			})
+			;
+		
 		//remember 기능
 		http.rememberMe() //사용자 계정 저장
 				.rememberMeParameter("rememberme")

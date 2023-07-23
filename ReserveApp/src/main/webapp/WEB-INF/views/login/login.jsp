@@ -32,11 +32,11 @@
 					<form class="login-form" method="post" name="f" action="loginProc">
 						<div class="form-group form-floating-label">
 							<input id="id" name="id" type="text" class="form-control input-border-bottom" required>
-							<label for="id" class="placeholder">ID</label>
+							<label for="id" class="placeholder">아이디</label>
 						</div>
 						<div class="form-group form-floating-label">
-							<input id="password" name="password" type="password" class="form-control input-border-bottom" required>
-							<label for="password" class="placeholder">Password</label>
+							<input id="password" name="password" type="password" class="form-control input-border-bottom" required autoComplete="off">
+							<label for="password" class="placeholder">비밀번호</label>
 							<div class="show-password">
 								<i class="flaticon-interface"></i>
 							</div>
@@ -64,10 +64,11 @@
 			<div class="container container-signup animated fadeIn">
 				<h3 class="text-center">회원 가입</h3>
 				<div class="signup-form">
+				<form>
 					<div class="form-group form-floating-label row">
 						<div class="form-group form-floating-label col-sm-8">
 							<input id="id_signup" name="id_signup" type="text" class="form-control input-border-bottom" style="margin-left: 6px;" required>
-							<label for="id_signup" class="placeholder" style="margin-left: 6px;">ID</label>
+							<label for="id_signup" class="placeholder" style="margin-left: 6px;">아이디</label>
 						</div>
 						<div class="form-group form-floating-label col-sm-4 d-flex align-items-center justify-content-center">
 							<button id="btn_checkId_signup" type="button" class="btn btn-secondary btn-rounded btn-sm">중복 확인</button>
@@ -79,7 +80,7 @@
 					</div>
 					
 					<div class="form-group form-floating-label">
-						<input id="pwd_signup" name="pwd_signup" type="password" class="form-control input-border-bottom" required>
+						<input id="pwd_signup" name="pwd_signup" type="password" class="form-control input-border-bottom" required autoComplete="off">
 						<label for="pwd_signup" class="placeholder">비밀번호</label>
 						<div class="show-password">
 							<i class="flaticon-interface"></i>
@@ -91,7 +92,7 @@
 					</div>
 					
 					<div class="form-group form-floating-label">
-						<input id="checkPwd_signup" name="checkPwd_signup" type="password" class="form-control input-border-bottom" required>
+						<input id="checkPwd_signup" name="checkPwd_signup" type="password" class="form-control input-border-bottom" required autoComplete="off">
 						<label for="checkPwd_signup" class="placeholder">비밀번호 재입력</label>
 						<div class="show-password">
 							<i class="flaticon-interface"></i>
@@ -122,12 +123,13 @@
 					</div>
 					<div class="form-group form-floating-label">
 						<input  id="joinCode_signup" name="joinCode_signup" type="text" class="form-control input-border-bottom" required>
-						<label for="joinCode_signup" class="placeholder">Code</label>
+						<label for="joinCode_signup" class="placeholder">가입코드</label>
 					</div>
 					<div class="form-action">
-						<a href="#" id="btn_cancel_signup" class="btn btn-danger btn-rounded btn-login mr-3">취소</a>
-						<a href="#" id="btn_signup" class="btn btn-primary btn-rounded btn-login">회원가입</a>
+						<a id="btn_signup" style="color:white" class="btn btn-secondary btn-rounded btn-login mr-3">회원가입</a>
+						<a href="" id="btn_cancel_signup" class="btn btn-info btn-rounded btn-login">취소</a>
 					</div>
+					</form>
 				</div>
 			</div>
 		</div>
@@ -172,17 +174,14 @@
 			$('#div_pwdLength_msg').hide();
 			$('#div_checkPwd_msg').hide();
 			
-			// 아이디 중복 확인 Button(회원 가입)
 			$('#btn_checkId_signup').click(function(){
 				let id = $('#id_signup').val();
 				
-				if(id == '' || id == null) {// 값이 없는 경우
+				if(id == '' || id == null) {
 					alert('ID를 입력해주세요');
 					return false;
 				}
 				
-				//아이디 정규식
-				// 정규식을 사용하여 영어와 숫자로만 구성되고 최소 4자 이상인지 확인
 				let idPattern = /^[A-Za-z0-9]{4,}$/;
 				if(!idPattern.test(id)){
 					$('#span_checkId_msg').text('영어 또는 숫자로 구성된 4자리 이상의 단어여야 합니다.');
@@ -203,7 +202,6 @@
 					$('#div_pwdLength_msg').show();
 				} else {
 					$('#div_pwdLength_msg').css('display','none');
-	// 				$('#checkPwd_signup').focus();
 				}
 			})
 			
@@ -229,9 +227,7 @@
 				}
 			})
 			
-			// 회원가입 Button
 			$('#btn_signup').click(function(){
-				//2~3자리 - 3~4자리 - 4자리
 				let telPattern = /([0-9]{1}[0-9]{1})-(\d{3,4})-(\d{4})/;
 				
 				if(!id_check) {
@@ -265,32 +261,28 @@
 				}
 				
 				let param = {
-					id			: $('#id_signup').val(),		// id
-					password	: $('#pwd_signup').val(),		// 비밀번호
-					name 		: $('#name_signup').val(),		// 이름
-					phone_number: $('#number_signup').val(),	// 전화번호
-					due_date	: signupDatepicker.getDate(),	// 출산 예정일
-					join_code	: $('#joinCode_signup').val(),	// 가입 코드
+					id			: $('#id_signup').val(),
+					password	: $('#pwd_signup').val(),
+					name 		: $('#name_signup').val(),
+					phone_number: $('#number_signup').val(),
+					due_date	: $('#dueDate_signup').val(),
+					join_code	: $('#joinCode_signup').val(),
 				}
 					
-				signup(param);	//DB에 가입 정보 추가
+				signup(param);
 			})
 			
-			//취소 Button
 			$('#btn_cancel_signup').click(function(){
 				location.reload();
 			});
 		});//$(document).ready
 			
-		// Ajax
-		// 아이디 중복 확인
 		function checkId(param) {
-			//$('#div_checkId_msg').hide();
 			$.doPost({
 				url	 	: "/join/checkId",
 				data 	: param,
 				success	: function(result) {
-					if(result.msg == "fail") {// 아이디 중복일 경우
+					if(result.msg == "fail") {
 						$('#span_checkId_msg').text('입력하신 아이디는 이미 사용중입니다.');
 						$('#div_checkId_msg').show();
 					} else if(result.msg == "success"){
@@ -298,24 +290,22 @@
 						$('#span_checkId_msg').css('color',"blue");
 						$('#div_checkId_msg').show();
 						$('#id_signup').attr('disabled', true);
-						// $("#pwd_signup").focus();
-						id_check = true;	// 아이디 중복확인(완)
+						id_check = true;
 					}
 				},
 				error	: function(xhr,status){
-					alert('오류가 발생했습니다.(아이디 중복)');
+					alert('오류가 발생했습니다.');
 				}
 			});
 		}
 		
-		// 회원가입
 		function signup(param){
 			$.doPost({
 				url	 	: "/join/signup",
 				data 	: param,
 				success	: function(result) {
 					if(result.msg == "success") {
-						alert('등록되었습니다.');
+						alert('가입 되었습니다.');
 						location.reload();
 					} else if(result.msg == "notFoundCode") {
 						alert('가입 코드를 확인해주세요.');
