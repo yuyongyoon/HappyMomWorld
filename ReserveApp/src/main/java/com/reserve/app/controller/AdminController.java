@@ -175,4 +175,23 @@ public class AdminController {
 		result.put("branchInfo", branchInfo);
 		return result;
 	}
+	
+	@RequestMapping(value = "/saveBranchMasterInfo", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String,Object> saveBranchMasterInfo(HttpServletRequest request, @RequestBody Map<String,Object> param) throws Exception {
+		Map<String,Object> result = new HashMap<String,Object>();
+		String msg = adminService.saveBranchMasterInfo(param);
+		result.put("msg", msg);
+		return result;
+	}
+	
+	//=======================예약 현황 조회 controller=====================
+	@RequestMapping(value = "/getReservationStatusList", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String,Object> getReservationStatusList(HttpServletRequest request, @RequestBody Map<String,Object> param) throws Exception {
+		Map<String,Object> result = new HashMap<String,Object>();
+		List<Map<String,Object>> reservationStatusList = adminService.getReservationStatusList(param);
+		result.put("reservationStatusList", reservationStatusList);
+		return result;
+	}
 }

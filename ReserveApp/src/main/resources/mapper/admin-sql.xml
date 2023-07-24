@@ -47,9 +47,6 @@
 					OR UPPER(a.name) LIKE '%' || UPPER(#{userIdOrName}) || '%'
 				)
 			</if>
-			<if test='name!=null and name!=""'>
-				AND UPPER(a.name) LIKE '%' || UPPER(#{name}) || '%'
-			</if>
 			<if test='phoneNumber!=null and phoneNumber!=""'>
 				AND a.phone_number LIKE '%' || UPPER(#{phoneNumber}) || '%'
 			</if>
@@ -321,14 +318,14 @@
 				CASE 
 					WHEN a.select_time = '1t' THEN b."t1_name"
 					WHEN a.select_time = '2t' THEN b."t2_name"
-					WHEN a.select_time = '3t' THEN b."t2_name"
-					WHEN a.select_time = '4t' THEN b."t2_name"
-					WHEN a.select_time = '5t' THEN b."t2_name"
-					WHEN a.select_time = '6t' THEN b."t2_name"
-					WHEN a.select_time = '7t' THEN b."t2_name"
-					WHEN a.select_time = '8t' THEN b."t2_name"
-					WHEN a.select_time = '9t' THEN b."t2_name"
-					WHEN a.select_time = '10t' THEN b."t2_name"
+					WHEN a.select_time = '3t' THEN b."t3_name"
+					WHEN a.select_time = '4t' THEN b."t4_name"
+					WHEN a.select_time = '5t' THEN b."t5_name"
+					WHEN a.select_time = '6t' THEN b."t6_name"
+					WHEN a.select_time = '7t' THEN b."t7_name"
+					WHEN a.select_time = '8t' THEN b."t8_name"
+					WHEN a.select_time = '9t' THEN b."t9_name"
+					WHEN a.select_time = '10t' THEN b."t10_name"
 				END AS "reservation_time"
 		FROM tb_reservation_list a
 		JOIN tb_reservation_info b ON a.branch_code = b.branch_code AND a.rsv_month = b.rsv_month
@@ -361,7 +358,7 @@
 		</where>
 	</select>
 	
-	<update id="updateBranchMasterInfo" parameterType="map">
+	<update id="saveBranchMasterInfo" parameterType="map">
 		UPDATE tb_branch_info
 		SET 
 			branch_name = #{branch_name},
@@ -373,4 +370,51 @@
 			modified_dt = now()
 		WHERE branch_code = #{branch_code}
 	</update>
+	
+	<select id="getReservationStatusList" parameterType="map" resultType="map">
+		SELECT rsv_date, a.user_id, c."name", c.phone_number, TO_CHAR(a.created_dt, 'YYYY-MM-DD') AS created_dt,
+				CASE 
+					WHEN a.select_time = '1t' THEN b."t1_name"
+					WHEN a.select_time = '2t' THEN b."t2_name"
+					WHEN a.select_time = '3t' THEN b."t3_name"
+					WHEN a.select_time = '4t' THEN b."t4_name"
+					WHEN a.select_time = '5t' THEN b."t5_name"
+					WHEN a.select_time = '6t' THEN b."t6_name"
+					WHEN a.select_time = '7t' THEN b."t7_name"
+					WHEN a.select_time = '8t' THEN b."t8_name"
+					WHEN a.select_time = '9t' THEN b."t9_name"
+					WHEN a.select_time = '10t' THEN b."t10_name"
+				END AS "reservation_time"
+		FROM tb_reservation_list a
+		JOIN tb_reservation_info b ON a.branch_code = b.branch_code AND a.rsv_month = b.rsv_month
+		JOIN tb_user c on a.user_id = c."id"
+		<where>
+			<choose>
+				<when test="super_branch_code == null or super_branch_code == ''">
+					AND a.branch_code = #{branch_code}
+				</when>
+				<otherwise>
+					AND a.branch_code = #{super_branch_code}
+				</otherwise>
+			</choose>
+			<if test='userIdOrName != null and userIdOrName != ""'>
+				AND (
+					UPPER(a.user_id) LIKE '%' || UPPER(#{userIdOrName}) || '%'
+					OR UPPER(a.user_id) LIKE '%' || UPPER(#{userIdOrName}) || '%'
+				)
+			</if>
+			<if test='phoneNumber!=null and phoneNumber!=""'>
+				AND c.phone_number LIKE '%' || UPPER(#{phoneNumber}) || '%'
+			</if>
+			<if test="startDate != null and startDate != '' and endDate != null and endDate != ''">
+				AND rsv_date::date BETWEEN TO_TIMESTAMP(#{startDate}, 'YYYY-MM-DD') AND TO_TIMESTAMP(#{endDate}, 'YYYY-MM-DD') + INTERVAL '1 day' - INTERVAL '1 second'
+			</if>
+			<if test='remark != null and remark != ""'>
+				AND (
+					UPPER(c.remark) LIKE '%' || UPPER(#{remark}) || '%'
+				)
+			</if>
+		</where>
+		ORDER BY rsv_date
+	</select>
 </mapper>

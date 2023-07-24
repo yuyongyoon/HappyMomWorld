@@ -1,5 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
+<style>
+.form-control:disabled {
+	background-color: white!important;
+	color: black!important;
+}
+</style>
 <script>
 $(document).ready(function() {
 	let superBranchCode
@@ -37,14 +43,29 @@ $(document).ready(function() {
 						branchHours = data.business_hours;
 						branchJoinCode = data.join_code;
 						branchRemark = data.remark;
-						
+
 						$('#input_brName').val(data.branch_name);
 						$('#input_brTel').val(data.branch_tel);
 						$('#input_brAddr').val(data.branch_addr);
 						$('#input_brHours').val(data.business_hours);
 						$('#input_brJoincode').val(data.join_code);
 						$('#input_brCode').val(data.join_code);
-						$('#input_remark').val(data.remark);
+						$('#input_brRemark').val(data.remark);
+					}
+				},
+				error	: function(xhr,status){
+					alert('오류가 발생했습니다.');
+				}
+			});
+		},
+		saveBranchMasterInfo: function(param){
+			$.doPost({
+				url	 	: "/admin/saveBranchMasterInfo",
+				data 	: param,
+				success	: function(result) {
+					if(result.msg == 'success'){
+						alert('저장되었습니다.');
+						location.reload(true);
 					}
 				},
 				error	: function(xhr,status){
@@ -52,7 +73,7 @@ $(document).ready(function() {
 				}
 			});
 		}
-	}; //ajaxCom END
+	};
 	
 	btnCom = {
 		btn_branchInfo: function(){
@@ -64,7 +85,7 @@ $(document).ready(function() {
 			$('#modal_brRemark').val(branchRemark);
 			$('#branchInfo_modal').modal('show');
 		},
-		btn_saveBranchInfo: function(){
+		btn_saveBranchMasterInfo: function(){
 			if($('#modal_brName').val() != '' && $('#modal_brTell').val() != '' && $('#modal_brAddr').val() != '' 
 					&& $('#modal_brHours').val() != '' && $('#modal_brCode').val() != '' && $('#modal_brRemark').val() != '') {
 				let param = {
@@ -75,7 +96,7 @@ $(document).ready(function() {
 						remark : $('#modal_brRemark').val()
 				}
 				
-				console.log(param)
+				ajaxCom.saveBranchMasterInfo(param);
 			} else {
 				alert('칸을 모두 입력해주세요.');
 				return false;
@@ -101,7 +122,7 @@ $('#select-branch').on('change', function(){
 				<div class="col-md-12">
 					<div class="card">
 						<div class="card-body d-flex flex-column">
-							<div class="row" style="border-bottom:1px solid gray">
+							<div class="row">
 								<div class="col-md-12">
 									<div class="row">
 										<div class="col-sm-6">
@@ -110,14 +131,14 @@ $('#select-branch').on('change', function(){
 										<div class="col-sm-6">
 											<div class="button-list float-right">
 <!-- 												<button type="button" id="btn_get" class="header-btn btn btn-secondary float-left ml-2 mb-2">조회</button> -->
-												<button type="button" id="btn_branchInfo" class="header-btn btn btn-secondary float-left ml-2 mb-2">지점 정보</button>
+												<button type="button" id="btn_branchInfo" class="header-btn btn btn-secondary float-left ml-2 mb-2">지점 정보 수정</button>
 												<button type="button" id="" class="header-btn btn btn-secondary float-left ml-2 mb-2">다운로드</button>
 											</div>
 										</div>
 									</div>
 								</div>
 							</div>
-							
+							<hr style="border: 1px solid lightgray;width: 100%;">
 							<div class="col-md-12">
 								<div class="card-body">
 									<h1 style="text-align: center">산전 마사지 예약 안내</h1>
@@ -234,7 +255,7 @@ $('#select-branch').on('change', function(){
 											</div>
 										</div>
 										<div class="modal-footer">
-											<button type="button" class="btn btn-secondary" id="btn_saveBranchInfo">저장</button>
+											<button type="button" class="btn btn-secondary" id="btn_saveBranchMasterInfo">저장</button>
 											<button type="button" class="btn btn-info" id="btn_cancle">취소</button>
 										</div>
 									</div>

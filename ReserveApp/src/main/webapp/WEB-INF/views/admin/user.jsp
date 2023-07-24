@@ -137,7 +137,7 @@ $(document).ready(function() {
 	const userGrid = tuiGrid.createGrid(
 		{
 			gridId : 'user_grid',
-			height: 500,
+			height: 550,
 			scrollX : true,
 			scrollY : true,
 			readOnlyColorFlag : false,
@@ -182,8 +182,6 @@ $(document).ready(function() {
 	);
 
 	ajaxCom.getUserList();
-	//
-// 	cfn_gridResize('card-body', 100)
 });
 </script>
 
@@ -316,95 +314,6 @@ $(document).ready(function() {
 											<button type="button" class="btn btn-danger" id="btn_resetPwd">초기화</button>
 											<button type="button" class="btn btn-secondary" id="btn_updateAccount">저장</button>
 											<button type="button" class="btn btn-info" id="btn_updateAccountClose">취소</button>
-										</div>
-									</div>
-								</div>
-							</div>
-							
-							<div class="modal fade" id="user_add_modal" tabindex="-1" role="dialog" aria-hidden="true">
-								<div class="modal-dialog modal-dialog-centered" role="document">
-									<div class="modal-content">
-										<div class="modal-header">
-											<h4 class="modal-title" id="user_edit_modalTitle">회원 정보 추가</h4>
-										</div>
-										<div class="modal-body">
-											<form>
-											<div class="col-12">
-												<div class="form-group row pb-0">
-													<div class="col-sm-3">
-														<label for="input_checkId_add" class="control-label mt-2">ID</label>
-													</div>
-													<div class="col-sm-7">
-														<input type="text" class="form-control" id="input_checkId_add">
-													</div>
-													<div class="col-sm-2 d-flex align-items-center">
-														<button type="button" class="btn btn-secondary btn-sm" id="btn_checkId">중복 확인</button>
-													</div>
-												</div>
-												<div class="col-sm-12 pb-0 mt-2" id="checkId_msg_add_div">
-													<span id="checkId_msg_add" style="color:red;display:flex;justify-content:center;"></span>
-												</div>
-												<div class="form-group row pb-0">
-													<div class="col-sm-3">
-														<label class="control-label mt-2" style="border: 0px;">비밀번호</label>
-													</div>
-													<div class="col-sm-9">
-														<input type="password" class="form-control" id="input_userPwd_add" autoComplete="off" maxlength='12'>
-													</div>
-												</div>
-												<div class="form-group row pb-0">
-													<div class="col-sm-3">
-														<label class="control-label mt-2">비밀번호 확인</label>
-													</div>
-													<div class="col-sm-9">
-														<input type="password" class="form-control" autoComplete="off" id="input_checkPwd_add">
-													</div>
-												</div>
-												<div class="col-sm-12 pb-0 mt-2" id="checkPwd_msg_add_div">
-													<span id="checkPwd_msg_add" style="color: red;display: flex;justify-content: center;"></span>
-												</div>
-												<div class="form-group row pb-0">
-													<div class="col-sm-3">
-														<label class="control-label mt-2" style="border: 0px;">이름</label>
-													</div>
-													<div class="col-sm-9">
-														<input type="text" class="form-control" id="input_userName_add" maxlength='12'>
-													</div>
-												</div>
-												<div class="form-group row pb-0">
-													<div class="col-sm-3">
-														<label class="control-label mt-2" style="border: 0px;">전화번호</label>
-													</div>
-													<div class="col-sm-9">
-														<input type="tel" class="form-control" id="input_phoneNumber_add" maxlength='13'>
-													</div>
-												</div>
-												<div class="form-group row pb-0">
-													<div class="col-sm-3">
-														<label class="control-label mt-2">출산 예정일</label>
-													</div>
-													<div class="col-sm-9">
-														<div class="tui-datepicker-input tui-datetime-input">
-															<input type="text" id="input_dueDate_add" aria-label="Date-Time">
-															<span class="tui-ico-date"></span>
-														</div>
-														<div id="wrapper_add" style="margin-top: -1px;"></div>
-													</div>
-												</div>
-												<div class="form-group row pb-0">
-													<div class="col-sm-3">
-														<label class="control-label mt-2">비고</label>
-													</div>
-													<div class="col-sm-9">
-														<textarea class="form-control" id="input_rmk_add" style="height: 70px;resize: none;"></textarea>
-													</div>
-												</div>
-											</div>
-											</form>
-										</div>
-										<div class="modal-footer">
-											<button type="button" class="btn btn-secondary" id="btn_addAccount">추가</button>
-											<button type="button" class="btn btn-info" id="btn_addAccountClose">취소</button>
 										</div>
 									</div>
 								</div>

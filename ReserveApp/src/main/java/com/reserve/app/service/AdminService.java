@@ -177,4 +177,20 @@ public class AdminService {
 	public Map<String, Object> getBranchInfo(Map<String, Object> param) throws Exception {
 		return mapper.getBranchInfo(param);
 	}
+	
+	public String saveBranchMasterInfo(Map<String,Object> param) {
+		String msg = "success";
+		
+		try {
+			mapper.saveBranchMasterInfo(param);
+		} catch (Exception e) {
+			e.printStackTrace();
+			msg = "fail";
+		}
+		return msg;
+	}
+	
+	public List<Map<String, Object>> getReservationStatusList(Map<String, Object> param) throws Exception {
+		return mapper.getReservationStatusList(param);
+	}
 }
