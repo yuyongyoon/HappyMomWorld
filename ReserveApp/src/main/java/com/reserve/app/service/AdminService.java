@@ -165,4 +165,16 @@ public class AdminService {
 		}
 		return msg;
 	}
+	
+	public List<Map<String, Object>> getCalendarEvent(Map<String,Object> param){
+		return mapper.getCalendarEvent(param);
+	}
+	
+	public List<Map<String, Object>> getSeletedDateReservationList(Map<String,Object> param){
+		return mapper.getSeletedDateReservationList(param);
+	}
+	
+	public Map<String, Object> getBranchInfo(Map<String, Object> param) throws Exception {
+		return mapper.getBranchInfo(param);
+	}
 }

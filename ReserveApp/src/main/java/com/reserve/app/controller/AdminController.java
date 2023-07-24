@@ -146,4 +146,33 @@ public class AdminController {
 		result.put("msg", msg);
 		return result;
 	}
+	
+	//=======================대시보드 controller=====================
+	@RequestMapping(value = "/getCalendarEvent", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String,Object> getCalendarEvent(HttpServletRequest request, @RequestBody Map<String,Object> param) throws Exception {
+		Map<String,Object> result = new HashMap<String,Object>();
+		List<Map<String,Object>> calendarList = adminService.getCalendarEvent(param);
+		result.put("calendarList", calendarList);
+		return result;
+	}
+	
+	@RequestMapping(value = "/getSeletedDateReservationList", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String,Object> getSeletedDateReservationList(HttpServletRequest request, @RequestBody Map<String,Object> param) throws Exception {
+		Map<String,Object> result = new HashMap<String,Object>();
+		List<Map<String,Object>> reservationList = adminService.getSeletedDateReservationList(param);
+		result.put("reservationList", reservationList);
+		return result;
+	}
+	
+	//=======================지점 마스터 controller=====================
+	@RequestMapping(value = "/getBranchInfo", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String,Object> getBranchInfo(HttpServletRequest request, @RequestBody Map<String,Object> param) throws Exception {
+		Map<String,Object> result = new HashMap<String,Object>();
+		Map<String,Object> branchInfo = adminService.getBranchInfo(param);
+		result.put("branchInfo", branchInfo);
+		return result;
+	}
 }

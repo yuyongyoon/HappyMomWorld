@@ -58,7 +58,6 @@ $(document).ready(function() {
 					
 				},
 				success	: function(result) {
-					console.log(result.userList.length)
 					$('#userCnt').text(result.userList.length);
 					userGrid.resetData(result.userList);
 				},

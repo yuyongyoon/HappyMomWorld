@@ -40,4 +40,11 @@ public interface AdminMapper {
 	int addbranchReservationInfo(Map<String,Object> param);
 	
 	int updatebranchReservationInfo(Map<String,Object> param);
+	
+	List<Map<String,Object>> getCalendarEvent(Map<String,Object> param);
+	
+	List<Map<String,Object>> getSeletedDateReservationList(Map<String,Object> param);
+	
+	Map<String, Object> getBranchInfo(Map<String,Object> param);
+	
 }

@@ -287,4 +287,90 @@
 			modified_dt = now()
 		WHERE branch_code = #{branch_code} and rsv_month = #{rsv_month}
 	</update>
+	
+	<select id="getCalendarEvent" parameterType="map"  resultType="map">
+		SELECT TO_CHAR(date_series.rsv_date, 'YYYY-MM-DD') AS rsv_date, COALESCE(reservation_cnt, 0) reservation_cnt
+		FROM (
+			SELECT generate_series(
+				TO_DATE(#{rsv_month}, 'YYYY-MM')::DATE,
+				(TO_DATE(#{rsv_month}, 'YYYY-MM') + INTERVAL '1 month' - INTERVAL '1 day')::DATE,
+				INTERVAL '1 day'
+			) AS rsv_date
+		) date_series
+		LEFT JOIN (
+			select rsv_date, count(rsv_date) reservation_cnt
+			from tb_reservation_list 
+			<where>
+				rsv_month like #{rsv_month}
+				<choose>
+					<when test="super_branch_code == null or super_branch_code == ''">
+						and branch_code = #{branch_code}
+					</when>
+					<otherwise>
+						and branch_code = #{super_branch_code}
+					</otherwise>
+				</choose>
+			</where>
+			group by rsv_date
+		) reservations ON date_series.rsv_date = reservations.rsv_date::date
+		ORDER BY date_series.rsv_date;
+	</select>
+	
+	<select id="getSeletedDateReservationList" parameterType="map"  resultType="map">
+		SELECT rsv_date, a.user_id, 
+				CASE 
+					WHEN a.select_time = '1t' THEN b."t1_name"
+					WHEN a.select_time = '2t' THEN b."t2_name"
+					WHEN a.select_time = '3t' THEN b."t2_name"
+					WHEN a.select_time = '4t' THEN b."t2_name"
+					WHEN a.select_time = '5t' THEN b."t2_name"
+					WHEN a.select_time = '6t' THEN b."t2_name"
+					WHEN a.select_time = '7t' THEN b."t2_name"
+					WHEN a.select_time = '8t' THEN b."t2_name"
+					WHEN a.select_time = '9t' THEN b."t2_name"
+					WHEN a.select_time = '10t' THEN b."t2_name"
+				END AS "reservation_time"
+		FROM tb_reservation_list a
+		JOIN tb_reservation_info b ON a.branch_code = b.branch_code AND a.rsv_month = b.rsv_month
+		<where>
+			a.rsv_date = #{rsv_date}
+			<choose>
+				<when test="super_branch_code == null or super_branch_code == ''">
+					and a.branch_code = #{branch_code}
+				</when>
+				<otherwise>
+					and a.branch_code = #{super_branch_code}
+				</otherwise>
+			</choose>
+		</where>
+	</select>
+	
+	<select id="getBranchInfo" parameterType="map"  resultType="map">
+		SELECT a.branch_name, a.branch_tel, a.branch_addr, a.business_hours, a.remark, b.join_code
+		FROM tb_branch_info a
+		LEFT OUTER JOIN tb_branch_mng b on a.branch_code = b.branch_code 
+		<where>
+			<choose>
+				<when test="super_branch_code == null or super_branch_code == ''">
+					and a.branch_code = #{branch_code}
+				</when>
+				<otherwise>
+					and a.branch_code = #{super_branch_code}
+				</otherwise>
+			</choose>
+		</where>
+	</select>
+	
+	<update id="updateBranchMasterInfo" parameterType="map">
+		UPDATE tb_branch_info
+		SET 
+			branch_name = #{branch_name},
+			branch_tel = #{branch_tel},
+			branch_addr = #{branch_addr},
+			business_hours = #{business_hours},
+			remark = #{remark},
+			modified_id = #{login_id},
+			modified_dt = now()
+		WHERE branch_code = #{branch_code}
+	</update>
 </mapper>
