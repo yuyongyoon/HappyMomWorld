@@ -19,7 +19,7 @@
 							add_table += '	<th scope="row">' + row + '</th>\n';
 							add_table += '	<td>' + rsv.rsv_date + '</th>\n';
 							add_table += '	<td>' + rsv.rsv_time + '</th>\n';
-							add_table += '	<td><button type="button"  onclick="btn_cancel();" id="btn_cancel' + (i+1) 
+							add_table += '	<td><button type="button"   id="btn_cancel' + (i+1)  //onclick="btn_cancel();"
 											+ '" class="header-btn btn btn-secondary float-left ml-2 mb-2">취소</button></td>\n';
 							add_table += '	<td>' + rsv.branch_name + '</th>\n';
 							add_table += '	<td>' + rsv.branch_tel + '</th>\n';
@@ -30,6 +30,13 @@
 						console.log('예약 리스트: ',result.rsvList);
 						//console.log(add_table);		//table structure test
 						//console.log(btn_cancel);
+						
+						//추가한 부분
+						$('#table-body').on('click', '[id^="btn_cancel"]', function() {
+							let row = $(this).attr('id').replace('btn_cancel', '');
+							console.log(row)
+							btn_cancel(row);
+						});
 					},
 					error	:	function(xhr,status){
 						alert('오류가 발생했습니다.');
@@ -105,7 +112,9 @@
 
 	}); //END $(document).ready
 	
-	
+	function btn_cancel(){
+		console.log('클릭함')
+	}
 </script>
 
 <div class="main-panel">
