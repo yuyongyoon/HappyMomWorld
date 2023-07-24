@@ -233,6 +233,7 @@ $(document).ready(function() {
 						std_8t = param.t8_name;
 						std_9t = param.t9_name;
 						std_10t = param.t10_name;
+						$('#input_stdWorker').val(std_worker);
 						alert('저장되었습니다.');
 						$('#rsv_set_modal').modal('hide');
 					} else {

@@ -193,9 +193,9 @@
 				}
 			});
 			
+			let pwdPattern = /^.{8,}$/;
 			$('#pwd_signup').blur(function(){
 				let pwd = $('#pwd_signup').val().trim();
-				let pwdPattern = /^.{8,}$/;
 				
 				if(!pwdPattern.test(pwd)){
 					$('#span_pwdLength_msg').text('비밀번호는 공백을 제외하고 8자 이상입니다.');
@@ -219,7 +219,7 @@
 					$('#span_checkPwd_msg').text('동일한 비밀번호를 입력해주세요.');
 					$('#div_checkPwd_msg').show();
 					return false;
-				} else {
+				} else if(pwd == checkPwd && pwdPattern.test(checkPwd) && pwdPattern.test(pwd)) {
 					$('#pwd_signup').attr('disabled', true);
 					$('#checkPwd_signup').attr('disabled', true);
 					$('#div_checkPwd_msg').css('display', 'none');
@@ -234,7 +234,7 @@
 					alert('아이디 중복 확인을 해주세요.');
 					return false;
 				} else if(!pwd_check) {
-					alert('비밀번호를 입력해주세요.');
+					alert('비밀번호를 확인해주세요.');
 					return false;
 				} else if($('#name_signup').val() == ''){
 					alert('이름을 입력해주세요.');
