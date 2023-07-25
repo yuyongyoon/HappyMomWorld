@@ -75,13 +75,14 @@ public class UserController {
 		return result;
 	}
 	
-	// 기간별 예약 조회
-	@RequestMapping(value = "/searchRsv", method = RequestMethod.POST)
+	// 예약 취소
+	@RequestMapping(value = "/removeReservation", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String,Object> searchRsv(HttpServletRequest request, @RequestBody Map<String,Object> param) throws Exception {
+	public Map<String,Object> removeReservation(HttpServletRequest request, @RequestBody Map<String,Object> param) throws Exception {
 		Map<String,Object> result = new HashMap<String,Object>();
-		List<Map<String,Object>> rsvList = userService.searchRsv(param);
-		result.put("rsvList", rsvList);
+		String msg = userService.removeReservation(param);
+		result.put("msg", msg);
 		return result;
 	}
+	 
 }

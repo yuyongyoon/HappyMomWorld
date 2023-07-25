@@ -15,6 +15,6 @@ public interface UserMapper {
 	
 	List<Map<String, Object>> getReservation(Map<String, Object> param);
 	
-	List<Map<String, Object>> searchRsv(Map<String, Object> param);
+	void removeReservation (Map<String, Object> param);
 	
 }

@@ -73,7 +73,15 @@ public class UserService {
 		return mapper.getReservation(param);
 	}
 	// 기간별 예약 조회
-	public List<Map<String, Object>> searchRsv(Map<String,Object> param){
-		return mapper.searchRsv(param);
+	public String removeReservation(Map<String,Object> param){ 
+		System.out.println("================ service ====================");
+		String msg = "success";
+		try {
+			mapper.removeReservation((Map<String,Object>) param);
+		}catch (Exception e) {
+			e.printStackTrace();
+			msg = "fail";
+		}
+		return msg;
 	}
 }
