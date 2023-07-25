@@ -47,9 +47,6 @@
 					OR UPPER(a.name) LIKE '%' || UPPER(#{userIdOrName}) || '%'
 				)
 			</if>
-			<if test='name!=null and name!=""'>
-				AND UPPER(a.name) LIKE '%' || UPPER(#{name}) || '%'
-			</if>
 			<if test='phoneNumber!=null and phoneNumber!=""'>
 				AND a.phone_number LIKE '%' || UPPER(#{phoneNumber}) || '%'
 			</if>
@@ -142,6 +139,7 @@
 			a.branch_code,
 			a.rsv_month,
 			a.rsv_date,
+			c.worker_num,
 			a."1t",
 			COUNT(b.select_time) FILTER (WHERE b.select_time = '1t') AS "1t_cnt",
 			a."2t",
@@ -163,7 +161,8 @@
 			a."10t",
 			COUNT(b.select_time) FILTER (WHERE b.select_time = '10t') AS "10t_cnt"
 		FROM tb_reservation_master a
-			LEFT OUTER JOIN tb_reservation_list b on   a.branch_code = b.branch_code AND a.rsv_month = b.rsv_month AND a.rsv_date = b.rsv_date
+			JOIN tb_reservation_info c on a.rsv_month =c.rsv_month  AND a.branch_code = c.branch_code 
+			LEFT OUTER JOIN tb_reservation_list b on a.branch_code = b.branch_code AND a.rsv_month = b.rsv_month AND a.rsv_date = b.rsv_date
 		<where>
 			<choose>
 				<when test="super_branch_code == null or super_branch_code == ''">
@@ -177,7 +176,8 @@
 		GROUP BY
 			a.branch_code,
 			a.rsv_month,
-			a.rsv_date
+			a.rsv_date,
+			c.worker_num
 		ORDER BY
 			a.rsv_month,
 			a.rsv_date
@@ -210,7 +210,6 @@
 		SELECT count(branch_code)
 		FROM tb_reservation_info
 		<where>
-			rsv_month like #{rsv_month}
 			<choose>
 				<when test="super_branch_code == null or super_branch_code == ''">
 					and branch_code = #{branch_code}
@@ -226,7 +225,6 @@
 		SELECT worker_num, t1_name, t2_name, t3_name, t4_name, t5_name, t6_name, t7_name, t8_name, t9_name, t10_name
 		FROM tb_reservation_info
 		<where>
-			AND rsv_month like #{rsv_month}
 			<choose>
 				<when test="super_branch_code == null or super_branch_code == ''">
 					AND branch_code = #{branch_code}
@@ -236,22 +234,8 @@
 				</otherwise>
 			</choose>
 		</where>
-	</select>
-	
-	<select id="getCntbranchReservationInfo" parameterType="map"  resultType="int">
-		SELECT count(branch_code)
-		FROM tb_reservation_info
-		<where>
-			rsv_month like #{rsv_month}
-			<choose>
-				<when test="super_branch_code == null or super_branch_code == ''">
-					and branch_code = #{branch_code}
-				</when>
-				<otherwise>
-					and branch_code = #{super_branch_code}
-				</otherwise>
-			</choose>
-		</where>
+		ORDER BY rsv_month desc
+		limit 1
 	</select>
 	
 	<insert id="addbranchReservationInfo" parameterType="map">
@@ -287,4 +271,137 @@
 			modified_dt = now()
 		WHERE branch_code = #{branch_code} and rsv_month = #{rsv_month}
 	</update>
+	
+	<select id="getCalendarEvent" parameterType="map"  resultType="map">
+		SELECT TO_CHAR(date_series.rsv_date, 'YYYY-MM-DD') AS rsv_date, COALESCE(reservation_cnt, 0) reservation_cnt
+		FROM (
+			SELECT generate_series(
+				TO_DATE(#{rsv_month}, 'YYYY-MM')::DATE,
+				(TO_DATE(#{rsv_month}, 'YYYY-MM') + INTERVAL '1 month' - INTERVAL '1 day')::DATE,
+				INTERVAL '1 day'
+			) AS rsv_date
+		) date_series
+		LEFT JOIN (
+			select rsv_date, count(rsv_date) reservation_cnt
+			from tb_reservation_list 
+			<where>
+				rsv_month like #{rsv_month}
+				<choose>
+					<when test="super_branch_code == null or super_branch_code == ''">
+						and branch_code = #{branch_code}
+					</when>
+					<otherwise>
+						and branch_code = #{super_branch_code}
+					</otherwise>
+				</choose>
+			</where>
+			group by rsv_date
+		) reservations ON date_series.rsv_date = reservations.rsv_date::date
+		ORDER BY date_series.rsv_date;
+	</select>
+	
+	<select id="getSeletedDateReservationList" parameterType="map"  resultType="map">
+		SELECT rsv_date, a.user_id, 
+				CASE 
+					WHEN a.select_time = '1t' THEN b."t1_name"
+					WHEN a.select_time = '2t' THEN b."t2_name"
+					WHEN a.select_time = '3t' THEN b."t3_name"
+					WHEN a.select_time = '4t' THEN b."t4_name"
+					WHEN a.select_time = '5t' THEN b."t5_name"
+					WHEN a.select_time = '6t' THEN b."t6_name"
+					WHEN a.select_time = '7t' THEN b."t7_name"
+					WHEN a.select_time = '8t' THEN b."t8_name"
+					WHEN a.select_time = '9t' THEN b."t9_name"
+					WHEN a.select_time = '10t' THEN b."t10_name"
+				END AS "reservation_time"
+		FROM tb_reservation_list a
+		JOIN tb_reservation_info b ON a.branch_code = b.branch_code AND a.rsv_month = b.rsv_month
+		<where>
+			a.rsv_date = #{rsv_date}
+			<choose>
+				<when test="super_branch_code == null or super_branch_code == ''">
+					and a.branch_code = #{branch_code}
+				</when>
+				<otherwise>
+					and a.branch_code = #{super_branch_code}
+				</otherwise>
+			</choose>
+		</where>
+	</select>
+	
+	<select id="getBranchInfo" parameterType="map"  resultType="map">
+		SELECT a.branch_name, a.branch_tel, a.branch_addr, a.business_hours, a.remark, b.join_code
+		FROM tb_branch_info a
+		LEFT OUTER JOIN tb_branch_mng b on a.branch_code = b.branch_code 
+		<where>
+			<choose>
+				<when test="super_branch_code == null or super_branch_code == ''">
+					and a.branch_code = #{branch_code}
+				</when>
+				<otherwise>
+					and a.branch_code = #{super_branch_code}
+				</otherwise>
+			</choose>
+		</where>
+	</select>
+	
+	<update id="saveBranchMasterInfo" parameterType="map">
+		UPDATE tb_branch_info
+		SET 
+			branch_name = #{branch_name},
+			branch_tel = #{branch_tel},
+			branch_addr = #{branch_addr},
+			business_hours = #{business_hours},
+			remark = #{remark},
+			modified_id = #{login_id},
+			modified_dt = now()
+		WHERE branch_code = #{branch_code}
+	</update>
+	
+	<select id="getReservationStatusList" parameterType="map" resultType="map">
+		SELECT rsv_date, a.user_id, c."name", c.phone_number, TO_CHAR(a.created_dt, 'YYYY-MM-DD') AS created_dt,
+				CASE 
+					WHEN a.select_time = '1t' THEN b."t1_name"
+					WHEN a.select_time = '2t' THEN b."t2_name"
+					WHEN a.select_time = '3t' THEN b."t3_name"
+					WHEN a.select_time = '4t' THEN b."t4_name"
+					WHEN a.select_time = '5t' THEN b."t5_name"
+					WHEN a.select_time = '6t' THEN b."t6_name"
+					WHEN a.select_time = '7t' THEN b."t7_name"
+					WHEN a.select_time = '8t' THEN b."t8_name"
+					WHEN a.select_time = '9t' THEN b."t9_name"
+					WHEN a.select_time = '10t' THEN b."t10_name"
+				END AS "reservation_time"
+		FROM tb_reservation_list a
+		JOIN tb_reservation_info b ON a.branch_code = b.branch_code AND a.rsv_month = b.rsv_month
+		JOIN tb_user c on a.user_id = c."id"
+		<where>
+			<choose>
+				<when test="super_branch_code == null or super_branch_code == ''">
+					AND a.branch_code = #{branch_code}
+				</when>
+				<otherwise>
+					AND a.branch_code = #{super_branch_code}
+				</otherwise>
+			</choose>
+			<if test='userIdOrName != null and userIdOrName != ""'>
+				AND (
+					UPPER(a.user_id) LIKE '%' || UPPER(#{userIdOrName}) || '%'
+					OR UPPER(a.user_id) LIKE '%' || UPPER(#{userIdOrName}) || '%'
+				)
+			</if>
+			<if test='phoneNumber!=null and phoneNumber!=""'>
+				AND c.phone_number LIKE '%' || UPPER(#{phoneNumber}) || '%'
+			</if>
+			<if test="startDate != null and startDate != '' and endDate != null and endDate != ''">
+				AND rsv_date::date BETWEEN TO_TIMESTAMP(#{startDate}, 'YYYY-MM-DD') AND TO_TIMESTAMP(#{endDate}, 'YYYY-MM-DD') + INTERVAL '1 day' - INTERVAL '1 second'
+			</if>
+			<if test='remark != null and remark != ""'>
+				AND (
+					UPPER(c.remark) LIKE '%' || UPPER(#{remark}) || '%'
+				)
+			</if>
+		</where>
+		ORDER BY rsv_date
+	</select>
 </mapper>

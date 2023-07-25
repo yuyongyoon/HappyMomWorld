@@ -151,7 +151,7 @@ public class AdminService {
 		String msg = "success";
 		
 		try {
-			int branchReservationInfo = mapper.getCntbranchReservationInfo(param);
+			int branchReservationInfo = mapper.getCntBranchReservationInfo(param);
 			
 			if(branchReservationInfo > 0) {
 				mapper.updatebranchReservationInfo(param);
@@ -164,5 +164,33 @@ public class AdminService {
 			msg = "fail";
 		}
 		return msg;
+	}
+	
+	public List<Map<String, Object>> getCalendarEvent(Map<String,Object> param){
+		return mapper.getCalendarEvent(param);
+	}
+	
+	public List<Map<String, Object>> getSeletedDateReservationList(Map<String,Object> param){
+		return mapper.getSeletedDateReservationList(param);
+	}
+	
+	public Map<String, Object> getBranchInfo(Map<String, Object> param) throws Exception {
+		return mapper.getBranchInfo(param);
+	}
+	
+	public String saveBranchMasterInfo(Map<String,Object> param) {
+		String msg = "success";
+		
+		try {
+			mapper.saveBranchMasterInfo(param);
+		} catch (Exception e) {
+			e.printStackTrace();
+			msg = "fail";
+		}
+		return msg;
+	}
+	
+	public List<Map<String, Object>> getReservationStatusList(Map<String, Object> param) throws Exception {
+		return mapper.getReservationStatusList(param);
 	}
 }

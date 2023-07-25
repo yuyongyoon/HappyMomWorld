@@ -1,120 +1,119 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+
 <style>
-table > tr :{
-	text-align: center;
+.form-control:disabled {
+	background-color: white!important;
+	color: black!important;
 }
 </style>
 <script>
 $(document).ready(function() {
+	let superBranchCode
+	let branchName;
+	let branchTel;
+	let branchAddr;
+	let branchHours;
+	let branchJoinCode;
+	let branchRemark;
 
-	
-	let stdMonthPicker = new tui.DatePicker('#datepicker-month-ko', {
-		date: new Date(),
-		language: 'ko',
-		type: 'month',
-		input: {
-			element: '#datepicker-input-ko',
-			format: 'yyyy-MM'
-		}
-	});
-	
-	//통신 객체
 	ajaxCom = {
-
-	}; //ajaxCom END
-	
-	//이벤트 객체 : id값을 주면 클릭 이벤트 발생
-	btnCom = {
-		btn_initCreate: function() {
-			let stdMonth = stdMonthPicker.getDate();
-			
-			let startOfMonth = new Date(stdMonth.getFullYear(), stdMonth.getMonth(), 1); // 기준 월의 시작일
-			let endOfMonth = new Date(stdMonth.getFullYear(), stdMonth.getMonth() + 1, 0); // 기준 월의 마지막일
-			
-			let datesArray = [];
-			let currentDate = new Date(startOfMonth);
-
-			while (currentDate <= endOfMonth) {
-// 				if (!removeDay.includes(currentDate.getDay())) {
-					datesArray.push(new Date(currentDate));
-// 				}
-				currentDate.setDate(currentDate.getDate() + 1);
+		getBranchInfo: function(){
+			if($('#role').val() == 'SUPERADMIN'){
+				superBranchCode = $('#select-branch');
+				$('#btn_branchInfo').css('display', 'none');
 			}
+			
+			if($('#select-branch').val() != ''){
+				superBranchCode = $('#select-branch').val();
+			} else {
+				superBranchCode = '';
+			}
+			
+			$.doPost({
+				url	 	: "/admin/getBranchInfo",
+				data 	: {
+					super_branch_code : superBranchCode
+				},
+				success	: function(result) {
+					if(result.branchInfo != null){
+						let data = result.branchInfo;
+						branchName = data.branch_name;
+						branchTel = data.branch_tel;
+						branchAddr = data.branch_addr;
+						branchHours = data.business_hours;
+						branchJoinCode = data.join_code;
+						branchRemark = data.remark;
 
-			let trData;
-			
-			datesArray.forEach(day => {
-				trData += '<tr value="'+cfn_tuiDateFormat(day)+'">'
-				trData += '<td style="width:100px;text-align:center;">' + cfn_tuiDateFormat(day) +'</td>'
-				trData += '<td style="text-align:center;">'+$('#input_worker').val()+'</td>'
-				trData += '<td style="text-align:center;background:#6aca71"><input type="number" style="width:100%;text-align:center;border:0px solid;background:transparent;color:white;" value="'+$('#input_worker').val()+'"></td>'
-				trData += '<td style="text-align:center;background:#6aca71"><input type="number" style="width:100%;text-align:center;border:0px solid;background:transparent;color:white;" value="'+$('#input_worker').val()+'"></td>'
-				trData += '<td style="text-align:center;background:#6aca71"><input type="number" style="width:100%;text-align:center;border:0px solid;background:transparent;color:white;" value="'+$('#input_worker').val()+'"></td>'
-				trData += '<td style="text-align:center;background:#6aca71"><input type="number" style="width:100%;text-align:center;border:0px solid;background:transparent;color:white;" value="'+$('#input_worker').val()+'"></td>'
-				trData += '<td style="text-align:center;background:#6aca71"><input type="number" style="width:100%;text-align:center;border:0px solid;background:transparent;color:white;" value="'+$('#input_worker').val()+'"></td>'
-				trData += '<td style="text-align:center;background:#6aca71"><input type="number" style="width:100%;text-align:center;border:0px solid;background:transparent;color:white;" value="'+$('#input_worker').val()+'"></td>'
-				trData += '<td style="text-align:center;background:#6aca71"><input type="number" style="width:100%;text-align:center;border:0px solid;background:transparent;color:white;" value="'+$('#input_worker').val()+'"></td>'
-				trData += '<td style="text-align:center;background:#6aca71"><input type="number" style="width:100%;text-align:center;border:0px solid;background:transparent;color:white;" value="'+$('#input_worker').val()+'"></td>'
-				trData += '<td style="text-align:center;background:#6aca71"><input type="number" style="width:100%;text-align:center;border:0px solid;background:transparent;color:white;" value="'+$('#input_worker').val()+'"></td>'
-				trData += '<td style="text-align:center;background:#6aca71"><input type="number" style="width:100%;text-align:center;border:0px solid;background:transparent;color:white;" value="'+$('#input_worker').val()+'"></td>'	
-				trData += '</tr>'
-			})
-			$('#reservation_tbody').append(trData);
-			$('#btn_initCreate').attr('disabled', 'true');
-		},
-		btn_reset: function(){
-			$('#reservation_tbody').find('tr').remove();
-			$('#btn_initCreate').removeAttr('disabled');
-		},
-		btn_tableUpdateBtn: function() {
-			console.log('클릭')
-			let editDay = [];
-			$("input[name='selectDay']:checked").each(function() {
-				editDay.push(Number($(this).val()));
+						$('#input_brName').val(data.branch_name);
+						$('#input_brTel').val(data.branch_tel);
+						$('#input_brAddr').val(data.branch_addr);
+						$('#input_brHours').val(data.business_hours);
+						$('#input_brJoincode').val(data.join_code);
+						$('#input_brCode').val(data.join_code);
+						$('#input_brRemark').val(data.remark);
+					}
+				},
+				error	: function(xhr,status){
+					alert('오류가 발생했습니다.');
+				}
 			});
-			
-			console.log('수정할 요일: ', editDay)
-			
-			$('#reservation_tbody tr').each(function() {
-				let dateValue = $(this).attr('value');
-				let dayOfWeek = new Date(dateValue).getDay();
-				
-				if (editDay.includes(dayOfWeek)) {
-					$(this).find('td input').val($('#input_worker').val());
+		},
+		saveBranchMasterInfo: function(param){
+			$.doPost({
+				url	 	: "/admin/saveBranchMasterInfo",
+				data 	: param,
+				success	: function(result) {
+					if(result.msg == 'success'){
+						alert('저장되었습니다.');
+						location.reload(true);
+					}
+				},
+				error	: function(xhr,status){
+					alert('오류가 발생했습니다.');
 				}
 			});
 		}
-	}; //btnCom END
-
-	//기타 함수 객체
-	fnCom = {
+	};
 	
-	}; //fnCom END
+	btnCom = {
+		btn_branchInfo: function(){
+			$('#modal_brName').val(branchName);
+			$('#modal_brTell').val(branchTel);
+			$('#modal_brAddr').val(branchAddr);
+			$('#modal_brHours').val(branchHours);
+			$('#modal_brCode').val(branchJoinCode);
+			$('#modal_brRemark').val(branchRemark);
+			$('#branchInfo_modal').modal('show');
+		},
+		btn_saveBranchMasterInfo: function(){
+			if($('#modal_brName').val() != '' && $('#modal_brTell').val() != '' && $('#modal_brAddr').val() != '' 
+					&& $('#modal_brHours').val() != '' && $('#modal_brCode').val() != '' && $('#modal_brRemark').val() != '') {
+				let param = {
+						branch_name : $('#modal_brName').val(),
+						branch_tel : $('#modal_brTell').val(),
+						branch_addr : $('#modal_brAddr').val(),
+						business_hours : $('#modal_brHours').val(),
+						remark : $('#modal_brRemark').val()
+				}
+				
+				ajaxCom.saveBranchMasterInfo(param);
+			} else {
+				alert('칸을 모두 입력해주세요.');
+				return false;
+			}
+			
+		},
+		btn_cancle: function(){
+			$('#branchInfo_modal').modal('hide');
+		}
+	};
+	ajaxCom.getBranchInfo();
 }); //END $(document).ready
 
-// let checkUnload = true;
-// $(window).on("beforeunload", function(){
-// 	if(checkUnload) {
-// 		return '변경사항이 저장되지 않을 수 있습니다.';
-// 	}
-// });
-	
-	
-$(document).on('input', '#reservation_tbody input[type="number"]', function() {
-	let value = $(this).val();
-	let parentTd = $(this).parent();
-	
-	if (value == null || value === '' || value == 0) {
-		parentTd.css('background', 'lightgray');
-		$(this).css('background', 'transparent');
-		$(this).css('color', 'white')
-	} else if (value >= 1) {
-		parentTd.css('background', '#6aca71');
-		$(this).css('background', 'transparent');
-		$(this).css('color', 'white');
-		
-		}
-});
+
+$('#select-branch').on('change', function(){
+	ajaxCom.getBranchInfo();
+})
 </script>
 <div class="main-panel">
 	<div class="content">
@@ -127,109 +126,141 @@ $(document).on('input', '#reservation_tbody input[type="number"]', function() {
 								<div class="col-md-12">
 									<div class="row">
 										<div class="col-sm-6">
-											<span class="row-title">지점 정보 관리</span>
+											<span class="row-title">지점 마스터 관리</span>
 										</div>
 										<div class="col-sm-6">
 											<div class="button-list float-right">
-												<button type="button" id="btn_initCreate" class="header-btn btn btn-secondary float-left ml-2 mb-2">생성</button>
-												<button type="button" id="btn_get" class="header-btn btn btn-secondary float-left ml-2 mb-2">조회</button>
-												<button type="button" id="btn_save" class="header-btn btn btn-secondary float-left ml-2 mb-2">저장</button>
-												<button type="button" id="btn_reset" class="header-btn btn btn-secondary float-left ml-2 mb-2">초기화</button>
-												<button type="button" id="btn_download" class="header-btn btn btn-secondary float-left ml-2 mb-2">다운로드</button>
+<!-- 												<button type="button" id="btn_get" class="header-btn btn btn-secondary float-left ml-2 mb-2">조회</button> -->
+												<button type="button" id="btn_branchInfo" class="header-btn btn btn-secondary float-left ml-2 mb-2">지점 정보 수정</button>
+												<button type="button" id="" class="header-btn btn btn-secondary float-left ml-2 mb-2">다운로드</button>
 											</div>
 										</div>
 									</div>
 								</div>
 							</div>
-							
-							<table class="table-sm mt-1 mb-2" style="border-top: 1px lightgray solid; border-bottom: 1px lightgray solid;">
-								<tbody>
-									<tr>
-										<th>기준 월</th>
-										<td>
-											<div class="tui-datepicker-input tui-datetime-input tui-has-focus">
-												<input type="text" id="datepicker-input-ko" aria-label="Year-Month">
-												<span class="tui-ico-date"></span>
-											</div>
-											<div class="datepicker-cell" id="datepicker-month-ko" style="margin-top: -1px;"></div>
-										</td>
-										
-										<th>기본 근무자 수</th>
-										<td>
-											<input type="number" id="input_worker" class="form-control form-control-sm" style="width:50%;height:15%"/>
-										</td>
-									</tr>
-									<tr>
-										<th>요일 선택 </th>
-										<td>
-<!-- 											<div class="row"> -->
-												<div class="custom-control custom-checkbox custom-control-inline">
-													<input type="checkbox" id="checkbox_1" name="selectDay" class="custom-control-input" value="1">
-													<label class="custom-control-label" for="checkbox_1">월</label>
-												</div>
-												<div class="custom-control custom-checkbox custom-control-inline">
-													<input type="checkbox" id="checkbox_2" name="selectDay" class="custom-control-input" value="2">
-													<label class="custom-control-label" for="checkbox_2">화</label>
-												</div>
-												<div class="custom-control custom-checkbox custom-control-inline">
-													<input type="checkbox" id="checkbox_3" name="selectDay" class="custom-control-input" value="3">
-													<label class="custom-control-label" for="checkbox_3">수</label>
-												</div>
-												<div class="custom-control custom-checkbox custom-control-inline">
-													<input type="checkbox" id="checkbox_4" name="selectDay" class="custom-control-input" value="4">
-													<label class="custom-control-label" for="checkbox_4">목</label>
-												</div>
-												<div class="custom-control custom-checkbox custom-control-inline">
-													<input type="checkbox" id="checkbox_5" name="selectDay" class="custom-control-input" value="5">
-													<label class="custom-control-label" for="checkbox_5">금</label>
-												</div>
-												<div class="custom-control custom-checkbox custom-control-inline">
-													<input type="checkbox" id="checkbox_6" name="selectDay" class="custom-control-input" value="6">
-													<label class="custom-control-label" for="checkbox_6">토</label>
-												</div>
-												<div class="custom-control custom-checkbox custom-control-inline">
-													<input type="checkbox" id="checkbox_0" name="selectDay" class="custom-control-input" value="0">
-													<label class="custom-control-label" for="checkbox_0">일</label>
-												</div>
-<!-- 											</div> -->
-										</td>
-										<th>근무자 수 조정</th>
-										<td>
-											<input type="number" id="input_worker" class="form-control form-control-sm" style="width:50%;height:15%"/>
-										</td>
-										<td>
-											<button type="button" id="btn_tableUpdateBtn" class="header-btn btn btn-secondary float-left btn-xs">적용</button>
-										</td>
-									</tr>
-								</tbody>
-							</table>
-							
-							<!-- Grid -->
-							<div class="col-md-12 mt-3" style="max-height: 600px; min-height: 600px; overflow-y: scroll;">
-								<div class="table-responsive" >
-									<table class="table table-bordered ">
-										<thead>
-											<tr>
-												<th scope="col" style="width: 100px;">날짜</th>
-												<th scope="col" style="width: 100px;">근무자 수</th>
-												<th scope="col" style="width: 80px;">1 Time</th>
-												<th scope="col" style="width: 80px;">2 Time</th>
-												<th scope="col" style="width: 80px;">3 Time</th>
-												<th scope="col" style="width: 80px;">4 Time</th >
-												<th scope="col" style="width: 80px;">5 Time</th>
-												<th scope="col" style="width: 80px;">6 Time</th>
-												<th scope="col" style="width: 80px;">7 Time</th>
-												<th scope="col" style="width: 80px;">8 Time</th>
-												<th scope="col" style="width: 80px;">9 Time</th>
-												<th scope="col" style="width: 80px;">10 Time</th>
-											</tr>
-										</thead>
-										<tbody id="reservation_tbody">
-										</tbody>
-									</table>
+							<hr style="border: 1px solid lightgray;width: 100%;">
+							<div class="col-md-12">
+								<div class="card-body">
+									<h1 style="text-align: center">산전 마사지 예약 안내</h1>
+									<div class="row mt-3">
+										<div class="col-md-3">
+											<label>지점 이름</label>
+										</div>
+										<div class="col-md-9">
+											<input type="text" class="form-control" id="input_brName" disabled>
+										</div>
+									</div>
+									<div class="row mt-3">
+										<div class="col-md-3">
+											<label>전화번호</label>
+										</div>
+										<div class="col-md-9">
+											<input type="text" class="form-control" id="input_brTel" disabled>
+										</div>
+									</div>
+									<div class="row mt-3">
+										<div class="col-md-3">
+											<label>주소</label>
+										</div>
+										<div class="col-md-9">
+											<input type="text" class="form-control" id="input_brAddr" disabled>
+										</div>
+									</div>
+									<div class="row mt-3">
+										<div class="col-md-3">
+											<label>운영시간</label>
+										</div>
+										<div class="col-md-9">
+											<input type="text" class="form-control" id="input_brHours" disabled>
+										</div>
+									</div>
+									<div class="row mt-3">
+										<div class="col-md-3">
+											<label>가입코드</label>
+										</div>
+										<div class="col-md-9">
+											<input type="text" class="form-control" id="input_brCode" disabled>
+										</div>
+									</div>
+									<div class="row mt-3">
+										<div class="col-md-3">
+											<label>안내문구</label>
+										</div>
+										<div class="col-md-9">
+											<textarea class="form-control" id="input_brRemark" rows="3"  style="resize: none;" disabled></textarea>
+										</div>
+									</div>
+									<div class="row mt-3">
+										<div></div>
+									</div>
 								</div>
 							</div>
 							
+							<div class="modal fade" id="branchInfo_modal" tabindex="-1" role="dialog" aria-hidden="true">
+								<div class="modal-dialog modal-dialog-centered" role="document">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h4 class="modal-title">지점 정보</h4>
+										</div>
+										<div class="modal-body">
+											<div class="col-12">
+												<div class="form-group row pb-0">
+													<div class="col-sm-2">
+														<label class="control-label mt-2">지점 이름</label>
+													</div>
+													<div class="col-sm-10">
+														<input type="text" class="form-control" id="modal_brName">
+													</div>
+												</div>
+												<div class="form-group row pb-0">
+													<div class="col-sm-2">
+														<label class="control-label mt-2" style="border: 0px;">전화번호</label>
+													</div>
+													<div class="col-sm-10">
+														<input type="text" class="form-control" id="modal_brTell">
+													</div>
+												</div>
+												<div class="form-group row pb-0">
+													<div class="col-sm-2">
+														<label class="control-label mt-2" style="border: 0px;">주소</label>
+													</div>
+													<div class="col-sm-10">
+														<input type="text" class="form-control" id="modal_brAddr">
+													</div>
+												</div>
+												<div class="form-group row pb-0">
+													<div class="col-sm-2">
+														<label class="control-label mt-2">운영 시간</label>
+													</div>
+													<div class="col-sm-10">
+														<input type="text" class="form-control" id="modal_brHours">
+													</div>
+												</div>
+												<div class="form-group row pb-0">
+													<div class="col-sm-2">
+														<label class="control-label mt-2">가입코드</label>
+													</div>
+													<div class="col-sm-10">
+														<input type="text" class="form-control" id="modal_brCode" disabled>
+													</div>
+												</div>
+												<div class="form-group row pb-0">
+													<div class="col-sm-2 ">
+														<label class="control-label mt-2">안내 문구</label>
+													</div>
+													<div class="col-sm-10">
+														<textarea class="form-control" id="modal_brRemark" style="height: 70px;resize: none;"></textarea>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="modal-footer">
+											<button type="button" class="btn btn-secondary" id="btn_saveBranchMasterInfo">저장</button>
+											<button type="button" class="btn btn-info" id="btn_cancle">취소</button>
+										</div>
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>	
