@@ -68,8 +68,12 @@ public class UserService {
 		}
 		return msg;
 	}
-	//예약 리스트 가져오기
+	// 예약 리스트 가져오기
 	public List<Map<String, Object>> getReservation(Map<String,Object> param){
 		return mapper.getReservation(param);
+	}
+	// 기간별 예약 조회
+	public List<Map<String, Object>> searchRsv(Map<String,Object> param){
+		return mapper.searchRsv(param);
 	}
 }

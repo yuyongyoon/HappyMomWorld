@@ -33,10 +33,59 @@
 		WHERE id = #{login_id}
 	</update>
 	
-	<select id="getReservation" parameterType="map" resultType="map">
+<!-- 	<select id="getReservation" parameterType="map" resultType="map">
 		SELECT date, time, staff_num
 		FROM tb_reservation
 		WHERE id like #{login_id}
+	</select> -->
+	
+	<select id="getReservation" parameterType="map" resultType="map">
+		SELECT distinct trl.user_id, trl.rsv_date, tbi.branch_name, tbi.branch_tel,
+			(case
+				when trl.select_time = '1t' then tri.t1_name
+				when trl.select_time = '2t' then tri.t2_name
+				when trl.select_time = '3t' then tri.t3_name
+				when trl.select_time = '4t' then tri.t4_name
+				when trl.select_time = '5t' then tri.t5_name
+				when trl.select_time = '6t' then tri.t6_name
+				when trl.select_time = '7t' then tri.t7_name
+				when trl.select_time = '8t' then tri.t8_name
+				when trl.select_time = '9t' then tri.t9_name
+				when trl.select_time = '10t' then tri.t10_name
+			end) as rsv_time
+		FROM tb_reservation_list trl 
+			join tb_reservation_info tri 
+				on trl.branch_code = tri.branch_code and trl.rsv_month = tri.rsv_month
+			join tb_branch_info tbi
+				on trl.branch_code = tbi.branch_code
+		WHERE trl.user_id = #{login_id}
+		<if test="startDate != null and startDate != '' and endDate != null and endDate != ''">
+				AND  trl.rsv_date between #{startDate} and #{endDate}a.created_dt BETWEEN TO_TIMESTAMP(#{startDate}, 'YYYY-MM-DD') AND TO_TIMESTAMP(#{endDate}, 'YYYY-MM-DD') + INTERVAL '1 day' - INTERVAL '1 second'
+		</if>
+		ORDER BY trl.rsv_date, rsv_time ASC
 	</select>
+	
+	<!-- <select id="searchRsv" parameterType="map" resultType="map">
+		SELECT distinct trl.user_id, trl.rsv_date, tbi.branch_name, tbi.branch_tel,
+			(case
+				when trl.select_time = '1t' then tri.t1_name
+				when trl.select_time = '2t' then tri.t2_name
+				when trl.select_time = '3t' then tri.t3_name
+				when trl.select_time = '4t' then tri.t4_name
+				when trl.select_time = '5t' then tri.t5_name
+				when trl.select_time = '6t' then tri.t6_name
+				when trl.select_time = '7t' then tri.t7_name
+				when trl.select_time = '8t' then tri.t8_name
+				when trl.select_time = '9t' then tri.t9_name
+				when trl.select_time = '10t' then tri.t10_name
+			end) as rsv_time
+		FROM tb_reservation_list trl 
+			join tb_reservation_info tri 
+				on trl.branch_code = tri.branch_code and trl.rsv_month = tri.rsv_month
+			join tb_branch_info tbi
+				on trl.branch_code = tbi.branch_code
+		WHERE trl.user_id = #{login_id} and trl.rsv_date between #{startDate} and #{endDate}
+		ORDER BY trl.rsv_date, rsv_time ASC
+	</select> -->
 	
 </mapper>

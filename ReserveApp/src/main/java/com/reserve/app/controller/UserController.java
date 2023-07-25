@@ -23,13 +23,13 @@ public class UserController {
 	@Autowired
 	UserService userService;
 	
-	//캘린더 화면
+	// 캘린더 화면
 	@RequestMapping(value = "/calendar", method = RequestMethod.GET)
 	public String viewCalendar(Model model, HttpServletRequest request) throws Exception{
 		return "user/calendar";
 	}
 	
-	//예약 확인 화면
+	// 예약 확인 화면
 	@RequestMapping(value = "/reservation", method = RequestMethod.GET)
 	public String viewReservation(Model model, HttpServletRequest request) throws Exception{
 		return "user/reservation";
@@ -65,14 +65,23 @@ public class UserController {
 		return result;
 	}
 	
-	//예약 리스트 가져오기
+	// 예약 리스트 가져오기
 	@RequestMapping(value = "/getReservation", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String,Object> getReservation(HttpServletRequest request, @RequestBody Map<String,Object> param) throws Exception {
 		Map<String,Object> result = new HashMap<String,Object>();
 		List<Map<String,Object>> rsvList = userService.getReservation(param);
 		result.put("rsvList", rsvList);
-		//System.out.println("rsvList >> "+rsvList);
+		return result;
+	}
+	
+	// 기간별 예약 조회
+	@RequestMapping(value = "/searchRsv", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String,Object> searchRsv(HttpServletRequest request, @RequestBody Map<String,Object> param) throws Exception {
+		Map<String,Object> result = new HashMap<String,Object>();
+		List<Map<String,Object>> rsvList = userService.searchRsv(param);
+		result.put("rsvList", rsvList);
 		return result;
 	}
 }
