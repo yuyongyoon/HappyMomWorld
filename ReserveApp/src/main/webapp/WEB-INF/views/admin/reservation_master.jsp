@@ -480,6 +480,9 @@ $(document).ready(function() {
 				$('#select_filter').val('none');
 				$('.td_filter').css('display', 'none');
 				$('#btn_clearFilter').css('display','none');
+				$('#td_day').css('display','none');
+				$('#td_time').css('display','none');
+				$('.td_range').css('display','none');
 			}
 		},
 		btn_set: function(){
@@ -540,7 +543,7 @@ $(document).ready(function() {
 			list.masterList.forEach(function(data){
 				trData += '<tr value="'+data.rsv_date+'">'
 				trData += '<td>' + data.rsv_date +'</td>'
-				trData += '<td>'+list.branchReservationInfo.worker_num+'</td>'
+				trData += '<td>'+data.worker_num+'</td>'
 				for(let i = 1; i <= 10; i++){
 					trData += '<td value="'+i+'t" input_val="'+data[i+'t']+'"><input type="number" min="'+data[i+'t_cnt']+'" value="'+data[i+'t']+'"></td>'
 				}
@@ -909,7 +912,7 @@ $(document).on('input', '#reservation_tbody input[type="number"]', function() {
 										<thead>
 											<tr>
 												<th scope="col" style="width: 100px;">날짜</th>
-												<th scope="col" style="width: 100px;">기본 근무자 수</th>
+												<th scope="col" style="width: 100px;">생성 당시 <br> 기준 근무자 수</th>
 												<th scope="col" style="width: 80px;">1 Time<br><span id="span_1t"></span></th>
 												<th scope="col" style="width: 80px;">2 Time<br><span id="span_2t"></span></th>
 												<th scope="col" style="width: 80px;">3 Time<br><span id="span_3t"></span></th>
@@ -936,7 +939,7 @@ $(document).on('input', '#reservation_tbody input[type="number"]', function() {
 				<div class="modal-dialog modal-dialog-centered" role="document">
 					<div class="modal-content">
 						<div class="modal-header">
-							<h4 class="modal-title" >예약 기본 설정</h4>
+							<h4 class="modal-title" >예약 설정</h4>
 						</div>
 						<div class="modal-body">
 							<form>

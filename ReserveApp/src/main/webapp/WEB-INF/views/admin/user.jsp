@@ -7,11 +7,11 @@ $(document).ready(function() {
 	let name_check;
 	
 	const today = new Date();
-	const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+	const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
 	
 	const searchPicker = tui.DatePicker.createRangePicker({
 		startpicker: {
-			date: lastMonth,
+			date: firstDay,
 			input: '#input_startDate',
 			container: '#startDate-container'
 		},
@@ -150,7 +150,7 @@ $(document).ready(function() {
 				{header : '마사지 예약 여부',	name : 'massage_reserve_cnt',	width : 150, align:'center', formatter: 'listItemText', disabled:true,
 					editor: { type: 'select', options: { listItems: [{text:'YES', value:'Y'},{text:'NO',value:'N'}]}, sortable: true }
 				},
-				{header : '등록일',		name : 'created_dt',	width : 150,  align:'center', sortable: true},
+				{header : '가입일',		name : 'created_dt',	width : 150,  align:'center', sortable: true},
 				{header : '비고',			name : 'remark',	align:'left'}
 			]
 		},

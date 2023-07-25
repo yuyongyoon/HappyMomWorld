@@ -139,6 +139,7 @@
 			a.branch_code,
 			a.rsv_month,
 			a.rsv_date,
+			c.worker_num,
 			a."1t",
 			COUNT(b.select_time) FILTER (WHERE b.select_time = '1t') AS "1t_cnt",
 			a."2t",
@@ -160,7 +161,8 @@
 			a."10t",
 			COUNT(b.select_time) FILTER (WHERE b.select_time = '10t') AS "10t_cnt"
 		FROM tb_reservation_master a
-			LEFT OUTER JOIN tb_reservation_list b on   a.branch_code = b.branch_code AND a.rsv_month = b.rsv_month AND a.rsv_date = b.rsv_date
+			JOIN tb_reservation_info c on a.rsv_month =c.rsv_month  AND a.branch_code = c.branch_code 
+			LEFT OUTER JOIN tb_reservation_list b on a.branch_code = b.branch_code AND a.rsv_month = b.rsv_month AND a.rsv_date = b.rsv_date
 		<where>
 			<choose>
 				<when test="super_branch_code == null or super_branch_code == ''">
@@ -174,7 +176,8 @@
 		GROUP BY
 			a.branch_code,
 			a.rsv_month,
-			a.rsv_date
+			a.rsv_date,
+			c.worker_num
 		ORDER BY
 			a.rsv_month,
 			a.rsv_date
