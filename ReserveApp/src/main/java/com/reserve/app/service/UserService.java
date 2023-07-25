@@ -34,12 +34,7 @@ public class UserService {
 		}
 		return msg;
 	}
-	// 기존 비밀번호 확인
-//	public int checkOrgPwd(Map<String,Object> org_pwd) {
-//		int pwdCnt = mapper.checkOrgPwd(org_pwd);
-//		System.out.println("checkOrgPwd(service): " + pwdCnt);	//test
-//		return pwdCnt;
-//	}
+	
 	// 비밀번호 변경
 	public String updateUserPwd(Map<String,Object> param) {
 		String msg = "success";
@@ -68,13 +63,14 @@ public class UserService {
 		}
 		return msg;
 	}
+	
 	// 예약 리스트 가져오기
 	public List<Map<String, Object>> getReservation(Map<String,Object> param){
 		return mapper.getReservation(param);
 	}
+	
 	// 기간별 예약 조회
 	public String removeReservation(Map<String,Object> param){ 
-		System.out.println("================ service ====================");
 		String msg = "success";
 		try {
 			mapper.removeReservation((Map<String,Object>) param);
