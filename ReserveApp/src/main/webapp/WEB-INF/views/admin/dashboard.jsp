@@ -217,15 +217,39 @@ a:link {
 				</div>
 				<div class="col-md-4">
 					<div class="card">
-						<div class="card-body pb-0">
+						<div class="card-body pb-0" style="margin-bottom:53px;">
 							<h2 class="mb-1 fw-bold">예약 리스트</h2>
 							<div id="reservation_grid"></div>
 						</div>
 					</div>
 					<div class="card">
 						<div class="card-body">
-							<h4 class="mb-1 fw-bold">Tasks Progress</h4>
-							<div id="task-complete" class="chart-circle mt-4 mb-3"></div>
+							<ol class="activity-feed" style="font-size: 15px;margin-bottom: 0px;">
+								<li class="feed-item feed-item-secondary">
+									<time class="date" datetime="9-25">Sep 25</time>
+<!-- 									<span class="text">Responded to need <a href="#">"Volunteer opportunity"</a></span> -->
+									<a href="/admin/reservation_master"><span class="text">예약 생성은 2023년 8월까지 되어 있습니다.</span></a>
+								</li>
+								<li class="feed-item feed-item-success">
+									<time class="date" datetime="9-24">Sep 24</time>
+<!-- 									<span class="text">Added an interest <a href="#">"Volunteer Activities"</a></span> -->
+									<a href="/admin/reservation_status"><span>8월 예약 생성 30건 중 15건이 예약 되었습니다.</span></a>
+								</li>
+								<li class="feed-item feed-item-info">
+									<time class="date" datetime="9-23">Sep 23</time>
+<!-- 									<span class="text">Joined the group <a href="single-group.php">"Boardsmanship Forum"</a></span> -->
+									<a href="/admin/user"><span class="text">어제 가입한 회원은 총 3명 입니다.</span></a>
+								</li>
+								<li class="feed-item feed-item-warning">
+									<time class="date" datetime="9-21">Sep 21</time>
+<!-- 									<span class="text">Responded to need <a href="#">"In-Kind Opportunity"</a></span> -->
+									<a href="/admin/user"><span>가입 후 예약하지 않은 회원은 10명입니다.</span></a>
+								</li>
+<!-- 								<li class="feed-item feed-item-danger"> -->
+<!-- 									<time class="date" datetime="9-18">Sep 18</time> -->
+<!-- 									<span class="text">Created need <a href="#">"Volunteer Opportunity"</a></span> -->
+<!-- 								</li> -->
+							</ol>
 						</div>
 					</div>
 				</div>

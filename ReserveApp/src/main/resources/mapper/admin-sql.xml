@@ -207,7 +207,6 @@
 		SELECT count(branch_code)
 		FROM tb_reservation_info
 		<where>
-			rsv_month like #{rsv_month}
 			<choose>
 				<when test="super_branch_code == null or super_branch_code == ''">
 					and branch_code = #{branch_code}
@@ -223,7 +222,6 @@
 		SELECT worker_num, t1_name, t2_name, t3_name, t4_name, t5_name, t6_name, t7_name, t8_name, t9_name, t10_name
 		FROM tb_reservation_info
 		<where>
-			AND rsv_month like #{rsv_month}
 			<choose>
 				<when test="super_branch_code == null or super_branch_code == ''">
 					AND branch_code = #{branch_code}
@@ -233,22 +231,8 @@
 				</otherwise>
 			</choose>
 		</where>
-	</select>
-	
-	<select id="getCntbranchReservationInfo" parameterType="map"  resultType="int">
-		SELECT count(branch_code)
-		FROM tb_reservation_info
-		<where>
-			rsv_month like #{rsv_month}
-			<choose>
-				<when test="super_branch_code == null or super_branch_code == ''">
-					and branch_code = #{branch_code}
-				</when>
-				<otherwise>
-					and branch_code = #{super_branch_code}
-				</otherwise>
-			</choose>
-		</where>
+		ORDER BY rsv_month desc
+		limit 1
 	</select>
 	
 	<insert id="addbranchReservationInfo" parameterType="map">

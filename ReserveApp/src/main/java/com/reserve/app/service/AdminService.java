@@ -151,7 +151,7 @@ public class AdminService {
 		String msg = "success";
 		
 		try {
-			int branchReservationInfo = mapper.getCntbranchReservationInfo(param);
+			int branchReservationInfo = mapper.getCntBranchReservationInfo(param);
 			
 			if(branchReservationInfo > 0) {
 				mapper.updatebranchReservationInfo(param);

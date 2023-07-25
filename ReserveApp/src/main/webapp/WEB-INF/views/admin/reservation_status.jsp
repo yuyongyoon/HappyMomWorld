@@ -67,11 +67,12 @@ $(document).ready(function() {
 				$.doPost({
 					url	 	: "/admin/getReservationStatusList",
 					data 	: {
-						userIdOrName	: userIdOrName,
-						phoneNumber		: phoneNumber,
-						startDate		: startDate,
-						endDate			: endDate,
-						remark : remark
+						userIdOrName		: userIdOrName,
+						phoneNumber			: phoneNumber,
+						startDate			: startDate,
+						endDate				: endDate,
+						remark				: remark,
+						super_branch_code 	: superBranchCode
 					},
 					success	: function(result) {
 						$('#reservationCnt').text(result.reservationStatusList.length);
@@ -121,7 +122,7 @@ $(document).ready(function() {
 			columns: [
 				{header : '날짜',			name : 'rsv_date',			align:'left',	sortable: true},
 				{header : '시간',			name : 'reservation_time',	align:'left', sortable: true},
-				{header : '아이디',		name : 'user_id',			align:'left', sortable: true},
+				{header : '아이디',			name : 'user_id',			align:'left', sortable: true},
 				{header : '이름',			name : 'name',				align:'left', sortable: true},
 				{header : '전화번호',		name : 'phone_number',		align:'left', sortable: true},
 				{header : '예약한 날짜',	name : 'created_dt',		align:'left', sortable: true},
