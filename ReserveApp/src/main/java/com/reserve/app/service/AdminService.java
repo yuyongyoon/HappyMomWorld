@@ -128,7 +128,14 @@ public class AdminService {
 			
 			mapper.deleteReservationMasterData(delInfo);
 			mapper.addReservationMasterData(saveReservationMasterData);
-			mapper.addbranchReservationInfo(branchReservationInfo);
+
+			int branchReservationInfoCnt = mapper.getCntBranchReservationInfo(branchReservationInfo);
+			
+			if(branchReservationInfoCnt == 0) {
+				mapper.addbranchReservationInfo(branchReservationInfo);
+			} else if(branchReservationInfoCnt >= 1) {
+				mapper.updatebranchReservationInfo(branchReservationInfo);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			msg = "fail";
@@ -149,14 +156,10 @@ public class AdminService {
 	
 	public String saveBranchReservationInfo(Map<String,Object> param) {
 		String msg = "success";
-		System.out.println("여기야!");
 		try {
 			int branchReservationInfo = mapper.getCntBranchReservationInfo(param);
 			
-			System.out.println(branchReservationInfo == 1);
-			
 			if(branchReservationInfo == 0) {
-				System.out.println();
 				mapper.addbranchReservationInfo(param);
 			} else if(branchReservationInfo >= 1) {
 				mapper.updatebranchReservationInfo(param);

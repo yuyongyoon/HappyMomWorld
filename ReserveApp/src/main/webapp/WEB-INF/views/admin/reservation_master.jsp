@@ -37,7 +37,20 @@ table tbody tr th {
 #reservation_tbody td[input_val="7"] {
 	background-color: #17a2b8;
 }
+.cell-with-memo {
+	position: relative;
+}
 
+.cell-with-memo::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	border-style: solid;
+	border-width: 10px 10px 0 0;
+	border-color: red transparent transparent transparent;
+	pointer-events: none;
+}
 </style>
 
 <script>
@@ -446,7 +459,13 @@ $(document).ready(function() {
 				trData += '<td>' + data.rsv_date +'</td>'
 				trData += '<td>'+data.worker_num+'</td>'
 				for(let i = 1; i <= 10; i++){
-					trData += '<td value="'+i+'t" input_val="'+data[i+'t']+'"><input type="number" min="'+data[i+'t_cnt']+'" value="'+data[i+'t']+'"></td>'
+					console.log(data[i+'t_cnt'], data[i+'t'])
+					if(data[i+'t_cnt'] == 0){
+						trData += '<td value="'+i+'t" input_val="'+data[i+'t']+'"><input type="number" min="'+data[i+'t_cnt']+'" value="'+data[i+'t']+'"></td>'
+					} else {
+						trData += '<td value="'+i+'t" input_val="'+data[i+'t']+'" class="cell-with-memo"><input type="number" min="'+data[i+'t_cnt']+'" value="'+data[i+'t']+'"></td>'
+					}
+					
 				}
 				trData += '</tr>'
 			})
@@ -548,17 +567,6 @@ $(document).on('input', '#reservation_tbody input[type="number"]', function() {
 													<button type="button" id="btn_initCreate" class="header-btn btn btn-warning btn-sm">생성</button>
 													<button type="button" id="btn_tableReset" class="header-btn btn btn-warning btn-sm">테이블 초기화</button>
 												</td>
-<!-- 												<th class="td_filter">적용 기준</th> -->
-<!-- 												<td class="td_filter"> -->
-<!-- 													<div class="form-group"> -->
-<!-- 														<select class="form-control form-control-sm" id="select_filter"> -->
-<!-- 															<option value="none">기준 선택</option> -->
-<!-- 															<option value="day">요일</option> -->
-<!-- 															<option value="time">시간</option> -->
-<!-- 															<option value="range">사용자 지정</option> -->
-<!-- 														</select> -->
-<!-- 													</div> -->
-<!-- 												</td> -->
 												<td style="text-align:center;">
 													<button type="button" id="btn_clearFilter" class="header-btn btn btn-warning btn-sm">필터 초기화</button>
 												</td>
