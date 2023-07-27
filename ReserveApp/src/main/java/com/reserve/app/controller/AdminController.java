@@ -49,9 +49,9 @@ public class AdminController {
 	}
 	
 	//지점 정보 관리 화면
-	@RequestMapping(value = "/branch_master", method = RequestMethod.GET)
+	@RequestMapping(value = "/print_master", method = RequestMethod.GET)
 	public String viewBranchMaster(Model model, HttpServletRequest request) throws Exception {
-		return "admin/branch_master";
+		return "admin/print_master";
 	}
 	
 	//지점 관리 화면
@@ -166,21 +166,21 @@ public class AdminController {
 		return result;
 	}
 	
-	//=======================지점 마스터 controller=====================
-	@RequestMapping(value = "/getBranchInfo", method = RequestMethod.POST)
+	//=======================예약 안내문 관리 controller=====================
+	@RequestMapping(value = "/getBranchPrintInfo", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String,Object> getBranchInfo(HttpServletRequest request, @RequestBody Map<String,Object> param) throws Exception {
+	public Map<String,Object> getBranchPrintInfo(HttpServletRequest request, @RequestBody Map<String,Object> param) throws Exception {
 		Map<String,Object> result = new HashMap<String,Object>();
-		Map<String,Object> branchInfo = adminService.getBranchInfo(param);
-		result.put("branchInfo", branchInfo);
+		Map<String,Object> branchPrintInfo = adminService.getBranchPrintInfo(param);
+		result.put("branchPrintInfo", branchPrintInfo);
 		return result;
 	}
 	
-	@RequestMapping(value = "/saveBranchMasterInfo", method = RequestMethod.POST)
+	@RequestMapping(value = "/saveBranchPrintInfo", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String,Object> saveBranchMasterInfo(HttpServletRequest request, @RequestBody Map<String,Object> param) throws Exception {
+	public Map<String,Object> saveBranchPrintInfo(HttpServletRequest request, @RequestBody Map<String,Object> param) throws Exception {
 		Map<String,Object> result = new HashMap<String,Object>();
-		String msg = adminService.saveBranchMasterInfo(param);
+		String msg = adminService.saveBranchPrintInfo(param);
 		result.put("msg", msg);
 		return result;
 	}

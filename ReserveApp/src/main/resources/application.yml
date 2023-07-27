@@ -12,5 +12,6 @@ spring:
   datasource:
     driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
     url: jdbc:log4jdbc:postgresql://192.168.1.19:5432/reserve_db
+#    url: jdbc:log4jdbc:postgresql://121.140.47.102:35432/reserve_db
     username: reserve_manager
     password: levware!1234

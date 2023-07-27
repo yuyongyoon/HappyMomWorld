@@ -40,7 +40,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers("/admin/user").hasAnyRole("ADMIN", "SUPERADMIN")
 				.antMatchers("/admin/reservation_status").hasAnyRole("ADMIN", "SUPERADMIN")
 				.antMatchers("/admin//admin/reservation_master").hasAnyRole("ADMIN", "SUPERADMIN")
-				.antMatchers("/admin//admin/branch_master").hasAnyRole("ADMIN", "SUPERADMIN")
+				.antMatchers("/admin//admin/print_master").hasAnyRole("ADMIN", "SUPERADMIN")
 				.antMatchers("/admin/branch_manager").hasAnyRole("SUPERADMIN")
 				.antMatchers("/login").permitAll()
 				.antMatchers("/join/**").permitAll()

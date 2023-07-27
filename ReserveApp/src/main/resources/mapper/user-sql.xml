@@ -52,13 +52,9 @@
 				on trl.branch_code = tri.branch_code and trl.rsv_month = tri.rsv_month
 			join tb_branch_info tbi
 				on trl.branch_code = tbi.branch_code
-		<where>
+		WHERE
 			trl.user_id = #{login_id}
-			<if test="startDate != null and startDate != '' and endDate != null and endDate != ''">
-				AND  trl.rsv_date BETWEEN #{startDate} AND #{endDate}
-			</if>
-		</where>
-		ORDER BY trl.rsv_date, rsv_time ASC
+		ORDER BY trl.rsv_date, rsv_time desc
 	</select>
 	
 	<delete id="removeReservation" parameterType="map">

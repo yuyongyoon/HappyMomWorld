@@ -54,28 +54,7 @@ $(document).ready(function() {
 			format: 'yyyy-MM'
 		}
 	});
-	
-	let firstDayForRangePicker = new Date(stdMonthPicker.getDate().getFullYear(), today.getMonth(), 1);
-	let lastDayForRangePicker = new Date(stdMonthPicker.getDate().getFullYear(), today.getMonth() + 1, 0);
 
-	let searchPicker = tui.DatePicker.createRangePicker({
-		startpicker: {
-			date: firstDayForRangePicker,
-			input: '#input_startDate',
-			container: '#startDate-container'
-		},
-		endpicker: {
-			date: lastDayForRangePicker,
-			input: '#input_endDate',
-			container: '#endDate-container'
-		},
-		language: 'ko',
-		format: 'YYYY-MM-dd',
-		selectableRanges: [
-			[firstDayForRangePicker, lastDayForRangePicker]
-		]
-	});
-	
 	let std_worker;
 	let std_1t;
 	let std_2t;
@@ -87,12 +66,7 @@ $(document).ready(function() {
 	let std_8t;
 	let std_9t;
 	let std_10t;
-	
-	$('#td_day').css('display', 'none');
-	$('#td_time').css('display', 'none');
-	$('.td_range').css('display', 'none');
-	$('.td_filter').css('display', 'none');
-	
+
 	ajaxCom = {
 		getReservationMasterData: function(){
 			let param;
@@ -116,11 +90,6 @@ $(document).ready(function() {
 						$('#reservation_tbody').find('tr').remove();
 						$('#btn_initCreate').css('display', '');
 						$('#btn_tableReset').css('display', 'none');
-						$('#btn_clearFilter').css('display', 'none');
-						$('.td_filter').css('display', 'none');
-						$('#td_day').css('display', 'none');
-						$('#td_time').css('display', 'none');
-						$('.td_range').css('display', 'none');
 						$('#role').val() == 'SUPERADMIN' ? $('#input_stdWorker').val('') : $('#input_stdWorker').val(result.branchReservationInfo.worker_num);
 						if($('#role').val() != 'SUPERADMIN'){
 							fnCom.createTable(result);
@@ -135,21 +104,22 @@ $(document).ready(function() {
 					}
 					
 					if($('#role').val() == 'SUPERADMIN'){
-						$('#btn_set').css('display', 'none');
-						$('#td_tableBtnList').css('display', 'none');
-						$('#btn_clearFilter').css('display', 'none');
-						$('#btn_save').css('display', 'none');
-						$('.stdWorker').css('display', 'none');
+						$('#btn_initCreate').css('display', 'none');
 						$('#td_day').css('display', 'none');
 						$('#td_time').css('display', 'none');
-						$('.td_range').css('display', 'none');
+						$('#btn_set').css('display', 'none');
+						$('#btn_save').css('display', 'none');
+						$('.stdWorker').css('display', 'none');
 						$('.td_filter').css('display', 'none');
+						$('#btn_clearFilter').css('display','none')
 						
 						$('#reservation_tbody tr').each(function() {
 							$(this).find('td').each(function() {
 								$(this).find('input').prop('disabled', true);
 							});
 						});
+						
+						cfn_tableResize('table_div', 300);
 					} else {
 						std_worker = result.branchReservationInfo.worker_num;
 						std_1t = result.branchReservationInfo.t1_name;
@@ -163,8 +133,6 @@ $(document).ready(function() {
 						std_9t = result.branchReservationInfo.t9_name;
 						std_10t = result.branchReservationInfo.t10_name;
 					}
-					
-
 				},
 				error	: function(xhr,status){
 					alert('오류가 발생했습니다.');
@@ -201,10 +169,6 @@ $(document).ready(function() {
 					if(result.msg == 'success') {
 						checkUnload = false;
 						$('#btn_tableReset').css('display','none');
-						$('#select_filter').val('none');
-						$('#td_day').css('display', 'none');
-						$('#td_time').css('display', 'none');
-						$('.td_range').css('display', 'none');
 						cfn_tableResize('table_div', 300);
 						alert('저장 되었습니다.');
 					} else {
@@ -246,9 +210,8 @@ $(document).ready(function() {
 				}
 			});
 		}
-	}; //ajaxCom END
+	};
 	
-	//이벤트 객체 : id값을 주면 클릭 이벤트 발생
 	btnCom = {
 		btn_get: function(){
 			ajaxCom.getReservationMasterData();
@@ -370,65 +333,6 @@ $(document).ready(function() {
 				}
 			});
 		},
-		btn_modifyByRange : function(){
-			let startDt = $('#input_startDate').val();
-			let endDt = $('#input_endDate').val();
-			let inputWorker = $('#input_workerForRange').val();
-			let editDay = [];
-			let editTime = [];
-			
-			$("input[name='selectRangeDay']:checked").each(function() {
-				editDay.push(Number($(this).val()));
-			});
-
-			$("input[name='selectRangeTime']:checked").each(function() {
-				editTime.push($(this).val());
-			});
-			
-			
-			if(editDay.length == 0 && editTime.length == 0) {
-				alert('지정 조건을 선택해주세요.');
-				return false;
-			}
-			
-			if(inputWorker == '') {
-				alert('변경할 근무자 수를 입력해주세요.');
-				return false;
-			}
-			
-			let rows = $('#reservation_tbody tr').filter(function() {
-				let dateValue = $(this).attr('value');
-				let date = new Date(dateValue);
-				let startDate = new Date(startDt);
-				let endDate = new Date(endDt);
-
-				return date >= startDate && date <= endDate;
-			});
-
-			rows.each(function() {
-				let row = $(this);
-				let dayOfWeek = new Date(row.attr("value")).getDay();
-				let inputColumns = row.find("td:nth-child(n+3):nth-child(-n+12)");
-
-				let isDayMatched = editDay.length == 0 || editDay.includes(dayOfWeek);
-
-				inputColumns.each(function() {
-					let column = $(this);
-					let timeValue = column.attr('value');
-					let isTimeMatched = editTime.length === 0 || editTime.includes(timeValue);
-
-					if (isDayMatched && isTimeMatched) {
-						let input = column.find('input');
-						let inputMinValue = input.attr('min');
-
-						if (inputWorker >= inputMinValue) {
-							input.val(inputWorker);
-							column.attr('input_val', inputWorker);
-						}
-					}
-				});
-			});
-		},
 		btn_save: function(){
 			let selectMonth = $('#datepicker_input_create').val();
 			let trList = $('#reservation_tbody tr');
@@ -464,13 +368,11 @@ $(document).ready(function() {
 			$("input[name='selectDay']").prop('checked', false);
 			$("input[name='selectTime']").prop('checked', false);
 			$("input[name='selectRangeDay']").prop('checked', false);
-			$("input[name='selectRangeTime']").prop('checked', false);
 
 			$("#input_workerForDay").val('');
 			$("#input_workerForTime").val('');
-			$("#input_workerForRange").val('');
+
 			
-			fnCom.setRangePicker();
 		},
 		btn_tableReset: function(){
 			if (confirm('입력된 내용들이 사라집니다.')) {
@@ -529,9 +431,8 @@ $(document).ready(function() {
 			}
 
 		}
-	}; //btnCom END
+	};
 
-	//기타 함수 객체
 	fnCom = {
 		createTable: function(list){
 			$('#reservation_tbody').find('tr').remove();
@@ -550,30 +451,8 @@ $(document).ready(function() {
 				trData += '</tr>'
 			})
 			$('#reservation_tbody').append(trData);
-		},
-		setRangePicker(){
-			firstDayForRangePicker = new Date(stdMonthPicker.getDate().getFullYear(), stdMonthPicker.getDate().getMonth(), 1);
-			lastDayForRangePicker = new Date(stdMonthPicker.getDate().getFullYear(), stdMonthPicker.getDate().getMonth() + 1, 0);
-			
-			searchPicker = tui.DatePicker.createRangePicker({
-				startpicker: {
-					date: firstDayForRangePicker,
-					input: '#input_startDate',
-					container: '#startDate-container'
-				},
-				endpicker: {
-					date: lastDayForRangePicker,
-					input: '#input_endDate',
-					container: '#endDate-container'
-				},
-				language: 'ko',
-				format: 'YYYY-MM-dd',
-				selectableRanges: [
-					[firstDayForRangePicker, lastDayForRangePicker]
-				]
-			});
 		}
-	}; //fnCom END
+	};
 	
 	$('#input_stdWorker').blur(function(){
 		if($('#input_stdWorker').val() < 0){
@@ -583,36 +462,11 @@ $(document).ready(function() {
 	
 	stdMonthPicker.on('change', function(){
 		ajaxCom.getReservationMasterData();
-		fnCom.setRangePicker();
-	})
-	
-	$('#select_filter').on('change', function(){
-		if($('#select_filter').val()=='day'){
-			$('#td_day').css('display', '');
-			$('#td_time').css('display', 'none');
-			$('.td_range').css('display', 'none');
-			cfn_tableResize('table_div', 350);
-		} else if($('#select_filter').val()=='time') {
-			$('#td_day').css('display', 'none');
-			$('#td_time').css('display', '');
-			$('.td_range').css('display', 'none');
-			cfn_tableResize('table_div', 350);
-		} else if($('#select_filter').val()=='range') {
-			$('#td_day').css('display', 'none');
-			$('#td_time').css('display', 'none');
-			$('.td_range').css('display', '');
-			cfn_tableResize('table_div', 430);
-		} else {
-			$('#td_day').css('display', 'none');
-			$('#td_time').css('display', 'none');
-			$('.td_range').css('display', 'none');
-			cfn_tableResize('table_div', 300);
-		}
 	})
 	
 	ajaxCom.getReservationMasterData();
-	cfn_tableResize('table_div', 300);
-}); //END $(document).ready
+	cfn_tableResize('table_div', 380);
+});
 
 
 $(window).on("beforeunload", function(){
@@ -694,17 +548,17 @@ $(document).on('input', '#reservation_tbody input[type="number"]', function() {
 													<button type="button" id="btn_initCreate" class="header-btn btn btn-warning btn-sm">생성</button>
 													<button type="button" id="btn_tableReset" class="header-btn btn btn-warning btn-sm">테이블 초기화</button>
 												</td>
-												<th class="td_filter">적용 기준</th>
-												<td class="td_filter">
-													<div class="form-group">
-														<select class="form-control form-control-sm" id="select_filter">
-															<option value="none">기준 선택</option>
-															<option value="day">요일</option>
-															<option value="time">시간</option>
-															<option value="range">사용자 지정</option>
-														</select>
-													</div>
-												</td>
+<!-- 												<th class="td_filter">적용 기준</th> -->
+<!-- 												<td class="td_filter"> -->
+<!-- 													<div class="form-group"> -->
+<!-- 														<select class="form-control form-control-sm" id="select_filter"> -->
+<!-- 															<option value="none">기준 선택</option> -->
+<!-- 															<option value="day">요일</option> -->
+<!-- 															<option value="time">시간</option> -->
+<!-- 															<option value="range">사용자 지정</option> -->
+<!-- 														</select> -->
+<!-- 													</div> -->
+<!-- 												</td> -->
 												<td style="text-align:center;">
 													<button type="button" id="btn_clearFilter" class="header-btn btn btn-warning btn-sm">필터 초기화</button>
 												</td>
@@ -802,105 +656,7 @@ $(document).on('input', '#reservation_tbody input[type="number"]', function() {
 													<button type="button" id="btn_modifyByTime" class="header-btn btn btn-warning btn-sm">적용</button>
 												</td>
 											</tr>
-											<tr class="td_range">
-												<th rowspan="3">사용자 지정 조건 수정</th>
-												<td colspan="7">
-													<div class="tui-datepicker-input tui-datetime-input">
-														<input id="input_startDate" type="text" aria-label="Date">
-														<span class="tui-ico-date"></span>
-														<div id="startDate-container" style="margin-left: -1px;"></div>
-													</div>
-													<span style="margin-left: 10px;margin-right: 10px;margin-top: 30px;vertical-align: bottom;">~</span>
-													<div class="tui-datepicker-input tui-datetime-input">
-														<input id="input_endDate" type="text" aria-label="Date">
-														<span class="tui-ico-date"></span>
-														<div id="endDate-container" style="margin-left: -1px;"></div>
-													</div>
-												</td>
-											</tr>
-											<tr class="td_range">
-												<td colspan="7">
-													<div class="custom-control custom-checkbox custom-control-inline">
-														<input type="checkbox" id="checkbox_range_1" name="selectRangeDay" class="custom-control-input" value="1">
-														<label class="custom-control-label" for="checkbox_range_1">월</label>
-													</div>
-													<div class="custom-control custom-checkbox custom-control-inline">
-														<input type="checkbox" id="checkbox_range_2" name="selectRangeDay" class="custom-control-input" value="2">
-														<label class="custom-control-label" for="checkbox_range_2">화</label>
-													</div>
-													<div class="custom-control custom-checkbox custom-control-inline">
-														<input type="checkbox" id="checkbox_range_3" name="selectRangeDay" class="custom-control-input" value="3">
-														<label class="custom-control-label" for="checkbox_range_3">수</label>
-													</div>
-													<div class="custom-control custom-checkbox custom-control-inline">
-														<input type="checkbox" id="checkbox_range_4" name="selectRangeDay" class="custom-control-input" value="4">
-														<label class="custom-control-label" for="checkbox_range_4">목</label>
-													</div>
-													<div class="custom-control custom-checkbox custom-control-inline">
-														<input type="checkbox" id="checkbox_range_5" name="selectRangeDay" class="custom-control-input" value="5">
-														<label class="custom-control-label" for="checkbox_range_5">금</label>
-													</div>
-													<div class="custom-control custom-checkbox custom-control-inline">
-														<input type="checkbox" id="checkbox_range_6" name="selectRangeDay" class="custom-control-input" value="6">
-														<label class="custom-control-label" for="checkbox_range_6">토</label>
-													</div>
-													<div class="custom-control custom-checkbox custom-control-inline">
-														<input type="checkbox" id="checkbox_range_0" name="selectRangeDay" class="custom-control-input" value="0">
-														<label class="custom-control-label" for="checkbox_range_0">일</label>
-													</div>
-												</td>
-											</tr>
-											<tr class="td_range">
-												<td colspan="4">
-													<div class="custom-control custom-checkbox custom-control-inline">
-														<input type="checkbox" id="checkbox_range_1t" name="selectRangeTime" class="custom-control-input" value="1t">
-														<label class="custom-control-label" for="checkbox_range_1t">1 Time</label>
-													</div>
-													<div class="custom-control custom-checkbox custom-control-inline">
-														<input type="checkbox" id="checkbox_range_2t" name="selectRangeTime" class="custom-control-input" value="2t">
-														<label class="custom-control-label" for="checkbox_range_2t">2 Time</label>
-													</div>
-													<div class="custom-control custom-checkbox custom-control-inline">
-														<input type="checkbox" id="checkbox_range_3t" name="selectRangeTime" class="custom-control-input" value="3t">
-														<label class="custom-control-label" for="checkbox_range_3t">3 Time</label>
-													</div>
-													<div class="custom-control custom-checkbox custom-control-inline">
-														<input type="checkbox" id="checkbox_range_4t" name="selectRangeTime" class="custom-control-input" value="4t">
-														<label class="custom-control-label" for="checkbox_range_4t">4 Time</label>
-													</div>
-													<div class="custom-control custom-checkbox custom-control-inline">
-														<input type="checkbox" id="checkbox_range_5t" name="selectRangeTime" class="custom-control-input" value="5t">
-														<label class="custom-control-label" for="checkbox_range_5t">5 Time</label>
-													</div>
-													<div class="custom-control custom-checkbox custom-control-inline">
-														<input type="checkbox" id="checkbox_range_6t" name="selectRangeTime" class="custom-control-input" value="6t">
-														<label class="custom-control-label" for="checkbox_range_6t">6 Time</label>
-													</div>
-													<div class="custom-control custom-checkbox custom-control-inline">
-														<input type="checkbox" id="checkbox_range_7t" name="selectRangeTime" class="custom-control-input" value="7t">
-														<label class="custom-control-label" for="checkbox_range_7t">7 Time</label>
-													</div>
-													<div class="custom-control custom-checkbox custom-control-inline">
-														<input type="checkbox" id="checkbox_range_8t" name="selectRangeTime" class="custom-control-input" value="8t">
-														<label class="custom-control-label" for="checkbox_range_8t">8 Time</label>
-													</div>
-													<div class="custom-control custom-checkbox custom-control-inline">
-														<input type="checkbox" id="checkbox_range_9t" name="selectRangeTime" class="custom-control-input" value="9t">
-														<label class="custom-control-label" for="checkbox_range_9t">9 Time</label>
-													</div>
-													<div class="custom-control custom-checkbox custom-control-inline">
-														<input type="checkbox" id="checkbox_range_10t" name="selectRangeTime" class="custom-control-input" value="10t">
-														<label class="custom-control-label" for="checkbox_range_10t">10 Time</label>
-													</div>
-												</td>
-												<th>변경할 근무자 수</th>
-												<td>
-													<input type="number" id="input_workerForRange" class="form-control form-control-sm" style="width:100%" min="0">
-												</td>
-												<td style="text-align: center;">
-													<button type="button" id="btn_modifyByRange" class="header-btn btn btn-warning btn-sm">적용</button>
-												</td>
-											</tr>
+
 										</tbody>
 									</table>
 								</div>

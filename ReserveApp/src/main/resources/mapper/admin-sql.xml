@@ -210,6 +210,7 @@
 		SELECT count(branch_code)
 		FROM tb_reservation_info
 		<where>
+			rsv_month = #{rsv_month}
 			<choose>
 				<when test="super_branch_code == null or super_branch_code == ''">
 					and branch_code = #{branch_code}
@@ -329,7 +330,7 @@
 		</where>
 	</select>
 	
-	<select id="getBranchInfo" parameterType="map"  resultType="map">
+	<select id="getBranchPrintInfo" parameterType="map"  resultType="map">
 		SELECT a.branch_name, a.branch_tel, a.branch_addr, a.business_hours, a.remark, b.join_code
 		FROM tb_branch_info a
 		LEFT OUTER JOIN tb_branch_mng b on a.branch_code = b.branch_code 
@@ -345,7 +346,7 @@
 		</where>
 	</select>
 	
-	<update id="saveBranchMasterInfo" parameterType="map">
+	<update id="saveBranchPrintInfo" parameterType="map">
 		UPDATE tb_branch_info
 		SET 
 			branch_name = #{branch_name},

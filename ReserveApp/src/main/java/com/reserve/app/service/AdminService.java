@@ -149,14 +149,17 @@ public class AdminService {
 	
 	public String saveBranchReservationInfo(Map<String,Object> param) {
 		String msg = "success";
-		
+		System.out.println("여기야!");
 		try {
 			int branchReservationInfo = mapper.getCntBranchReservationInfo(param);
 			
-			if(branchReservationInfo > 0) {
-				mapper.updatebranchReservationInfo(param);
-			} else {
+			System.out.println(branchReservationInfo == 1);
+			
+			if(branchReservationInfo == 0) {
+				System.out.println();
 				mapper.addbranchReservationInfo(param);
+			} else if(branchReservationInfo >= 1) {
+				mapper.updatebranchReservationInfo(param);
 			}
 			
 		} catch (Exception e) {
@@ -174,15 +177,15 @@ public class AdminService {
 		return mapper.getSeletedDateReservationList(param);
 	}
 	
-	public Map<String, Object> getBranchInfo(Map<String, Object> param) throws Exception {
-		return mapper.getBranchInfo(param);
+	public Map<String, Object> getBranchPrintInfo(Map<String, Object> param) throws Exception {
+		return mapper.getBranchPrintInfo(param);
 	}
 	
-	public String saveBranchMasterInfo(Map<String,Object> param) {
+	public String saveBranchPrintInfo(Map<String,Object> param) {
 		String msg = "success";
 		
 		try {
-			mapper.saveBranchMasterInfo(param);
+			mapper.saveBranchPrintInfo(param);
 		} catch (Exception e) {
 			e.printStackTrace();
 			msg = "fail";
