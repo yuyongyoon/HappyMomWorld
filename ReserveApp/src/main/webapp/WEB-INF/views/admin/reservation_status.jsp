@@ -103,9 +103,9 @@ $(document).ready(function() {
 		reservationCancle: function(props, rowKey){
 			console.log('reservationCancle 클릭', props.grid.getRow(rowKey))
 		},
-		sendMsg: function(props, rowKey){
-			console.log('sendMsg 클릭', props.grid.getRow(rowKey))
-		}
+// 		sendMsg: function(props, rowKey){
+// 			console.log('sendMsg 클릭', props.grid.getRow(rowKey))
+// 		}
 	}; //fnCom END
 	
 	const statusGrid = tuiGrid.createGrid(
@@ -122,10 +122,11 @@ $(document).ready(function() {
 			columns: [
 				{header : '날짜',			name : 'rsv_date',			align:'left',	sortable: true},
 				{header : '시간',			name : 'reservation_time',	align:'left', sortable: true},
-				{header : '아이디',			name : 'user_id',			align:'left', sortable: true},
+				{header : '아이디',			name : 'user_id',		align:'left', sortable: true},
 				{header : '이름',			name : 'name',				align:'left', sortable: true},
 				{header : '전화번호',		name : 'phone_number',		align:'left', sortable: true},
 				{header : '예약한 날짜',	name : 'created_dt',		align:'left', sortable: true},
+				{header : '예약한 시간대', name : 'select_time',		hidden:true},
 				{header : '예약변경',		name : 'change',			width : 150, align:'center', 
 					renderer: {
 						type : ButtonRenderer,

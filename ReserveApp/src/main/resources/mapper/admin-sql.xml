@@ -407,7 +407,7 @@
 	</update>
 	
 	<select id="getReservationStatusList" parameterType="map" resultType="map">
-		SELECT rsv_date, a.user_id, c."name", c.phone_number, TO_CHAR(a.created_dt, 'YYYY-MM-DD') AS created_dt,
+		SELECT rsv_date, a.user_id, c."name", c.phone_number, TO_CHAR(a.created_dt, 'YYYY-MM-DD') AS created_dt, a.select_time,
 				CASE 
 					WHEN a.select_time = '1t' THEN b."t1_name"
 					WHEN a.select_time = '2t' THEN b."t2_name"
