@@ -118,12 +118,6 @@
 							
 							<div id="table-template" class="table-responsive" style="display: none;">
 								<div class="col-md-12 mt-3">
-									<div class="col-sm-12">
-										<div class="button-list float-right">
-											<button type="button" class="btn_cancel header-btn btn btn-secondary float-left ml-2 mb-2">취소</button> 
-										</div>
-									</div>
-							
 									<div class="table-responsive">
 										<table class="table table-head-bg-secondary">
 											<tbody>
@@ -145,6 +139,11 @@
 												</tr>
 												<tr style="display:none;">
 													<td class="select_time"></td>
+												</tr>
+												<tr>
+													<td colspan="2">
+														<button type="button" class="btn_cancel header-btn btn btn-secondary btn-rounded btn-lg btn-block">취소</button> 
+													</td>
 												</tr>
 											</tbody>
 										</table>
