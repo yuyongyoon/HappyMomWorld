@@ -96,8 +96,6 @@ public class AdminController {
 		result.put("msg", msg);
 		return result;
 	}
-
-
 	//=======================지점 관리 controller=====================
 	@RequestMapping(value = "/getBranchList", method = RequestMethod.POST)
 	@ResponseBody
@@ -108,11 +106,37 @@ public class AdminController {
 		return result;
 	}
 	
-	@RequestMapping(value = "/saveBranchInfo", method = RequestMethod.POST)
+	/*
+	 * @RequestMapping(value = "/saveBranchInfo", method = RequestMethod.POST)
+	 * 
+	 * @ResponseBody public Map<String,Object> saveBranchInfo(HttpServletRequest
+	 * request, @RequestBody Map<String,Object> param) throws Exception {
+	 * Map<String,Object> result = new HashMap<String,Object>(); String msg =
+	 * adminService.saveBranchInfo(param); result.put("msg", msg); return result; }
+	 */
+	
+	// 관리자 아이디 중복 확인
+	@RequestMapping(value = "/checkId", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String,Object> saveBranchInfo(HttpServletRequest request, @RequestBody Map<String,Object> param) throws Exception {
+	public Map<String, Object> checkId(HttpServletRequest request, @RequestBody HashMap<String, Object> param) throws Exception {
+		Map<String, Object> result = adminService.checkId(param);
+		return result; 
+	}
+	// 지점 추가
+	@RequestMapping(value = "/addBranchInfo", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String,Object> addBranch(HttpServletRequest request, @RequestBody HashMap<String,Object> param) throws Exception {
 		Map<String,Object> result = new HashMap<String,Object>();
-		String msg = adminService.saveBranchInfo(param);
+		String msg = adminService.addBranchInfo(param);
+		result.put("msg", msg);
+		return result;
+	}
+	// 지점 정보 수정
+	@RequestMapping(value = "/updateBranchInfo", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String,Object> updateBranchInfo(HttpServletRequest request, @RequestBody HashMap<String,Object> param) throws Exception {
+		Map<String,Object> result = new HashMap<String,Object>();
+		String msg = adminService.updateBranchInfo(param);
 		result.put("msg", msg);
 		return result;
 	}

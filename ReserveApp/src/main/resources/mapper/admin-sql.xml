@@ -90,44 +90,91 @@
 	<select id="checkId" parameterType="map" resultType="int">
 		SELECT count(id)
 		FROM tb_user
-		WHERE 	id = #{add_id}
+		WHERE 	id = #{id}
 	</select>
 	
+	<!--=============== 지점 관리 ===============-->
 	<select id="getBranchList" parameterType="map"  resultType="map">
-		SELECT seq_no, branch_code as branch_code_col, branch_name, join_code, to_char(created_dt,'YYYY-MM-DD') as created_dt
-		FROM tb_branch_mng
+		SELECT	seq_no,
+				tu.id,
+				tbm.branch_code as branch_code_col, 
+				tbm.branch_name, 
+				join_code,
+				to_char(tbi.created_dt,'YYYY-MM-DD') as created_dt, 
+				tbi.branch_tel,
+				tbi.branch_addr,
+				tbi.business_hours
+		FROM tb_branch_mng tbm 
+				join tb_branch_info tbi on tbm.branch_code = tbi.branch_code
+				join tb_user tu on tbm.branch_code = tu.branch_code and tu.user_role = 'ADMIN' and tu.user_status = 'Y'
 		<where>
-			branch_code != 'b0000'
-			<if test='branchCode!=null and branchCode!=""'>and branch_code like '%'|| #{branchCode} ||'%'</if>
-			<if test='branchName!=null and branchName!=""'>and branch_name like '%'|| #{branchName} ||'%'</if>
+			tbm.branch_code != 'b0000'
+			<if test='branchCode!=null and branchCode!=""'>and tbm.branch_code like '%'|| #{branchCode} ||'%'</if>
+			<if test='branchName!=null and branchName!=""'>and tbm.branch_name like '%'|| #{branchName} ||'%'</if>
 			<if test='joinCode!=null and joinCode!=""'>and join_code like '%'|| #{joinCode} ||'%'</if>
 		</where>
-		ORDER BY branch_code;
+		ORDER BY tbm.branch_code;
 	</select>
-
+	
 	<insert id="addBranchInfo" parameterType="map">
 		insert into tb_branch_mng (
-			branch_code, branch_name, join_code, created_id, created_dt, modified_id, modified_dt
+			branch_name, join_code, created_id, created_dt, modified_id, modified_dt
 		)
 		values (
-			#{branch_code_col}, #{branch_name}, #{join_code}, #{login_id}, now(), #{login_id}, now()
+			#{branch_name}, #{join_code}, #{login_id}, now(), #{login_id}, now()
 		);
 		insert into tb_branch_info (
-			branch_code, branch_name, created_id, created_dt, modified_id, modified_dt
+			branch_name, branch_tel, created_id, created_dt, modified_id, modified_dt, branch_code
 		)
 		values (
-			#{branch_code_col}, #{branch_name}, #{login_id}, now(), #{login_id}, now()
+			#{branch_name}, #{branch_tel}, #{login_id}, now(), #{login_id}, now(), 
+			(select branch_code from tb_branch_mng where branch_name=#{branch_name})
+		);
+		insert into tb_user (
+			id, password, name, user_role, user_status, phone_number, created_id, created_dt, modified_id, modified_dt, branch_code
 		)
+		values(
+			#{id}, #{encpwd}, #{branch_name}, 'ADMIN', 'Y', #{branch_tel}, #{login_id}, now(), #{login_id}, now(),
+			(select branch_code from tb_branch_mng where branch_name=#{branch_name})
+		);
+		insert into tb_reservation_info (
+			rsv_month, created_id, created_dt, modified_id, modified_dt, branch_code
+		)
+		values(
+			'2023-00', #{login_id}, now(), #{login_id}, now(),
+			(select branch_code from tb_branch_mng where branch_name=#{branch_name})
+		);
 	</insert>
 
 	
 	<update id="updateBranchInfo" parameterType="map">
-		update tb_branch_mng
+		update tb_branch_info
 		set 
 			branch_name = #{branch_name},
+			branch_tel = #{branch_tel},
+			branch_addr = #{branch_addr},
+			business_hours = #{business_hours},
 			modified_id = #{login_id},
 			modified_dt = now()
-		where seq_no = #{seq_no} and branch_code = #{branch_code_col}
+		where
+			branch_code = (select branch_code from tb_branch_mng where join_code=#{join_code});
+		
+		update tb_branch_mng
+		set
+			branch_name = #{branch_name},
+			modified_id = #{login_id}, 
+			modified_dt = now()
+		where 
+			branch_code = (select branch_code from tb_branch_mng where join_code=#{join_code});
+			
+		update tb_user
+		set
+			name = #{branch_name},
+			phone_number = #{branch_tel},
+			modified_id = #{login_id}, 
+			modified_dt = now()
+		where
+			branch_code = (select branch_code from tb_branch_mng where join_code=#{join_code});
 	</update>
 	
 	<delete id="deleteBranchInfo" parameterType="map">

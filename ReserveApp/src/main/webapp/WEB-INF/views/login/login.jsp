@@ -160,7 +160,6 @@
 				$('#forgotPwdDiv').css('display','block');
 			});
 			
-			
 			const signupDatepicker = new tui.DatePicker('#wrapper_signup', {
 					language: 'ko',
 					date: '',

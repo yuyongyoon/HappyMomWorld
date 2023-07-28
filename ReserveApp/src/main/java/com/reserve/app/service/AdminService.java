@@ -67,36 +67,71 @@ public class AdminService {
 		}
 		return msg;
 	}
-
-
+	// ===================== 지점 관리  =====================
 	public List<Map<String, Object>> getBranchList(Map<String,Object> param){
 		return mapper.getBranchList(param);
 	}
 	
-	@SuppressWarnings("unchecked")
-	public String saveBranchInfo(Map<String,Object> param) {
+	/*
+	 * @SuppressWarnings("unchecked") public String
+	 * saveBranchInfo(Map<String,Object> param) { String msg = "success";
+	 * 
+	 * List<Map<String,Object>> branchList =
+	 * (List<Map<String,Object>>)param.get("data");
+	 * 
+	 * try { for (Map<String,Object> branchData : branchList) { if
+	 * (branchData.get("status").equals("i")) { int p1 = (int)(Math.random() * 10);
+	 * int p2 = (int)(Math.random() * 10); char p3 =
+	 * (char)((int)(Math.random()*26)+97); char p4 =
+	 * (char)((int)(Math.random()*26)+97); String joinCode = "@" + p3 +
+	 * Integer.toString(p1) + p4 + Integer.toString(p2);
+	 * 
+	 * branchData.put("join_code", joinCode); mapper.addBranchInfo(branchData); }
+	 * else if (branchData.get("status").equals("u")) {
+	 * mapper.updateBranchInfo(branchData); } else {
+	 * mapper.deleteBranchInfo(branchData); } } } catch (Exception e) {
+	 * e.printStackTrace(); if (e.getCause() instanceof PSQLException) {
+	 * PSQLException psqlException = (PSQLException) e.getCause(); String sqlState =
+	 * psqlException.getSQLState(); if ("23505".equals(sqlState)) { String errorMsg
+	 * = "지점 코드가 중복되었습니다. 지점 코드를 변경 후 다시 저장하세요."; msg = errorMsg; } else { msg =
+	 * "fail"; } } else { msg = "fail"; } } return msg; }
+	 */
+	
+	public Map<String,Object> checkId(HashMap<String, Object> param) {
+		Map<String,Object> result = new HashMap<String,Object>();
+		int idCnt = mapper.checkId(param);
+		System.out.println("중복 아이디 수: "+idCnt);
+		
+		if(idCnt < 1) {// 아이디 중복X
+			result.put("msg", "success");
+		}else {
+			result.put("msg", "fail");
+		}
+		return result;
+	}
+	
+	public String addBranchInfo(HashMap<String, Object> param) {
 		String msg = "success";
 		
-		List<Map<String,Object>> branchList = (List<Map<String,Object>>)param.get("data");
-
 		try {
-			for (Map<String,Object> branchData : branchList) {
-				if (branchData.get("status").equals("i")) {
-					int p1 = (int)(Math.random() * 10);
-					int p2 = (int)(Math.random() * 10);
-					char p3 = (char)((int)(Math.random()*26)+97);
-					char p4 = (char)((int)(Math.random()*26)+97);
-					String joinCode = "@" + p3 + Integer.toString(p1) + p4 + Integer.toString(p2);
-					
-					branchData.put("join_code", joinCode);
-					mapper.addBranchInfo(branchData);
-				} else if (branchData.get("status").equals("u")) {
-					mapper.updateBranchInfo(branchData);
-				} else {
-					mapper.deleteBranchInfo(branchData);
-				}
-			}
-		} catch (Exception e) {
+			// 비밀번호 암호화
+			String pwd = param.get("password").toString();
+			SHA512PasswordEncoder sha512Service = new SHA512PasswordEncoder();
+			
+			String encpwd = sha512Service.encode(pwd);
+			param.put("encpwd", encpwd);
+			
+			// 가입 코드
+			int p1 = (int)(Math.random() * 10);
+			int p2 = (int)(Math.random() * 10);
+			char p3 = (char)((int)(Math.random()*26)+97);
+			char p4 = (char)((int)(Math.random()*26)+97);
+			
+			String joinCode = "@" + p3 + Integer.toString(p1) + p4 + Integer.toString(p2);
+			param.put("join_code", joinCode);
+			
+			mapper.addBranchInfo((Map<String,Object>) param);
+		}catch (Exception e) {
 			e.printStackTrace();
 			if (e.getCause() instanceof PSQLException) {
 				PSQLException psqlException = (PSQLException) e.getCause();
@@ -110,6 +145,18 @@ public class AdminService {
 			} else {
 				msg = "fail";
 			}
+		}
+		return msg;
+	}
+	// (수정중)
+	public String updateBranchInfo(HashMap<String, Object> param) {
+		String msg = "success";
+		
+		try {
+			mapper.updateBranchInfo((Map<String,Object>) param);
+		}catch (Exception e) {
+			e.printStackTrace();
+			msg = "fail";
 		}
 		return msg;
 	}
