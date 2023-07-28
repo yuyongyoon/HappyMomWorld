@@ -113,7 +113,7 @@ $(document).ready(function() {
 				url		: "/admin/getSeletedDateReservationList",
 				data	: param,
 				success	: function(result){
-					reservationGrid.resetData(result.reservationList);
+					fnCom.createTr(result.reservationList)
 				},
 				error	: function(xhr,status){
 					alert('오류가 발생했습니다.');
@@ -123,25 +123,20 @@ $(document).ready(function() {
 		}
 	};
 	
-	const reservationGrid = tuiGrid.createGrid(
-			{
-				gridId : 'reservation_grid',
-				height: 250,
-				scrollY : true,
-				readOnlyColorFlag : false,
-				rowHeaders: ['rowNum'],
-				columns: [
-					{header : '예약일',		name : 'rsv_date',				align:'left'},
-					{header : '아이디',		name : 'user_id',			align:'left', sortable: true},
-					{header : '예약시간',		name : 'reservation_time',		align:'left', sortable: true},
-				]
-			},
-			[],
-			{}
-		);
-	
+	fnCom = {
+		createTr : function(data){
+			$("#reservation_tbody").empty();
+			
+			data.forEach((reservation, index) => {
+				let row = '<tr><td>'+Number(index+1)+'</td><td>'+reservation.rsv_date+'</td><td>'+reservation.user_id+'</td>'+reservation.user_id+'<td>'+reservation.reservation_time+'</td></tr>';
+				
+				$("#reservation_tbody").append(row);
+			});
+		},
+	}
+
 	ajaxCom.getCalendarEvent(cfn_yearMonthFormat(new Date()));
-}); //$(document).ready END
+});
 
 $('#select-branch').on('change', function(){
 	ajaxCom.getCalendarEvent(cfn_yearMonthFormat(new Date()));
@@ -216,39 +211,48 @@ a:link {
 					</div>
 				</div>
 				<div class="col-md-4">
-					<div class="card">
+					<div class="card" style="min-height:390px;">
 						<div class="card-body pb-0" style="margin-bottom:53px;">
 							<h2 class="mb-1 fw-bold">예약 리스트</h2>
-							<div id="reservation_grid"></div>
+							<div class="table-responsive" style="overflow-y: auto;max-height: 300px;">
+								<table class="table table-head-bg-secondary">
+									<thead>
+										<tr>
+											<th scope="col" id="idx">#</th>
+											<th scope="col" id="rsv_date">예약일</th>
+											<th scope="col" id="user_id">아이디</th>
+											<th scope="col" id="reservation_time">예약시간</th>
+										</tr>
+									</thead>
+									<tbody id="reservation_tbody">
+									</tbody>
+								</table>
+							</div>
 						</div>
 					</div>
 					<div class="card">
 						<div class="card-body">
 							<ol class="activity-feed" style="font-size: 15px;margin-bottom: 0px;">
 								<li class="feed-item feed-item-secondary">
-									<time class="date" datetime="9-25">Sep 25</time>
+									<time class="date" datetime="9-25">1</time>
 <!-- 									<span class="text">Responded to need <a href="#">"Volunteer opportunity"</a></span> -->
 									<a href="/admin/reservation_master"><span class="text">예약 생성은 2023년 8월까지 되어 있습니다.</span></a>
 								</li>
 								<li class="feed-item feed-item-success">
-									<time class="date" datetime="9-24">Sep 24</time>
+									<time class="date" datetime="9-24">2</time>
 <!-- 									<span class="text">Added an interest <a href="#">"Volunteer Activities"</a></span> -->
 									<a href="/admin/reservation_status"><span>8월 예약 생성 30건 중 15건이 예약 되었습니다.</span></a>
 								</li>
 								<li class="feed-item feed-item-info">
-									<time class="date" datetime="9-23">Sep 23</time>
+									<time class="date" datetime="9-23">3</time>
 <!-- 									<span class="text">Joined the group <a href="single-group.php">"Boardsmanship Forum"</a></span> -->
 									<a href="/admin/user"><span class="text">어제 가입한 회원은 총 3명 입니다.</span></a>
 								</li>
 								<li class="feed-item feed-item-warning">
-									<time class="date" datetime="9-21">Sep 21</time>
+									<time class="date" datetime="9-21">4</time>
 <!-- 									<span class="text">Responded to need <a href="#">"In-Kind Opportunity"</a></span> -->
 									<a href="/admin/user"><span>가입 후 예약하지 않은 회원은 10명입니다.</span></a>
 								</li>
-<!-- 								<li class="feed-item feed-item-danger"> -->
-<!-- 									<time class="date" datetime="9-18">Sep 18</time> -->
-<!-- 									<span class="text">Created need <a href="#">"Volunteer Opportunity"</a></span> -->
-<!-- 								</li> -->
 							</ol>
 						</div>
 					</div>

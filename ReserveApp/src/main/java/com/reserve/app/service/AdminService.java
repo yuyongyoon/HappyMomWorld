@@ -175,7 +175,14 @@ public class AdminService {
 			
 			mapper.deleteReservationMasterData(delInfo);
 			mapper.addReservationMasterData(saveReservationMasterData);
-			mapper.addbranchReservationInfo(branchReservationInfo);
+
+			int branchReservationInfoCnt = mapper.getCntBranchReservationInfo(branchReservationInfo);
+			
+			if(branchReservationInfoCnt == 0) {
+				mapper.addbranchReservationInfo(branchReservationInfo);
+			} else if(branchReservationInfoCnt >= 1) {
+				mapper.updatebranchReservationInfo(branchReservationInfo);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			msg = "fail";
@@ -196,14 +203,13 @@ public class AdminService {
 	
 	public String saveBranchReservationInfo(Map<String,Object> param) {
 		String msg = "success";
-		
 		try {
 			int branchReservationInfo = mapper.getCntBranchReservationInfo(param);
 			
-			if(branchReservationInfo > 0) {
-				mapper.updatebranchReservationInfo(param);
-			} else {
+			if(branchReservationInfo == 0) {
 				mapper.addbranchReservationInfo(param);
+			} else if(branchReservationInfo >= 1) {
+				mapper.updatebranchReservationInfo(param);
 			}
 			
 		} catch (Exception e) {
@@ -221,15 +227,15 @@ public class AdminService {
 		return mapper.getSeletedDateReservationList(param);
 	}
 	
-	public Map<String, Object> getBranchInfo(Map<String, Object> param) throws Exception {
-		return mapper.getBranchInfo(param);
+	public Map<String, Object> getBranchPrintInfo(Map<String, Object> param) throws Exception {
+		return mapper.getBranchPrintInfo(param);
 	}
 	
-	public String saveBranchMasterInfo(Map<String,Object> param) {
+	public String saveBranchPrintInfo(Map<String,Object> param) {
 		String msg = "success";
 		
 		try {
-			mapper.saveBranchMasterInfo(param);
+			mapper.saveBranchPrintInfo(param);
 		} catch (Exception e) {
 			e.printStackTrace();
 			msg = "fail";

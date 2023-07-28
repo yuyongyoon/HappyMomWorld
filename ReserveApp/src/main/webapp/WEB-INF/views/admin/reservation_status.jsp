@@ -144,19 +144,19 @@ $(document).ready(function() {
 						}
 					}
 				},
-				{header : '문자 발송',			name : 'sendMsg',	width : 150, align:'center',
-					renderer: {
-						type : ButtonRenderer,
-						options : {
-							value : '발송',
-							click: fnCom.sendMsg
-						}
-					}
-				},
-				{header : '발송 성공 여부',			name : 'sendMsgStatus',	align:'left', sortable: true, 
-					editor: { type: 'select', options: { listItems: [{text:'YES', value:'Y'},{text:'NO',value:'N'}]}}
+// 				{header : '문자 발송',			name : 'sendMsg',	width : 150, align:'center',
+// 					renderer: {
+// 						type : ButtonRenderer,
+// 						options : {
+// 							value : '발송',
+// 							click: fnCom.sendMsg
+// 						}
+// 					}
+// 				},
+// 				{header : '발송 성공 여부',			name : 'sendMsgStatus',	align:'left', sortable: true, 
+// 					editor: { type: 'select', options: { listItems: [{text:'YES', value:'Y'},{text:'NO',value:'N'}]}}
 				
-				}
+// 				}
 			]
 		},
 		[],//초기 데이터
@@ -210,7 +210,7 @@ $(document).ready(function() {
 											<div class="row ml-1">
 												<div class="custom-control custom-radio custom-control-inline">
 													<input type="radio" id="radio_day" name="searchRange" class="custom-control-input" value="day">
-													<label class="custom-control-label" for="radio_day">일</label>
+													<label class="custom-control-label" for="radio_day">오늘</label>
 												</div>
 												<div class="custom-control custom-radio custom-control-inline">
 													<input type="radio" id="radio_week" name="searchRange" class="custom-control-input" value="week">

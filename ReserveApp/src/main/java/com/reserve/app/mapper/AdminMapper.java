@@ -45,9 +45,9 @@ public interface AdminMapper {
 	
 	List<Map<String,Object>> getSeletedDateReservationList(Map<String,Object> param);
 	
-	Map<String, Object> getBranchInfo(Map<String,Object> param);
+	Map<String, Object> getBranchPrintInfo(Map<String,Object> param);
 	
-	void saveBranchMasterInfo(Map<String,Object> param);
+	void saveBranchPrintInfo(Map<String,Object> param);
 	
 	List<Map<String,Object>> getReservationStatusList(Map<String,Object> param);
 	
