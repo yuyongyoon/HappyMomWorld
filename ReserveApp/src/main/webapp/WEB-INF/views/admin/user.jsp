@@ -59,7 +59,6 @@ $(document).ready(function() {
 				success	: function(result) {
 					$('#userCnt').text(result.userList.length);
 					userGrid.resetData(result.userList);
-					//console.log('회원 관리_정보: ',result.userList)
 				},
 				error	: function(xhr,status){
 					alert('오류가 발생했습니다.');
@@ -84,7 +83,7 @@ $(document).ready(function() {
 				data 	: param,
 				success	: function(result) {
 					if(result.msg == 'success') {
-						alert('등록되었습니다.');
+						alert('수정되었습니다.');
 						$('#user_edit_modal').modal('hide');
 						ajaxCom.getUserList();
 						$('#btn_get').click();
@@ -105,13 +104,22 @@ $(document).ready(function() {
 			tuiGrid.dataExport(userGrid,'해피맘월드_회원정보.xlsx');
 		},
 		btn_updateAccount : function(){
+			
+			if($('#input_massage_total').val() < $('#input_rsv_cnt').val()){
+				alert('전체 마사지 횟수가 예약 건수보다 작을 수 없습니다.\n예약을 취소 한 후 변경해주세요.');
+				$('#input_massage_total').val(rowData.massage_total);
+				return false;
+			}
+			
 			let param = {
-				id			: $('#input_userId_edit').val(),
-				name 		: $('#input_userName_edit').val(),
-				phone_number: $('#input_phoneNumber_edit').val(),
-				due_date	: updatemodalDatepicker.getDate() != null ? cfn_tuiDateFormat(updatemodalDatepicker.getDate()) : '',
-				user_status	: $('#input_enabled_edit').val(),
-				remark		: $('#input_rmk_edit').val()
+				id				: $('#input_userId_edit').val(),
+				name 			: $('#input_userName_edit').val(),
+				phone_number	: $('#input_phoneNumber_edit').val(),
+				due_date		: updatemodalDatepicker.getDate() != null ? cfn_tuiDateFormat(updatemodalDatepicker.getDate()) : '',
+				user_status		: $('#input_enabled_edit').val(),
+				remark			: $('#input_rmk_edit').val(),
+				massage_cnt		: Number($('#input_massage_total').val())-Number($('#input_rsv_cnt').val()),
+				massage_total	: Number($('#input_massage_total').val())
 			}
 
 			ajaxCom.updateAccount(param);
@@ -142,17 +150,16 @@ $(document).ready(function() {
 			scrollY : true,
 			readOnlyColorFlag : false,
 			columns: [
-				{header : 'ID',			name : 'id',			width : 100,  align:'left',	
-					style:'cursor:pointer;text-decoration:underline;', sortable: true},
-				{header : '이름',			name : 'name',				width : 150, align:'left', sortable: true},
-				{header : '전화번호',		name : 'phone_number',		width : 150, align:'left', sortable: true},
-				{header : '출산 예정일',	name : 'due_date',			width : 150, align:'left', sortable: true},
-				{header : '마사지 잔여 횟수',	name : 'massage_cnt',		width : 150, align:'center', sortable: true},
-				/* {header : '마사지 사용여부',	name : 'massage_cnt',		width : 150, align:'center', sortable: true, formatter: 'listItemText', disabled:true,
-					editor: { type: 'select', options: { listItems: [{text:'YES', value:'Y'},{text:'NO',value:'N'}]}}
-				}, */
-				{header : '가입일',		name : 'created_dt',	width : 150,  align:'center', sortable: true},
-				{header : '비고',			name : 'remark',	align:'left'}
+				{header : 'ID',				name : 'id',						width : 100, align:'left',	style:'cursor:pointer;text-decoration:underline;',	sortable: true},
+				{header : '이름',				name : 'name',						width : 150, align:'left',	sortable: true},
+				{header : '전화번호',			name : 'phone_number',				width : 150, align:'left',	sortable: true},
+				{header : '출산 예정일',		name : 'due_date',					width : 150, align:'left',	sortable: true},
+				{header : '예약 마사지 횟수',	name : 'massage_reservation_cnt',	width : 150, align:'center', sortable: true},
+				{header : '잔여 마사지 횟수',	name : 'massage_cnt',				width : 150, align:'center', sortable: true},
+				{header : '전체 마사지 횟수',	name : 'massage_total',				width : 150, align:'center', sortable: true},
+				{header : '예약 완료 여부',		name : 'reserve_cnt_status',		width : 150, align:'center', sortable: true, formatter: 'listItemText', disabled:true, editor: { type: 'select', options: { listItems: [{text:'YES', value:'Y'},{text:'NO',value:'N'}]}}},
+				{header : '가입일',			name : 'created_dt',				width : 150,  align:'center', sortable: true},
+				{header : '비고',				name : 'remark',	align:'left'}
 			]
 		},
 		[],
@@ -166,8 +173,11 @@ $(document).ready(function() {
 					$('#input_userId_edit').val(rowData.id);
 					$('#input_userName_edit').val(rowData.name);
 					$('#input_phoneNumber_edit').val(rowData.phone_number);
-					$('#input_role_edit').val(rowData.user_role),
+					$('#input_role_edit').val(rowData.user_role);
 					$('#input_rmk_edit').val(rowData.remark);
+					$('#input_massage_total').val(rowData.massage_total);
+					$('#input_massage_cnt').val(rowData.massage_cnt);
+					$('#input_rsv_cnt').val(rowData.massage_reservation_cnt);
 					
 					updatemodalDatepicker = new tui.DatePicker('#wrapper_edit', {
 						language: 'ko',
@@ -177,6 +187,13 @@ $(document).ready(function() {
 							format: 'yyyy-MM-dd'
 						},
 					});
+					
+					$('#input_massage_total').on('change', function(e){
+						if($('#input_massage_total').val() < $('#input_rsv_cnt').val()){
+							alert('전체 마사지 횟수가 예약 건수보다 작을 수 없습니다.\n예약을 취소 한 후 변경해주세요.');
+							$('#input_massage_total').val(rowData.massage_total);
+						}
+					})
 				}
 			}
 		}
@@ -197,7 +214,7 @@ $(document).ready(function() {
 								<div class="col-md-12">
 									<div class="row">
 										<div class="col-sm-6">
-											<span class="row-title">회원관리</span>
+											<span class="row-title">회원 관리</span>
 										</div>
 										<div class="col-sm-6">
 											<div class="button-list float-right">
@@ -255,34 +272,34 @@ $(document).ready(function() {
 										<div class="modal-body">
 											<div class="col-12">
 												<div class="form-group row pb-0">
-													<div class="col-sm-2">
+													<div class="col-sm-3">
 														<label class="control-label mt-2">ID</label>
 													</div>
-													<div class="col-sm-10">
+													<div class="col-sm-9">
 														<input type="text" class="form-control" id="input_userId_edit" style="border: 0px;" readonly>
 													</div>
 												</div>
 												<div class="form-group row pb-0">
-													<div class="col-sm-2">
+													<div class="col-sm-3">
 														<label class="control-label mt-2" style="border: 0px;">이름</label>
 													</div>
-													<div class="col-sm-10">
+													<div class="col-sm-9">
 														<input type="text" class="form-control" id="input_userName_edit" maxlength='12'>
 													</div>
 												</div>
 												<div class="form-group row pb-0">
-													<div class="col-sm-2">
+													<div class="col-sm-3">
 														<label class="control-label mt-2" style="border: 0px;">전화번호</label>
 													</div>
-													<div class="col-sm-10">
+													<div class="col-sm-9">
 														<input type="tel" class="form-control" id="input_phoneNumber_edit">
 													</div>
 												</div>
 												<div class="form-group row pb-0">
-													<div class="col-sm-2">
+													<div class="col-sm-3">
 														<label class="control-label mt-2">출산 예정일</label>
 													</div>
-													<div class="col-sm-10">
+													<div class="col-sm-9">
 														<div class="tui-datepicker-input tui-datetime-input">
 															<input type="text" id="input_dueDate_edit" aria-label="Date-Time">
 															<span class="tui-ico-date"></span>
@@ -291,10 +308,34 @@ $(document).ready(function() {
 													</div>
 												</div>
 												<div class="form-group row pb-0">
-													<div class="col-sm-2">
+													<div class="col-sm-3">
+														<label class="control-label mt-2" style="border: 0px;">예약 마사지 횟수</label>
+													</div>
+													<div class="col-sm-9">
+														<input type="number" class="form-control" id="input_rsv_cnt" disabled>
+													</div>
+												</div>
+												<div class="form-group row pb-0">
+													<div class="col-sm-3">
+														<label class="control-label mt-2" style="border: 0px;">잔여 마사지 횟수</label>
+													</div>
+													<div class="col-sm-9">
+														<input type="number" class="form-control" id="input_massage_cnt" disabled>
+													</div>
+												</div>
+												<div class="form-group row pb-0">
+													<div class="col-sm-3">
+														<label class="control-label mt-2" style="border: 0px;">전체 마사지 횟수</label>
+													</div>
+													<div class="col-sm-9">
+														<input type="number" class="form-control" id="input_massage_total" min=1>
+													</div>
+												</div>
+												<div class="form-group row pb-0">
+													<div class="col-sm-3">
 														<label class="control-label mt-2" style="border: 0px;">사용 여부</label>
 													</div>
-													<div class="col-sm-10">
+													<div class="col-sm-9">
 														<select name="enabled" class="form-control" id="input_enabled_edit">
 															<option value="Y">사용</option>
 															<option value="N">미사용</option>
@@ -302,17 +343,17 @@ $(document).ready(function() {
 													</div>
 												</div>
 												<div class="form-group row pb-0">
-													<div class="col-sm-2 ">
+													<div class="col-sm-3 ">
 														<label class="control-label mt-2">비고</label>
 													</div>
-													<div class="col-sm-10">
+													<div class="col-sm-9">
 														<textarea class="form-control" id="input_rmk_edit" style="height: 70px;resize: none;"></textarea>
 													</div>
 												</div>
 											</div>
 										</div>
 										<div class="modal-footer">
-											<button type="button" class="btn btn-danger" id="btn_resetPwd">초기화</button>
+											<button type="button" class="btn btn-danger" id="btn_resetPwd">비밀번호 초기화</button>
 											<button type="button" class="btn btn-secondary" id="btn_updateAccount">저장</button>
 											<button type="button" class="btn btn-info" id="btn_updateAccountClose">취소</button>
 										</div>
