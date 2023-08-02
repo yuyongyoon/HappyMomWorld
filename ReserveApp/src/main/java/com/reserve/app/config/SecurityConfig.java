@@ -36,12 +36,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		http
 			.authorizeRequests()
-				.antMatchers("/admin//dashboard").hasAnyRole("ADMIN", "SUPERADMIN")
+				.antMatchers("/admin/dashboard").hasAnyRole("ADMIN", "SUPERADMIN")
 				.antMatchers("/admin/user").hasAnyRole("ADMIN", "SUPERADMIN")
 				.antMatchers("/admin/reservation_status").hasAnyRole("ADMIN", "SUPERADMIN")
-				.antMatchers("/admin//admin/reservation_master").hasAnyRole("ADMIN", "SUPERADMIN")
-				.antMatchers("/admin//admin/print_master").hasAnyRole("ADMIN", "SUPERADMIN")
+				.antMatchers("/admin/admin/reservation_master").hasAnyRole("ADMIN", "SUPERADMIN")
+				.antMatchers("/admin/info_master").hasAnyRole("ADMIN", "SUPERADMIN")
 				.antMatchers("/admin/branch_manager").hasAnyRole("SUPERADMIN")
+				.antMatchers("/admin/qrcode_manager").hasAnyRole("SUPERADMIN")
 				.antMatchers("/login").permitAll()
 				.antMatchers("/join/**").permitAll()
 				.antMatchers("/static/**").permitAll()

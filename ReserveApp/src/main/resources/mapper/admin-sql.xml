@@ -102,12 +102,13 @@
 				tbi.business_hours
 		FROM tb_branch_mng tbm 
 				join tb_branch_info tbi on tbm.branch_code = tbi.branch_code
-				join tb_user tu on tbm.branch_code = tu.branch_code and tu.user_role = 'ADMIN' and tu.user_status = 'Y'
+				join tb_user tu on tbm.branch_code = tu.branch_code and tu.user_role = 'ADMIN'
 		<where>
 			tbm.branch_code != 'b0000'
 			<if test='branchCode!=null and branchCode!=""'>and tbm.branch_code like '%'|| #{branchCode} ||'%'</if>
 			<if test='branchName!=null and branchName!=""'>and tbm.branch_name like '%'|| #{branchName} ||'%'</if>
 			<if test='joinCode!=null and joinCode!=""'>and join_code like '%'|| #{joinCode} ||'%'</if>
+			<if test='userStatus!=null and userStatus!=""'>and user_status like '%'|| #{userStatus} ||'%'</if>
 		</where>
 		ORDER BY tbm.branch_code;
 	</select>
@@ -123,7 +124,7 @@
 			branch_name, branch_tel, std_due_date, created_id, created_dt, modified_id, modified_dt, branch_code
 		)
 		values (
-			#{branch_name}, #{branch_tel}, cast(#{std_due_date} as integer), #{login_id}, now(), #{login_id}, now(), 
+			#{branch_name}, #{branch_tel}, #{std_due_date}, #{login_id}, now(), #{login_id}, now(), 
 			(select branch_code from tb_branch_mng where branch_name=#{branch_name})
 		);
 		insert into tb_user (
@@ -440,16 +441,16 @@
 	<select id="getReservationStatusList" parameterType="map" resultType="map">
 		SELECT rsv_date, a.user_id, c."name", c.phone_number, TO_CHAR(a.created_dt, 'YYYY-MM-DD') AS created_dt, a.select_time,
 				CASE 
-					WHEN a.select_time = '1t' THEN b."t1_name"
-					WHEN a.select_time = '2t' THEN b."t2_name"
-					WHEN a.select_time = '3t' THEN b."t3_name"
-					WHEN a.select_time = '4t' THEN b."t4_name"
-					WHEN a.select_time = '5t' THEN b."t5_name"
-					WHEN a.select_time = '6t' THEN b."t6_name"
-					WHEN a.select_time = '7t' THEN b."t7_name"
-					WHEN a.select_time = '8t' THEN b."t8_name"
-					WHEN a.select_time = '9t' THEN b."t9_name"
-					WHEN a.select_time = '10t' THEN b."t10_name"
+					WHEN a.select_time = 't1' THEN b."t1_name"
+					WHEN a.select_time = 't2' THEN b."t2_name"
+					WHEN a.select_time = 't3' THEN b."t3_name"
+					WHEN a.select_time = 't4' THEN b."t4_name"
+					WHEN a.select_time = 't5' THEN b."t5_name"
+					WHEN a.select_time = 't6' THEN b."t6_name"
+					WHEN a.select_time = 't7' THEN b."t7_name"
+					WHEN a.select_time = 't8' THEN b."t8_name"
+					WHEN a.select_time = 't9' THEN b."t9_name"
+					WHEN a.select_time = 't10' THEN b."t10_name"
 				END AS "reservation_time"
 		FROM tb_reservation_list a
 		JOIN tb_reservation_info b ON a.branch_code = b.branch_code AND a.rsv_month = b.rsv_month

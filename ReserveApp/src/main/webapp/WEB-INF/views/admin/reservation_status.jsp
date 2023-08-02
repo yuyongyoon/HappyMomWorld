@@ -91,7 +91,7 @@ $(document).ready(function() {
 				if($('#role').val() == 'SUPERADMIN'){
 					let superBranchCode = $('#select-branch');
 				}
-				console.log("month: ", month,"\ndate: ", date, "\ncode: ", superBranchCode)
+// 				console.log("month: ", month,"\ndate: ", date, "\ncode: ", superBranchCode)
 				$.doPost({
 					url	 	: "/admin/getReservationModal",
 					data 	: {
@@ -100,7 +100,8 @@ $(document).ready(function() {
 						super_branch_code	: superBranchCode
 					},
 					success	: function(result) {
-						console.log('modal list >>',result.rsvListModal)
+// 						console.log('modal list >>',result.rsvListModal)
+						//그리드 삭제
 						modalGrid.resetData(result.rsvListModal);
 					},
 					error	: function(xhr,status){
@@ -114,7 +115,7 @@ $(document).ready(function() {
 	//이벤트 객체
 	btnCom = {
 		btn_download: function(){
-			tuiGrid.dataExport(statusGrid,'해피맘월드_예약현황.xlsx');	//error
+			tuiGrid.dataExport(statusGrid,'해피맘월드_예약현황.xlsx');
 		},
 		btn_get: function(){
 			ajaxCom.getReservationStatusList();
@@ -146,10 +147,10 @@ $(document).ready(function() {
 				ajaxCom.getReservationModal();
 			} 
 		},
-		changedDatepicker: function(obj){
-			//let rsvDate = modalPicker.getDate();
-			console.log('예약 변경 기간: ', $(obj).val());
-		}
+// 		changedDatepicker: function(obj){
+// 			//let rsvDate = modalPicker.getDate();
+// 			console.log('예약 변경 기간: ', $(obj).val());
+// 		}
 	}; //fnCom END
 	
 	const statusGrid = tuiGrid.createGrid(
@@ -218,6 +219,11 @@ $(document).ready(function() {
 					});
 					
 					$('#editUserInfo_modal').modal('show');
+					
+					//체인지 이벤트
+					modalPicker.on('change', function(){
+						console.log('변경')
+					})
 				}
 			}
 		}
@@ -261,7 +267,6 @@ $(document).ready(function() {
 		console.log("rsv date: ", $('#input_datepicker_modal').val())
 	});
 }); //END $(document).ready
-	
 </script>
 
 <div class="main-panel">

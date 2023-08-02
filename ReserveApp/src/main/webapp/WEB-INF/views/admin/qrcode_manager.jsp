@@ -165,7 +165,7 @@ $('#select-branch').on('change', function(){
 										</div>
 										<div class="col-sm-6">
 											<div class="button-list float-right">
-<!-- 												<button type="button" id="btn_branchInfo" class="header-btn btn btn-secondary float-left ml-2 mb-2">지점 정보 수정</button> -->
+												<button type="button" id="btn_branchInfo" class="header-btn btn btn-secondary float-left ml-2 mb-2">지점 정보 수정</button>
 												<button type="button" id="btn_pdfDownload" class="header-btn btn btn-secondary float-left ml-2 mb-2">다운로드</button>
 											</div>
 										</div>
@@ -176,14 +176,61 @@ $('#select-branch').on('change', function(){
 							<div id="pdfDiv">
 								<div class="col-md-12">
 									<div class="card-body">
-<!-- 										<h1 style="text-align: center;font-size:3.5rem;font-weight:border;" class="mb-2">산전 마사지 예약 안내</h1> -->
+										<h1 style="text-align: center;font-size:3.5rem;font-weight:border;" class="mb-2">산전 마사지 예약 안내</h1>
 										<div class="row">
-											<div class="col-12" style="display: flex; justify-content: center;">
-												<img src="/static/common/img/1690506713.3915.png" style="width: 200%;">
+											<div class="col-8">
+												<div class="row mt-5">
+													<div class="col-md-2">
+														<label>지점 이름</label>
+													</div>
+													<div class="col-md-10">
+														<input type="text" class="form-control" id="input_brName" disabled>
+													</div>
+												</div>
+												<div class="row mt-3">
+													<div class="col-md-2">
+														<label>전화번호</label>
+													</div>
+													<div class="col-md-10">
+														<input type="text" class="form-control" id="input_brTel" disabled>
+													</div>
+												</div>
+												<div class="row mt-3">
+													<div class="col-md-2">
+														<label>주소</label>
+													</div>
+													<div class="col-md-10">
+														<input type="text" class="form-control" id="input_brAddr" disabled>
+													</div>
+												</div>
+												<div class="row mt-3">
+													<div class="col-md-2">
+														<label>운영시간</label>
+													</div>
+													<div class="col-md-10">
+														<input type="text" class="form-control" id="input_brHours" disabled>
+													</div>
+												</div>
+												<div class="row mt-3">
+													<div class="col-md-2">
+														<label>가입코드</label>
+													</div>
+													<div class="col-md-10">
+														<input type="text" class="form-control" id="input_brCode" disabled>
+													</div>
+												</div>
+												<div class="row mt-3">
+													<div class="col-md-2">
+													<label>안내문구</label>
+													</div>
+													<div class="col-md-10">
+														<textarea class="form-control" id="input_brRemark" rows="3" style="resize: none;" disabled></textarea>
+													</div>
+												</div>
 											</div>
-<!-- 											<div class="col-6" style="display: flex; justify-content: center;"> -->
-<!-- 												<div id="qrcode" class="" style="margin-top: 100px;"></div> -->
-<!-- 											</div> -->
+											<div class="col-4">
+												<div id="qrcode" class="ml-5" style="margin-top: 60px;"></div>
+											</div>
 										</div>
 									</div>
 								</div>

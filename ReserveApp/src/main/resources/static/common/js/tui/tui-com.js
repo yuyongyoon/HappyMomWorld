@@ -475,18 +475,18 @@ const tuiGrid = {
 		let cols = grid.getColumns();
 		let colNms = [];
 		cols.forEach(col => {
-			if(!col.hidden){
+			if(!col.hidden && col.name != 'change' && col.name != 'cancle' && col.name != 'check'){
 				colNms.push(col.header);
 			}
 		});
-		
+
 		let data = grid.getData();
 		let convData = [];
 		
 		data.forEach(row => {
 			let map = {};
 			cols.forEach( (col,idx) => {
-				if(!col.hidden){
+				if(!col.hidden && col.name != 'change' && col.name != 'cancle' && col.name != 'check'){
 					if(col.hasOwnProperty('formatter') && col.formatter=="listItemText"){
 						let list = col.editor.options.listItems;
 						list.forEach( item => {
@@ -508,7 +508,7 @@ const tuiGrid = {
 		});
 		
 		cols.forEach( (col,cidx) => {
-			if(!col.hidden){
+			if(!col.hidden && col.name != 'change' && col.name != 'cancle' && col.name != 'check'){
 				let val = sheetCol[cidx]+'1';
 				ws[val].s = {
 					alignment : {

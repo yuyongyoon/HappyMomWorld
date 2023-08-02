@@ -49,15 +49,21 @@ public class AdminController {
 	}
 	
 	//지점 정보 관리 화면
-	@RequestMapping(value = "/print_master", method = RequestMethod.GET)
+	@RequestMapping(value = "/info_master", method = RequestMethod.GET)
 	public String viewBranchMaster(Model model, HttpServletRequest request) throws Exception {
-		return "admin/print_master";
+		return "admin/info_master";
 	}
 	
 	//지점 관리 화면
 	@RequestMapping(value = "/branch_manager", method = RequestMethod.GET)
 	public String viewBranchManager(Model model, HttpServletRequest request) throws Exception {
 		return "admin/branch_manager";
+	}
+	
+	//qr 코드 관리 화면
+	@RequestMapping(value = "/qrcode_manager", method = RequestMethod.GET)
+	public String viewQrcodeManager(Model model, HttpServletRequest request) throws Exception {
+		return "admin/qrcode_manager";
 	}
 	
 	//=======================nav 지점 코드 가져오기=====================
@@ -105,14 +111,6 @@ public class AdminController {
 		result.put("branchList", branchList);
 		return result;
 	}
-	/*
-	 * @RequestMapping(value = "/saveBranchInfo", method = RequestMethod.POST)
-	 * 
-	 * @ResponseBody public Map<String,Object> saveBranchInfo(HttpServletRequest
-	 * request, @RequestBody Map<String,Object> param) throws Exception {
-	 * Map<String,Object> result = new HashMap<String,Object>(); String msg =
-	 * adminService.saveBranchInfo(param); result.put("msg", msg); return result; }
-	 */
 	
 	// 관리자 아이디 중복 확인
 	@RequestMapping(value = "/checkId", method = RequestMethod.POST)

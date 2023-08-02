@@ -15,6 +15,7 @@ $(document).ready(function() {
 					branchCode	: $('#input_branchCode').val(),
 					branchName	: $('#input_branchName').val(),
 					joinCode	: $('#input_joinCode').val(),
+					userStatus	: $('#select_userStatus').val()
 				},
 				success	: function(result){
 					let branchNum = result.branchList.length;
@@ -226,14 +227,16 @@ $(document).ready(function() {
 			}
 			
 			if(checkFlag){
+				console.log($('#input_stdDueDate_add').val() == '')
 				let param = {
 						branch_name	: $('#input_branchName_add').val(),
 						id			: $('#input_branchId_add').val(),
 						branch_tel	: $('#input_branchTel_add').val(),
 						password	: $('#input_newPwd_add').val(),
-						std_due_date: $('#input_stdDueDate_add').val()
+						std_due_date: $('#input_stdDueDate_add').val() == '' ? Number(30) : Number($('#input_stdDueDate_add').val())
 						
 				}
+				console.log(param)
 				//console.log('지점 추가 >>',param);
 				ajaxCom.addBranchInfo(param);
 			}
@@ -397,13 +400,6 @@ $(document).ready(function() {
 	})
 }); //END $(document).ready
 
-
-$(window).on("beforeunload", function(){
-	if(checkUnload) {
-		return '변경사항이 저장되지 않을 수 있습니다.';
-	}
-});
-
 </script>
 <div class="main-panel">
 	<div class="content">
@@ -431,17 +427,25 @@ $(window).on("beforeunload", function(){
 							
 							<!-- 상단바 -->
 							<div class="row search flex-grow-1">
-								<div class="col-md-4 col-sm-6 searchDiv">
+								<div class="col-md-3 col-sm-6 searchDiv">
 									<label for="input_branchName" class="search-label float-left mt-2">지점 이름</label>
 									<input type="text" id="input_branchCode" class="form-control form-control-sm mt-2"/>
 								</div>
-								<div class="col-md-4 col-sm-6 searchDiv">
+								<div class="col-md-3 col-sm-6 searchDiv">
 									<label for="input_mngId" class="search-label float-left mt-2">관리자 Id</label>
 									<input type="text" id="input_branchName" class="form-control form-control-sm mt-2"/>
 								</div>
-								<div class="col-md-4 col-sm-6 searchDiv">
+								<div class="col-md-3 col-sm-6 searchDiv">
 									<label for="input_joinCode" class="search-label float-left mt-2">가입 코드</label>
 									<input type="text" id="input_joinCode" class="form-control form-control-sm mt-2"/>
+								</div>
+								<div class="col-md-3 col-sm-6 searchDiv">
+									<label for="input_joinCode" class="search-label float-left mt-2">사용 여부</label>
+									<select id="select_userStatus" class="form-control-sm mt-2">
+										<option value="Y">사용</option>
+										<option value="N">미사용</option>
+									</select>
+<!-- 									<input type="text" id="input_joinCode" class="form-control form-control-sm mt-2"/> -->
 								</div>
 							</div>
 							
@@ -517,10 +521,10 @@ $(window).on("beforeunload", function(){
 												</div>
 												<div class="form-group row pb-0">
 													<div class="col-sm-3">
-														<label class="control-label mt-2" style="border: 0px;">기준 임신주수</label>
+														<label class="control-label mt-2" style="border: 0px;">기준 임신 주수</label>
 													</div>
 													<div class="col-sm-9">
-														<input type="number" class="form-control" id="input_stdDueDate_add" maxlength='12'>
+														<input type="number" class="form-control" id="input_stdDueDate_add" min=28>
 													</div>
 												</div>
 											</div>
