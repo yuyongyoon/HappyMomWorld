@@ -18,15 +18,16 @@
 			a.phone_number,
 			a.due_date,
 			a.user_role,
-			a.remark,
 			a.massage_cnt,
 			a.massage_total,
-			TO_CHAR(a.created_dt, 'YYYY-MM-DD') AS created_dt,
-			a.branch_code,
+			coalesce(b.has_reservation,0) as massage_reservation_cnt,
 			CASE
-				WHEN b.has_reservation >= 1 THEN 'Y'
+				WHEN b.has_reservation = a.massage_total and massage_cnt = 0 THEN 'Y'
 				ELSE 'N'
-			END AS massage_reserve_cnt
+			END AS reserve_cnt_status,
+			TO_CHAR(a.created_dt, 'YYYY-MM-DD') AS created_dt,
+			a.remark,
+			a.branch_code
 		FROM tb_user a
 		LEFT OUTER JOIN
 			(
@@ -67,25 +68,18 @@
 		where id = #{user_id}
 	</update>
 	
-	<insert id="addAccount" parameterType="map">
-		insert into tb_user (
-			id, password, name, phone_number, due_date, user_role, remark, created_id, created_dt, modified_id, modified_dt, branch_code, user_status
-		)
-		values (
-			#{id}, #{encoded_password}, #{name}, #{phone_number}, #{due_date}, 'USER', #{remark}, #{login_id}, now(), #{login_id}, now(), #{branch_code}, 'Y'
-		)
-	</insert>
-	
 	<update id="updateAccount" parameterType="map">
 		update tb_user
-		set id = #{id}, 
+		set id = #{id},
 			name = #{name},
 			phone_number = #{phone_number},
 			due_date = #{due_date},
 			user_status = #{user_status},
-			remark = #{remark}, 
-			modified_id = #{login_id}, 
-			modified_dt = now() 
+			massage_total = #{massage_total},
+			massage_cnt = #{massage_cnt},
+			remark = #{remark},
+			modified_id = #{login_id},
+			modified_dt = now()
 		where id = #{id}
 	</update>
 
@@ -388,16 +382,16 @@
 	<select id="getSeletedDateReservationList" parameterType="map"  resultType="map">
 		SELECT rsv_date, a.user_id, 
 				CASE 
-					WHEN a.select_time = '1t' THEN b."t1_name"
-					WHEN a.select_time = '2t' THEN b."t2_name"
-					WHEN a.select_time = '3t' THEN b."t3_name"
-					WHEN a.select_time = '4t' THEN b."t4_name"
-					WHEN a.select_time = '5t' THEN b."t5_name"
-					WHEN a.select_time = '6t' THEN b."t6_name"
-					WHEN a.select_time = '7t' THEN b."t7_name"
-					WHEN a.select_time = '8t' THEN b."t8_name"
-					WHEN a.select_time = '9t' THEN b."t9_name"
-					WHEN a.select_time = '10t' THEN b."t10_name"
+					WHEN a.select_time = 't1' THEN b."t1_name"
+					WHEN a.select_time = 't2' THEN b."t2_name"
+					WHEN a.select_time = 't3' THEN b."t3_name"
+					WHEN a.select_time = 't4' THEN b."t4_name"
+					WHEN a.select_time = 't5' THEN b."t5_name"
+					WHEN a.select_time = 't6' THEN b."t6_name"
+					WHEN a.select_time = 't7' THEN b."t7_name"
+					WHEN a.select_time = 't8' THEN b."t8_name"
+					WHEN a.select_time = 't9' THEN b."t9_name"
+					WHEN a.select_time = 't10' THEN b."t10_name"
 				END AS "reservation_time"
 		FROM tb_reservation_list a
 		JOIN tb_reservation_info b ON a.branch_code = b.branch_code AND a.rsv_month = b.rsv_month

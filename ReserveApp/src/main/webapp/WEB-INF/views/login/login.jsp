@@ -122,7 +122,7 @@
 						</div>
 					</div>
 					<div class="form-group form-floating-label">
-						<input  id="msgCnt_signup" name="msgCnt_signup" class="form-control input-border-bottom" type="number" min="1" required>
+						<input  id="msgCnt_signup" name="msgCnt_signup" class="form-control input-border-bottom" type="number" min=1 required>
 						<label for="msgCnt_signup" class="placeholder">마사지 횟수</label>
 					</div>
 					<div class="form-group form-floating-label">
@@ -259,8 +259,6 @@
 					alert('가입 코드를 입력해주세요');
 					$('#joinCode_signup').focus();
 					return false;
-				} else {
-					
 				}
 				
 				let param = {
@@ -269,17 +267,20 @@
 					name 		: $('#name_signup').val(),
 					phone_number: $('#number_signup').val(),
 					due_date	: $('#dueDate_signup').val(),
-					massage_cnt	: $('#msgCnt_signup').val(),
 					join_code	: $('#joinCode_signup').val(),
 				}
-				console.log(param);
+				
+				if($('#msgCnt_signup').val() != '') {
+					param.massage_cnt = Number($('#msgCnt_signup').val());
+				}
+				
 				signup(param);
 			})
 			
 			$('#btn_cancel_signup').click(function(){
 				location.reload();
 			});
-		});//$(document).ready
+		});
 			
 		function checkId(param) {
 			$.doPost({
