@@ -463,7 +463,7 @@ $(document).ready(function() {
 					if(data[i+'t_cnt'] == 0){
 						trData += '<td value="'+i+'t" input_val="'+data[i+'t']+'"><input type="number" min="'+data[i+'t_cnt']+'" value="'+data[i+'t']+'"></td>'
 					} else {
-						trData += '<td value="'+i+'t" input_val="'+data[i+'t']+'" class="cell-with-memo"><input type="number" min="'+data[i+'t_cnt']+'" value="'+data[i+'t']+'"></td>'
+						trData += '<td value="'+i+'t" input_val="'+data[i+'t']+'" class="cell-with-memo" data-toggle="tooltip"  data-placement="bottom" title="예약된 건수: '+data[i+'t_cnt']+'"><input type="number" min="'+data[i+'t_cnt']+'" value="'+data[i+'t']+'"></td>'
 					}
 					
 				}
@@ -670,7 +670,7 @@ $(document).on('input', '#reservation_tbody input[type="number"]', function() {
 								</div>
 							</div>
 							
-							<div class="col-md-12 mt-3" id="table_div" style="overflow-y: scroll;">
+							<div class="col-md-12 mt-3" id="table_div" style="overflow-y: auto;">
 								<div class="table-responsive" >
 									<table class="table table-bordered" id="table_reserve">
 										<thead>

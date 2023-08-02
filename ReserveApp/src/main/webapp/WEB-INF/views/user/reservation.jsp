@@ -10,6 +10,8 @@
 				$.doPost({
 					url		:	"/user/getReservation",
 					success	:	function(result){
+						$('#massageCnt').text(result.massageCnt.reservation_count)
+						$('#massageTotal').text(result.massageCnt.massage_total)
 						if(result.rsvList.length != 0){
 							result.rsvList.forEach(data => {
 								fnCom.createTable(data);
@@ -19,7 +21,7 @@
 								$(exp[i]).css('display','none');
 							}
 						} else{
-							
+							$('#rsvTable').css('display', '');
 						}
 					},
 					error	:	function(xhr,status){
@@ -63,14 +65,17 @@
 				
 				$('#tables-container').append(tableTemplate);
 				
-				let cancelBtn = tableTemplate.find(".btn_cancel");
+				let cancelBtn = tableTemplate.find('.btn_cancel');
+				let cancelTr = tableTemplate.find('.trCancel')
 				cancelBtn.attr('id', 'btn_'+uniqueId);
+				cancelTr.attr('id', 'tr_'+uniqueId);
 				
 				const today = new Date();
 				const rsvDate = new Date(data.rsv_date);
 				
 				if (rsvDate < today) {
 					exp.push('#btn_'+uniqueId);
+					exp.push('#tr_'+uniqueId);
 				}
 
 				
@@ -81,7 +86,8 @@
 
 					let param = {
 						select_time : selectTime,
-						rsv_date	: rsvDate
+						rsv_date	: rsvDate,
+						flag		: 'd'
 					}
 					
 					if (confirm('예약을 취소하시겠습니까?')) {
@@ -107,12 +113,30 @@
 								<div class="col-md-12">
 									<div class="row">
 										<div class="col-sm-6">
-											<span class="row-title">예약 확인</span>
+											<span class="row-title">예약 확인(</span>
+											<span class="row-title" id="massageCnt"></span>
+											<span class="row-title">회 예약 / 총 </span>
+											<span class="row-title" id="massageTotal"></span>
+											<span class="row-title">회 )</span>
 										</div>
 									</div>
 								</div>
 							</div>
-
+							
+							<div id="rsvTable" class="col-md-12 mt-3" style="display: none;">
+								<div class="col-md-12 mt-3">
+									<div class="table-responsive">
+										<table class="table table-head-bg-secondary">
+											<tbody>
+												<tr style="border-top:1px solid #dee2e6;">
+												<td style="text-align: center;">예약 내역이 없습니다.</td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+								</div>
+							</div>
+							
 							<div id="tables-container" class="col-md-12 mt-3">
 							</div>
 							
@@ -140,7 +164,7 @@
 												<tr style="display:none;">
 													<td class="select_time"></td>
 												</tr>
-												<tr>
+												<tr class="trCancel">
 													<td colspan="2">
 														<button type="button" class="btn_cancel header-btn btn btn-secondary btn-rounded btn-lg btn-block">취소</button> 
 													</td>

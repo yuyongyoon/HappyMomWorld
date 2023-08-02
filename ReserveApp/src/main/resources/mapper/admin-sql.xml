@@ -331,7 +331,7 @@
 		) date_series
 		LEFT JOIN (
 			select rsv_date, count(rsv_date) reservation_cnt
-			from tb_reservation_list 
+			from tb_reservation_list
 			<where>
 				rsv_month like #{rsv_month}
 				<choose>

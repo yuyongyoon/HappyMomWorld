@@ -34,18 +34,18 @@
 	</update>
 	
 	<select id="getReservation" parameterType="map" resultType="map">
-		SELECT distinct trl.user_id, trl.rsv_date, tbi.branch_name, tbi.branch_tel, trl.select_time,
+		SELECT trl.user_id, trl.rsv_date, tbi.branch_name, tbi.branch_tel, trl.select_time,
 			(case
-				when trl.select_time = '1t' then tri.t1_name
-				when trl.select_time = '2t' then tri.t2_name
-				when trl.select_time = '3t' then tri.t3_name
-				when trl.select_time = '4t' then tri.t4_name
-				when trl.select_time = '5t' then tri.t5_name
-				when trl.select_time = '6t' then tri.t6_name
-				when trl.select_time = '7t' then tri.t7_name
-				when trl.select_time = '8t' then tri.t8_name
-				when trl.select_time = '9t' then tri.t9_name
-				when trl.select_time = '10t' then tri.t10_name
+				when trl.select_time = 't1' then tri.t1_name
+				when trl.select_time = 't2' then tri.t2_name
+				when trl.select_time = 't3' then tri.t3_name
+				when trl.select_time = 't4' then tri.t4_name
+				when trl.select_time = 't5' then tri.t5_name
+				when trl.select_time = 't6' then tri.t6_name
+				when trl.select_time = 't7' then tri.t7_name
+				when trl.select_time = 't8' then tri.t8_name
+				when trl.select_time = 't9' then tri.t9_name
+				when trl.select_time = 't10' then tri.t10_name
 			end) as rsv_time
 		FROM tb_reservation_list trl 
 			join tb_reservation_info tri 
@@ -57,9 +57,122 @@
 		ORDER BY trl.rsv_date, rsv_time desc
 	</select>
 	
+	<select id="getMassageCnt" parameterType="map" resultType="map">
+		SELECT a.massage_total, COUNT(b.user_id) AS reservation_count
+		FROM tb_user a
+		LEFT JOIN tb_reservation_list b ON a.id = b.user_id
+		WHERE a.id = #{login_id}
+		GROUP BY a.massage_total;
+	</select>
+	
 	<delete id="removeReservation" parameterType="map">
 		delete from tb_reservation_list
 		where user_id = #{login_id} and rsv_date = #{rsv_date} and select_time = #{select_time}
 	</delete>
 	
+	<select id="getAvailableDate" parameterType="map" resultType="map">
+		SELECT a.rsv_date,
+			CASE
+				WHEN a.rsv_date::date <![CDATA[<]]> CURRENT_DATE THEN 'NO'
+				WHEN (
+					(a."1t" - COALESCE(COUNT(CASE WHEN b.select_time = '1t' THEN 1 END), 0)) > 0 OR
+					(a."2t" - COALESCE(COUNT(CASE WHEN b.select_time = '2t' THEN 1 END), 0)) > 0 OR
+					(a."3t" - COALESCE(COUNT(CASE WHEN b.select_time = '3t' THEN 1 END), 0)) > 0 OR
+					(a."4t" - COALESCE(COUNT(CASE WHEN b.select_time = '4t' THEN 1 END), 0)) > 0 OR
+					(a."5t" - COALESCE(COUNT(CASE WHEN b.select_time = '5t' THEN 1 END), 0)) > 0 OR
+					(a."6t" - COALESCE(COUNT(CASE WHEN b.select_time = '6t' THEN 1 END), 0)) > 0 OR
+					(a."7t" - COALESCE(COUNT(CASE WHEN b.select_time = '7t' THEN 1 END), 0)) > 0 OR
+					(a."8t" - COALESCE(COUNT(CASE WHEN b.select_time = '8t' THEN 1 END), 0)) > 0 OR
+					(a."9t" - COALESCE(COUNT(CASE WHEN b.select_time = '9t' THEN 1 END), 0)) > 0 OR
+					(a."10t" - COALESCE(COUNT(CASE WHEN b.select_time = '10t' THEN 1 END), 0)) > 0
+				)
+				THEN 'YES'
+				ELSE 'NO'
+			END AS "is_available"
+		FROM tb_reservation_master a
+		LEFT JOIN tb_reservation_list b ON a.rsv_date = b.rsv_date AND a.branch_code = b.branch_code AND a.rsv_month = b.rsv_month
+		WHERE a.branch_code = #{branch_code}
+		AND a.rsv_month = #{rsv_month}
+		GROUP BY a.rsv_date, a."1t", a."2t", a."3t", a."4t", a."5t", a."6t", a."7t", a."8t", a."9t", a."10t"
+		ORDER BY a.rsv_date
+	</select>
+	
+	<select id="getAvailableData" parameterType="map" resultType="map">
+		SELECT
+			<foreach item="timeSlot" index="index" collection="timeSlots" separator="," >
+				a."${timeSlot}t" - COALESCE(t${index+1}.cnt, 0) AS "t${timeSlot}"
+			</foreach>
+		FROM tb_reservation_master a
+		<foreach item="timeSlot" index="index" collection="timeSlots" separator=" " >
+			LEFT JOIN (
+				SELECT rsv_date, COUNT(*) AS cnt
+				FROM tb_reservation_list
+				WHERE rsv_month = #{rsv_month} AND branch_code = #{branch_code} AND select_time = '${timeSlot}t'
+				GROUP BY rsv_date
+			) t${index+1} ON a.rsv_date = t${index+1}.rsv_date
+		</foreach>
+		WHERE
+			a.rsv_month = #{rsv_month} AND a.branch_code = #{branch_code} AND a.rsv_date = #{rsv_date};
+	</select>
+
+	<select id="reservationTimeInfo" parameterType="map" resultType="map">
+		SELECT rsv_month, t1_name, t2_name, t3_name, t4_name, t5_name, t6_name, t7_name, t8_name, t9_name, t10_name 
+		FROM tb_reservation_info
+		WHERE rsv_month = #{rsv_month} and branch_code = #{branch_code}
+	</select>
+	
+	<select id="getReservationCnt" parameterType="map" resultType="int">
+		SELECT massage_cnt
+		FROM tb_user
+		WHERE id = #{login_id}
+	</select>
+	
+	<update id="changeMagCnt" parameterType="map">
+		UPDATE tb_user
+		<set>
+			<if test="flag == 'i'.toString()">
+				massage_cnt = massage_cnt - 1
+			</if>
+			<if test="flag == 'd'.toString()">
+				massage_cnt = massage_cnt + 1
+			</if>
+		</set>
+		WHERE id = #{login_id}
+	</update>
+	
+	<insert id="saveCancelLog" parameterType="map">
+		INSERT INTO tb_cancel_log(
+			branch_code, rsv_date, select_time, created_id, created_dt
+		)
+		VALUES(
+			#{branch_code}, #{rsv_date}, #{select_time}, #{login_id}, now()
+		)
+	</insert>
+	
+	<insert id="saveReservation" parameterType="map">
+		INSERT into tb_reservation_list (
+			branch_code, rsv_month, rsv_date, select_time, user_id, created_id, created_dt, modified_id, modified_dt
+		)
+		VALUES (
+			#{branch_code}, #{rsv_month}, #{rsv_date}, #{select_time}, #{login_id}, #{login_id}, now(), #{login_id}, now()
+		)
+	</insert>
+
+<!-- 	</select> -->
+<!-- 			SELECT a.rsv_date, -->
+<!-- 			a."1t" - COALESCE(COUNT(CASE WHEN b.select_time = '1t' THEN 1 END), 0) AS "1t", -->
+<!-- 			a."2t" - COALESCE(COUNT(CASE WHEN b.select_time = '2t' THEN 1 END), 0) AS "2t", -->
+<!-- 			a."3t" - COALESCE(COUNT(CASE WHEN b.select_time = '3t' THEN 1 END), 0) AS "3t", -->
+<!-- 			a."4t" - COALESCE(COUNT(CASE WHEN b.select_time = '4t' THEN 1 END), 0) AS "4t", -->
+<!-- 			a."5t" - COALESCE(COUNT(CASE WHEN b.select_time = '5t' THEN 1 END), 0) AS "5t", -->
+<!-- 			a."6t" - COALESCE(COUNT(CASE WHEN b.select_time = '6t' THEN 1 END), 0) AS "6t", -->
+<!-- 			a."7t" - COALESCE(COUNT(CASE WHEN b.select_time = '7t' THEN 1 END), 0) AS "7t", -->
+<!-- 			a."8t" - COALESCE(COUNT(CASE WHEN b.select_time = '8t' THEN 1 END), 0) AS "8t", -->
+<!-- 			a."9t" - COALESCE(COUNT(CASE WHEN b.select_time = '9t' THEN 1 END), 0) AS "9t", -->
+<!-- 			a."10t" - COALESCE(COUNT(CASE WHEN b.select_time = '10t' THEN 1 END), 0) AS "10t" -->
+<!-- 		FROM tb_reservation_master a -->
+<!-- 		LEFT JOIN tb_reservation_list b ON a.rsv_date = b.rsv_date AND a.branch_code = b.branch_code AND a.rsv_month = b.rsv_month -->
+<!-- 		WHERE a.branch_code = #{branch_code} AND a.rsv_month = #{rsv_month} -->
+<!-- 		GROUP BY a.rsv_date, a."1t", a."2t", a."3t", a."4t", a."5t", a."6t", a."7t", a."8t", a."9t", a."10t" -->
+<!-- 		ORDER BY a.rsv_date -->
 </mapper>
