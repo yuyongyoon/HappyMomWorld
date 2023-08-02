@@ -71,7 +71,9 @@ public class UserController {
 	public Map<String,Object> getReservation(HttpServletRequest request, @RequestBody Map<String,Object> param) throws Exception {
 		Map<String,Object> result = new HashMap<String,Object>();
 		List<Map<String,Object>> rsvList = userService.getReservation(param);
+		Map<String,Object> massageCnt = userService.getMassageCnt(param);
 		result.put("rsvList", rsvList);
+		result.put("massageCnt", massageCnt);
 		return result;
 	}
 	
@@ -84,5 +86,36 @@ public class UserController {
 		result.put("msg", msg);
 		return result;
 	}
-	 
+	
+	
+	// 캘린더 목록
+	@RequestMapping(value = "/getAvailableDate", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String,Object> getAvailableDate(HttpServletRequest request, @RequestBody Map<String,Object> param) throws Exception {
+		Map<String,Object> result = new HashMap<String,Object>();
+		List<Map<String,Object>> calendarList = userService.getAvailableDate(param);
+		result.put("calendarList", calendarList);
+		return result;
+	}
+	
+	@RequestMapping(value = "/getAvailableData", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String,Object> getAvailableData(HttpServletRequest request, @RequestBody Map<String,Object> param) throws Exception {
+		Map<String,Object> result = new HashMap<String,Object>();
+		Map<String,Object> availableData = userService.getAvailableData(param);
+		Map<String,Object> reservationTimeInfo = userService.reservationTimeInfo(param);
+		result.put("availableData", availableData);
+		result.put("reservationTimeInfo", reservationTimeInfo);
+		result.put("rsv_date", param.get("rsv_date"));
+		return result;
+	}
+	
+	@RequestMapping(value = "/saveReservation", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String,Object> saveReservation(HttpServletRequest request, @RequestBody Map<String,Object> param) throws Exception {
+		Map<String,Object> result = new HashMap<String,Object>();
+		String msg = userService.saveReservation(param);
+		result.put("msg", msg);
+		return result;
+	}
 }

@@ -21,7 +21,7 @@
 						<a href="/admin/user"><i class="fas fa-user-alt"></i><p>회원 관리</p></a>
 					</li>
 					<li class="nav-item">
-						<a href="/admin/reservation_status"><i class="far fa-calendar-alt"></i><p>예약 현황 조회</p></a>
+						<a href="/admin/reservation_status"><i class="far fa-calendar-alt"></i><p>예약 현황</p></a>
 					</li>
 					<li class="nav-item">
 						<a href="/admin/reservation_master"><i class="fas fa-cog"></i><p>예약 마스터 관리</p></a>

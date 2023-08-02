@@ -1,9 +1,11 @@
 package com.reserve.app.service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -69,12 +71,52 @@ public class UserService {
 		return mapper.getReservation(param);
 	}
 	
-	// 기간별 예약 조회
+	public Map<String, Object> getMassageCnt(Map<String,Object> param){
+		return mapper.getMassageCnt(param);
+	}
+	
 	public String removeReservation(Map<String,Object> param){ 
 		String msg = "success";
 		try {
-			mapper.removeReservation((Map<String,Object>) param);
+			mapper.removeReservation(param);
+			mapper.changeMagCnt(param);
+			mapper.saveCancelLog(param);
 		}catch (Exception e) {
+			e.printStackTrace();
+			msg = "fail";
+		}
+		return msg;
+	}
+	
+	public List<Map<String, Object>> getAvailableDate(Map<String,Object> param){
+		return mapper.getAvailableDate(param);
+	}
+	
+	public Map<String, Object> getAvailableData(Map<String,Object> param){
+		param.put("timeSlots", Arrays.asList("1", "2", "3", "4", "5", "6", "7", "8", "9", "10"));
+		return mapper.getAvailableData(param);
+	}
+	
+	public Map<String, Object> reservationTimeInfo(Map<String,Object> param){
+		return mapper.reservationTimeInfo(param);
+	}
+	
+	public String saveReservation(Map<String,Object> param) {
+		String msg = "success";
+		try {
+//			
+			int cnt = mapper.getReservationCnt();
+			
+			if(cnt > 0) {
+				mapper.changeMagCnt(param);
+				mapper.saveReservation(param);
+			} else {
+				msg = "Reservation not allowed";
+			}
+			
+		} catch (DataIntegrityViolationException e) {
+			msg = "Duplicate reservation found";
+		}	catch (Exception e) {
 			e.printStackTrace();
 			msg = "fail";
 		}
