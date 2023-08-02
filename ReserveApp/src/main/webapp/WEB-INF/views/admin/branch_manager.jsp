@@ -86,6 +86,7 @@ $(document).ready(function() {
 						$('#input_branchTel_add').val('');
 						$('#input_curPwd_add').val('');
 						$('#input_newPwd_add').val('');
+						$('#input_stdDueDate_add').val('');
 						$('#addBranch_modal').modal('hide');
 						ajaxCom.getBranchList();
 					}
@@ -124,7 +125,6 @@ $(document).ready(function() {
 		},
 		// 지점 추가 버튼
 		btn_add: function(){
-			tuiGrid.appendRow(branchGrid,{branch_code_col:'',branch_name:''},{editable:['branch_code_col', 'branch_name']});
 			$('#input_branchId_add').attr('disabled', false);
 			$('#input_curPwd_add').attr('disabled', false);
 			$('#input_newPwd_add').attr('disabled', false);
@@ -134,6 +134,7 @@ $(document).ready(function() {
 			$('#input_branchTel_add').val('');
 			$('#input_curPwd_add').val('');
 			$('#input_newPwd_add').val('');
+			$('#input_stdDueDate_add').val('');
 			
 			$('#div_checkId_msg').hide();
 			$('#div_curPwd_msg').hide();
@@ -198,7 +199,9 @@ $(document).ready(function() {
 						branch_name	: $('#input_branchName_add').val(),
 						id			: $('#input_branchId_add').val(),
 						branch_tel	: $('#input_branchTel_add').val(),
-						password	: $('#input_newPwd_add').val()
+						password	: $('#input_newPwd_add').val(),
+						std_due_date: $('#input_stdDueDate_add').val()
+						
 				}
 				//console.log('지점 추가 >>',param);
 				ajaxCom.addBranchInfo(param);
@@ -384,7 +387,7 @@ $(window).on("beforeunload", function(){
 							<!-- 지점 그리드 -->
 							<div id="branch_grid"></div>
 							
-							<!-- 지점 추가 modal(1차 완료) -->
+							<!-- 지점 추가 modal -->
 							<div class="modal fade" id="addBranch_modal" tabindex="-1" role="dialog" aria-hidden="true">
 								<div class="modal-dialog modal-dialog-centered" role="document">
 									<div class="modal-content">
@@ -432,7 +435,7 @@ $(window).on("beforeunload", function(){
 													</div>
 												</div>
 												<div class="row form-sub m-0" id="div_curPwd_msg" style="padding:0px;">
-													<span class="float-left" id="span_curPwd_msg" style="color:red; margin-left:10px; margin-bottom: 5px;">비밀번호 경고 메세지</span>
+													<span class="float-left" id="span_curPwd_msg" style="color:red; margin-left:10px; margin-bottom: 5px;"></span>
 												</div>
 												<div class="form-group row pb-0">
 													<div class="col-sm-3">
@@ -443,7 +446,15 @@ $(window).on("beforeunload", function(){
 													</div>
 												</div>
 												<div class="row form-sub m-0" id="div_newPwd_msg" style="padding:0px;">
-													<span class="float-left" id="span_newPwd_msg" style="color:red; margin-left:10px; margin-bottom: 5px;">비밀번호 경고 메세지2</span>
+													<span class="float-left" id="span_newPwd_msg" style="color:red; margin-left:10px; margin-bottom: 5px;"></span>
+												</div>
+												<div class="form-group row pb-0">
+													<div class="col-sm-3">
+														<label class="control-label mt-2" style="border: 0px;">기준 임신주수</label>
+													</div>
+													<div class="col-sm-9">
+														<input type="number" class="form-control" id="input_stdDueDate_add" maxlength='12'>
+													</div>
 												</div>
 											</div>
 										</div>
@@ -455,7 +466,6 @@ $(window).on("beforeunload", function(){
 								</div>
 							</div>
 							
-							<!-- 지점 정보 수정 modal(수정중) -->
 							<div class="modal fade" id="editBranch_modal" tabindex="-1" role="dialog" aria-hidden="true">
 								<div class="modal-dialog modal-dialog-centered" role="document">
 									<div class="modal-content">

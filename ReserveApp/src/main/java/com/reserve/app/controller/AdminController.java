@@ -218,4 +218,14 @@ public class AdminController {
 		result.put("reservationStatusList", reservationStatusList);
 		return result;
 	}
+	
+	@RequestMapping(value = "/getReservationModal", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String,Object> getReservationModal(HttpServletRequest request, @RequestBody Map<String,Object> param) throws Exception {
+		Map<String,Object> result = new HashMap<String,Object>();
+		List<Map<String,Object>> rsvList_modal = adminService.getReservationModal(param);
+		result.put("rsvListModal", rsvList_modal);
+		result.put("listSize", rsvList_modal.size());
+		return result;
+	}
 }

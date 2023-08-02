@@ -122,6 +122,10 @@
 						</div>
 					</div>
 					<div class="form-group form-floating-label">
+						<input  id="msgCnt_signup" name="msgCnt_signup" class="form-control input-border-bottom" type="number" min="1" required>
+						<label for="msgCnt_signup" class="placeholder">마사지 횟수</label>
+					</div>
+					<div class="form-group form-floating-label">
 						<input  id="joinCode_signup" name="joinCode_signup" type="text" class="form-control input-border-bottom" required>
 						<label for="joinCode_signup" class="placeholder">가입코드</label>
 					</div>
@@ -265,9 +269,10 @@
 					name 		: $('#name_signup').val(),
 					phone_number: $('#number_signup').val(),
 					due_date	: $('#dueDate_signup').val(),
+					massage_cnt	: $('#msgCnt_signup').val(),
 					join_code	: $('#joinCode_signup').val(),
 				}
-					
+				console.log(param);
 				signup(param);
 			})
 			

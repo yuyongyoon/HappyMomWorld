@@ -246,4 +246,22 @@ public class AdminService {
 	public List<Map<String, Object>> getReservationStatusList(Map<String, Object> param) throws Exception {
 		return mapper.getReservationStatusList(param);
 	}
+	
+	public List<Map<String, Object>> getReservationModal(Map<String, Object> param) throws Exception {
+		List<Map<String, Object>> result = mapper.getReservationModal(param);
+		
+		int i = 0;
+		while(i < result.size()) {
+			int cnt = Integer.parseInt(result.get(i).get("cnt").toString());
+			result.get(i).remove("col");
+			result.get(i).remove("cnt");
+			if(cnt == 0) {
+				result.remove(i);
+				i--;
+			}
+			i++;
+		}
+		System.out.println(result);
+		return result;
+	}
 }

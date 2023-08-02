@@ -48,7 +48,8 @@ public interface AdminMapper {
 	Map<String, Object> getBranchPrintInfo(Map<String,Object> param);
 	
 	void saveBranchPrintInfo(Map<String,Object> param);
-	
+	//=================================== 예약 현황 ===================================
 	List<Map<String,Object>> getReservationStatusList(Map<String,Object> param);
 	
+	List<Map<String,Object>> getReservationModal(Map<String,Object> param);
 }

@@ -36,10 +36,10 @@ $(document).ready(function() {
 			let phoneNumber = $('#input_phone').val();
 			let startDate = $('#input_startDate').val();
 			let endDate = $('#input_endDate').val();
+			
 			if($('#role').val() == 'SUPERADMIN'){
 				let superBranchCode = $('#select-branch');
 			}
-			
 			
 			if($('#select-branch').val() != ''){
 				superBranchCode = $('#select-branch').val();
@@ -55,11 +55,11 @@ $(document).ready(function() {
 					startDate		: startDate,
 					endDate			: endDate,
 					super_branch_code : superBranchCode
-					
 				},
 				success	: function(result) {
 					$('#userCnt').text(result.userList.length);
 					userGrid.resetData(result.userList);
+					//console.log('회원 관리_정보: ',result.userList)
 				},
 				error	: function(xhr,status){
 					alert('오류가 발생했습니다.');
@@ -142,14 +142,15 @@ $(document).ready(function() {
 			scrollY : true,
 			readOnlyColorFlag : false,
 			columns: [
-				{header : 'ID',				name : 'id',			width : 100,  align:'left',	
+				{header : 'ID',			name : 'id',			width : 100,  align:'left',	
 					style:'cursor:pointer;text-decoration:underline;', sortable: true},
-				{header : '이름',				name : 'name',				width : 150, align:'left', sortable: true},
-				{header : '전화번호',			name : 'phone_number',		width : 150, align:'left', sortable: true},
-				{header : '출산 예정일',		name : 'due_date',			width : 150, align:'left', sortable: true},
-				{header : '마사지 예약 여부',	name : 'massage_reserve_cnt',	width : 150, align:'center', formatter: 'listItemText', disabled:true,
-					editor: { type: 'select', options: { listItems: [{text:'YES', value:'Y'},{text:'NO',value:'N'}]}, sortable: true }
-				},
+				{header : '이름',			name : 'name',				width : 150, align:'left', sortable: true},
+				{header : '전화번호',		name : 'phone_number',		width : 150, align:'left', sortable: true},
+				{header : '출산 예정일',	name : 'due_date',			width : 150, align:'left', sortable: true},
+				{header : '마사지 잔여 횟수',	name : 'massage_cnt',		width : 150, align:'center', sortable: true},
+				/* {header : '마사지 사용여부',	name : 'massage_cnt',		width : 150, align:'center', sortable: true, formatter: 'listItemText', disabled:true,
+					editor: { type: 'select', options: { listItems: [{text:'YES', value:'Y'},{text:'NO',value:'N'}]}}
+				}, */
 				{header : '가입일',		name : 'created_dt',	width : 150,  align:'center', sortable: true},
 				{header : '비고',			name : 'remark',	align:'left'}
 			]

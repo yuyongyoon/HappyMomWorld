@@ -27,6 +27,8 @@ $(document).ready(function() {
 			format: 'yyyy-MM'
 		}
 	});
+	let modalPicker;
+	let modalGrid;
 
 	ajaxCom = {
 			getReservationStatusList : function() {
@@ -48,7 +50,7 @@ $(document).ready(function() {
 					endDate = $('#input_endDate').val();
 				}
 				
-				console.log(startDate, endDate)
+				//console.log(startDate, endDate)
 				
 				let userIdOrName = $('#input_id_name').val();
 				let phoneNumber = $('#input_phone').val();
@@ -83,29 +85,71 @@ $(document).ready(function() {
 					}
 				});
 			},
+			getReservationModal: function() {
+				let month = $('#datepicker_input_create').val();
+				let date = $('#input_datepicker_modal').val();
+				if($('#role').val() == 'SUPERADMIN'){
+					let superBranchCode = $('#select-branch');
+				}
+				console.log("month: ", month,"\ndate: ", date, "\ncode: ", superBranchCode)
+				$.doPost({
+					url	 	: "/admin/getReservationModal",
+					data 	: {
+						rsv_date	: date,
+						rsv_month	: month,
+						super_branch_code	: superBranchCode
+					},
+					success	: function(result) {
+						console.log('modal list >>',result.rsvListModal)
+						modalGrid.resetData(result.rsvListModal);
+					},
+					error	: function(xhr,status){
+						alert('오류가 발생했습니다.');
+					}
+				});
+			}
+			
 	};
 	
-	//이벤트 객체 : id값을 주면 클릭 이벤트 발생
+	//이벤트 객체
 	btnCom = {
 		btn_download: function(){
-			console.log('다운로드 클릭')
+			tuiGrid.dataExport(statusGrid,'해피맘월드_예약현황.xlsx');	//error
 		},
 		btn_get: function(){
 			ajaxCom.getReservationStatusList();
+		},
+		btn_close_modal: function(){
+			let modalId = $(this).closest(".modal").attr("id");
+			$('#editUserInfo_modal').modal('hide');
 		}
 	}; //btnCom END
 
 	//기타 함수 객체
 	fnCom = {
 		reservationChange: function(props, rowKey){
-			console.log('reservationChange 클릭', props.grid.getRow(rowKey))
+			console.log('reservationChange clicked', props.grid.getRow(rowKey))
 		},
 		reservationCancle: function(props, rowKey){
-			console.log('reservationCancle 클릭', props.grid.getRow(rowKey))
+			if (confirm("예약을 취소하시겠습니까?")) {
+				alert('취소되었습니다.');
+				ajaxCom.getReservationStatusList();
+			} 
 		},
-// 		sendMsg: function(props, rowKey){
-// 			console.log('sendMsg 클릭', props.grid.getRow(rowKey))
-// 		}
+		checkMassage: function(props, rowKdy){
+			console.log('checkMassage clicked', props.grid.getRow(rowKey))
+		},
+		changeRsvModal: function(props, rowKey){
+			if (confirm("기존 예약이 취소됩니다. 변경하시겠습니까?")) {
+				alert('예약이 변경되었습니다.');
+				$('#editUserInfo_modal').modal('hide');
+				ajaxCom.getReservationModal();
+			} 
+		},
+		changedDatepicker: function(obj){
+			//let rsvDate = modalPicker.getDate();
+			console.log('예약 변경 기간: ', $(obj).val());
+		}
 	}; //fnCom END
 	
 	const statusGrid = tuiGrid.createGrid(
@@ -122,11 +166,11 @@ $(document).ready(function() {
 			columns: [
 				{header : '날짜',			name : 'rsv_date',			align:'left',	sortable: true},
 				{header : '시간',			name : 'reservation_time',	align:'left', sortable: true},
-				{header : '아이디',			name : 'user_id',		align:'left', sortable: true},
+				{header : '아이디',		name : 'user_id',		align:'left', sortable: true,  style:'cursor:pointer;text-decoration:underline;', sortable: true},
 				{header : '이름',			name : 'name',				align:'left', sortable: true},
 				{header : '전화번호',		name : 'phone_number',		align:'left', sortable: true},
 				{header : '예약한 날짜',	name : 'created_dt',		align:'left', sortable: true},
-				{header : '예약한 시간대', name : 'select_time',		hidden:true},
+				{header : '예약한 시간대',	name : 'select_time',		hidden:true},
 				{header : '예약변경',		name : 'change',			width : 150, align:'center', 
 					renderer: {
 						type : ButtonRenderer,
@@ -145,36 +189,76 @@ $(document).ready(function() {
 						}
 					}
 				},
-// 				{header : '문자 발송',			name : 'sendMsg',	width : 150, align:'center',
-// 					renderer: {
-// 						type : ButtonRenderer,
-// 						options : {
-// 							value : '발송',
-// 							click: fnCom.sendMsg
-// 						}
-// 					}
-// 				},
-// 				{header : '발송 성공 여부',			name : 'sendMsgStatus',	align:'left', sortable: true, 
-// 					editor: { type: 'select', options: { listItems: [{text:'YES', value:'Y'},{text:'NO',value:'N'}]}}
-				
-// 				}
+				{header : '마사지 확인',	name : 'check',		width : 150,	align:'center',
+					renderer: {
+						type : ButtonRenderer,
+						options : {
+							value : '확인',
+							click: fnCom.checkMassage
+						}
+					}
+				}
 			]
 		},
 		[],//초기 데이터
 		//이벤트
+		// 회원 정보 수정 modal(수정중)
 		{
 			cellclick : function(rowKey,colName,grid){
-				
+				if(colName=="user_id"){
+					let rowData = statusGrid.getRow(rowKey);
+					$('#input_datepicker_modal').val(rowData.rsv_date);
+					modalPicker = new tui.DatePicker('#div_datepicker_modal', {
+						date: new Date(input_datepicker_modal),
+						language: 'ko',
+						input: {
+							element: '#input_datepicker_modal',
+							format: 'yyyy-MM-dd'
+						}
+					});
+					
+					$('#editUserInfo_modal').modal('show');
+				}
 			}
 		}
 	);
-
+	
 	ajaxCom.getReservationStatusList();
 	
 	$('table input').on('keydown', function(event) {
 		if(event.keyCode == 13) {
 			ajaxCom.getReservationStatusList();
 		}
+	});
+	// id 클릭 시 modal 팝업과 동시에 grid 생성
+	$('#editUserInfo_modal').on('shown.bs.modal', function(e){
+		modalGrid = tuiGrid.createGrid (
+			{
+				gridId : 'grid_userInfo_modal',
+				height : 300,
+				scrollX : true,
+				scrollY : true,
+				readOnlyColorFlag : false,
+				columns: [
+					{header : '시간',		name : 'rsv_time',	width: 250,	align:'center', sortable: true},
+					{header : '예약변경',	name : 'change',	width: 200,	align:'center', 
+						renderer: {
+							type : ButtonRenderer,
+							options : {
+								value : '변경',
+								click: fnCom.changeRsvModal
+							}
+						}
+					}
+				]
+			},
+			[],
+			{}
+		);
+		ajaxCom.getReservationModal();
+	});
+	$('#input_datepicker_modal').change(function(){
+		console.log("rsv date: ", $('#input_datepicker_modal').val())
 	});
 }); //END $(document).ready
 	
@@ -268,6 +352,34 @@ $(document).ready(function() {
 						</div>
 					</div>
 				</div>	
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal fade" id="editUserInfo_modal" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title">사용자 정보 수정</h4>
+			</div>
+			
+			<div class="form-group row pb-0"  style="margin: 6px;">
+				<label class="control-label mt-2 mr-3">날짜</label>
+				<div class="tui-datepicker-input tui-datetime-input tui-has-focus" style="margin-bottom: 6px;">
+					<input type="text" id="input_datepicker_modal" aria-label="date">
+					<span class="tui-ico-date"></span>
+				</div>
+				<div class="datepicker-cell" id="div_datepicker_modal" style="margin-top: -1px;"></div>
+			</div>
+			
+			<div class="modal-body">
+				<div>
+					<div id="grid_userInfo_modal"></div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" id="btn_save_modal">저장</button>
+				<button type="button" class="btn btn-info" id="btn_close_modal">취소</button>
 			</div>
 		</div>
 	</div>
