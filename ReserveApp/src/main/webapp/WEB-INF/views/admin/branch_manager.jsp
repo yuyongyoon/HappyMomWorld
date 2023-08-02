@@ -19,10 +19,10 @@ $(document).ready(function() {
 				success	: function(result){
 					let branchNum = result.branchList.length;
 					$('#branchCnt').text(branchNum);
-					//console.log('branchList>> ',result.branchList)
 					
 					if(result.branchList.legnth != 0) {
 						branchGrid.resetData(result.branchList);
+						//console.log(result.branchList);
 					}
 				},
 				error	: function(xhr,status){
@@ -96,7 +96,7 @@ $(document).ready(function() {
 				}
 			});
 		},
-		// 지점 수정
+		// 지점 정보 수정
 		updateBranchInfo : function(param){
 			$.doPost({
 				url	 	: "/admin/updateBranchInfo",
@@ -108,6 +108,37 @@ $(document).ready(function() {
 						alert('정보를 수정했습니다.');
 						
 						$('#editBranch_modal').modal('hide');
+						ajaxCom.getBranchList();
+					}
+				},
+				error	: function(xhr,status){
+					alert('오류가 발생했습니다.');
+				}
+			});
+		},
+		resetMngPwd : function(param) {
+			$.doPost({
+				url	 	: "/admin/resetMngPwd",
+				data 	: param,
+				success	: function(result) {
+					alert('초기화된 비밀번호는 ' + result.raw_pw + ' 입니다.');
+				},
+				error	: function(xhr,status){
+					alert('오류가 발생했습니다.');
+				}
+			});
+		},
+		// 관지라 정보 수정
+		updateManager : function(param){
+			$.doPost({
+				url	 	: "/admin/updateManager",
+				data 	: param,
+				success	: function(result) {
+					if(result.msg == "fail") {
+						alert('수정 실패했습니다.');
+					} else if(result.msg == "success"){
+						alert('수정 성공했습니다.');
+						$('#editManager_modal').modal('hide');
 						ajaxCom.getBranchList();
 					}
 				},
@@ -250,6 +281,33 @@ $(document).ready(function() {
 			} else {
 				$('#btn_editBranch_close').blur();
 			}
+		},
+		btn_resetPwd : function() {
+			let param = {
+				manager_id : $('#input_mngId_edit').val()
+			}
+			ajaxCom.resetMngPwd(param);
+			console.log('비밀번호 초기화 >>',param);
+			
+		},
+		btn_updateMng: function(){
+			let param = {
+					id			: $('#input_mngId_edit').val(),
+					branch_name	: $('#input_mngName_edit').val(),
+					user_status	: $('#input_mngEnabled_edit').val(),
+					join_code	: $('#input_joinCode_edit').val()
+			}
+			ajaxCom.updateManager(param);
+			console.log('관리자 수정 >>',param);
+		},
+		btn_updateMng_close: function(){
+			let modalId = $(this).closest(".modal").attr("id");
+			
+			if (confirm("창을 닫으면 수정한 내용이 모두 지워집니다. 닫으시겠습니까?")) {
+				$('#' + modalId).modal('hide');
+			} else {
+				$('#btn_editBranch_close').blur();
+			}
 		}
 	}; //btnCom END
 
@@ -267,8 +325,8 @@ $(document).ready(function() {
 			scrollY : true,
 			readOnlyColorFlag : false,
 			columns: [
-				{header : '지점이름',		name : 'branch_name',		align:'left',	style:'cursor:pointer;text-decoration:underline;', sortable: true},
-				{header : '관리자 아이디',	name : 'id', 				align:'left'},
+				{header : '지점이름',		name : 'branch_name',		align:'left', style:'cursor:pointer;text-decoration:underline;', sortable: true},
+				{header : '관리자 아이디',	name : 'id', 				align:'left', style:'cursor:pointer;text-decoration:underline;', sortable: true},
 				{header : '전화번호',		name : 'branch_tel', 		align:'left'},
 				{header : '가입코드',		name : 'join_code',			align:'left' },
 				{header : '등록일',		name : 'created_dt',		align:'left' }
@@ -288,6 +346,15 @@ $(document).ready(function() {
 					$('#input_joinCode_edit').val(rowData.join_code);
 					
 					$('#editBranch_modal').modal('show');
+				}
+				if(colName=="id"){
+					let rowData = branchGrid.getRow(rowKey);
+					$('#input_joinCode_edit').val(rowData.join_code);
+					$('#input_mngId_edit').val(rowData.id);
+					$('#input_mngName_edit').val(rowData.branch_name);
+					$('#input_mngEnabled_edit').val();
+					
+					$('#editManager_modal').modal('show');
 				}
 			}
 		}
@@ -465,7 +532,7 @@ $(window).on("beforeunload", function(){
 									</div>
 								</div>
 							</div>
-							
+							<!-- 지점 정보 수정 modal -->
 							<div class="modal fade" id="editBranch_modal" tabindex="-1" role="dialog" aria-hidden="true">
 								<div class="modal-dialog modal-dialog-centered" role="document">
 									<div class="modal-content">
@@ -519,6 +586,52 @@ $(window).on("beforeunload", function(){
 										<div class="modal-footer">
 											<button type="button" class="btn btn-secondary" id="btn_editBranch">저장</button>
 											<button type="button" class="btn btn-info" id="btn_editBranch_close">취소</button>
+										</div>
+									</div>
+								</div>
+							</div>
+							<!-- 관리자 정보 수정 modal -->
+							<div class="modal fade" id="editManager_modal" tabindex="-1" role="dialog" aria-hidden="true">
+								<div class="modal-dialog modal-dialog-centered" role="document">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h4 class="modal-title" id="mng_edit_modalTitle">관리자 정보 수정</h4>
+										</div>
+										<div class="modal-body">
+											<div class="col-12">
+												<div class="form-group row pb-0">
+													<div class="col-sm-2">
+														<label class="control-label mt-2">ID</label>
+													</div>
+													<div class="col-sm-10">
+														<input type="text" class="form-control" id="input_mngId_edit">
+													</div>
+												</div>
+												<div class="form-group row pb-0">
+													<div class="col-sm-2">
+														<label class="control-label mt-2" style="border: 0px;">이름</label>
+													</div>
+													<div class="col-sm-10">
+														<input type="text" class="form-control" id="input_mngName_edit" maxlength='12'>
+													</div>
+												</div>
+												<div class="form-group row pb-0">
+													<div class="col-sm-2">
+														<label class="control-label mt-2" style="border: 0px;">사용 여부</label>
+													</div>
+													<div class="col-sm-10">
+														<select name="enabled" class="form-control" id="input_mngEnabled_edit">
+															<option value="Y">사용</option>
+															<option value="N">미사용</option>
+														</select>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="modal-footer">
+											<button type="button" class="btn btn-danger" id="btn_resetPwd">비밀번호 초기화</button>
+											<button type="button" class="btn btn-secondary" id="btn_updateMng">저장</button>
+											<button type="button" class="btn btn-info" id="btn_updateMng_close">취소</button>
 										</div>
 									</div>
 								</div>

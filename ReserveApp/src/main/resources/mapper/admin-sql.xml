@@ -94,11 +94,11 @@
 		FROM tb_user
 		WHERE 	id = #{id}
 	</select>
-	
 	<!--=============== 지점 관리 ===============-->
 	<select id="getBranchList" parameterType="map"  resultType="map">
 		SELECT	seq_no,
 				tu.id,
+				tu.user_status,
 				tbm.branch_code as branch_code_col, 
 				tbm.branch_name, 
 				join_code,
@@ -147,7 +147,6 @@
 			(select branch_code from tb_branch_mng where branch_name=#{branch_name})
 		);
 	</insert>
-
 	
 	<update id="updateBranchInfo" parameterType="map">
 		update tb_branch_info
@@ -183,6 +182,42 @@
 		delete from tb_branch_mng where seq_no=#{seq_no}
 	</delete>
 	
+	<update id="resetMngPwd" parameterType="map">
+		update tb_user
+		set password = #{password},
+			modified_dt = now(),
+			modified_id = #{login_id}
+		where id = #{manager_id}
+	</update>
+	
+	<update id="updateManager" parameterType="map">
+		update tb_branch_info
+		set 
+			branch_name = #{branch_name},
+			modified_id = #{login_id},
+			modified_dt = now()
+		where
+			branch_code = (select branch_code from tb_branch_mng where join_code=#{join_code});
+		
+		update tb_branch_mng
+		set
+			branch_name = #{branch_name},
+			modified_id = #{login_id}, 
+			modified_dt = now()
+		where 
+			branch_code = (select branch_code from tb_branch_mng where join_code=#{join_code});
+			
+		update tb_user
+		set
+			id = #{id},
+			name = #{branch_name},
+			user_status = #{user_status},
+			modified_id = #{login_id},
+			modified_dt = now()
+		where
+			branch_code = (select branch_code from tb_branch_mng where join_code=#{join_code});
+	</update>
+	<!--=============== 지점 관리 ===============-->
 	<select id="getReservationMasterData" parameterType="map"  resultType="map">
 		SELECT
 			a.branch_code,

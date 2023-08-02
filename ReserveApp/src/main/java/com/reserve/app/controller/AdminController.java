@@ -105,7 +105,6 @@ public class AdminController {
 		result.put("branchList", branchList);
 		return result;
 	}
-	
 	/*
 	 * @RequestMapping(value = "/saveBranchInfo", method = RequestMethod.POST)
 	 * 
@@ -137,6 +136,20 @@ public class AdminController {
 	public Map<String,Object> updateBranchInfo(HttpServletRequest request, @RequestBody HashMap<String,Object> param) throws Exception {
 		Map<String,Object> result = new HashMap<String,Object>();
 		String msg = adminService.updateBranchInfo(param);
+		result.put("msg", msg);
+		return result;
+	}
+	@RequestMapping(value="/resetMngPwd")
+	@ResponseBody
+	public Map<String, Object> resetMngPwd(@RequestBody Map<String, Object> param, HttpServletResponse response) throws Exception{
+		return adminService.resetMngPwd(param);
+	}
+	// 지점 정보 수정
+	@RequestMapping(value = "/updateManager", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String,Object> updateManager(HttpServletRequest request, @RequestBody HashMap<String,Object> param) throws Exception {
+		Map<String,Object> result = new HashMap<String,Object>();
+		String msg = adminService.updateManager(param);
 		result.put("msg", msg);
 		return result;
 	}
