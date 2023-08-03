@@ -88,26 +88,28 @@
 		FROM tb_user
 		WHERE 	id = #{id}
 	</select>
-	
 	<!--=============== 지점 관리 ===============-->
 	<select id="getBranchList" parameterType="map"  resultType="map">
 		SELECT	seq_no,
 				tu.id,
+				tu.user_status,
 				tbm.branch_code as branch_code_col, 
 				tbm.branch_name, 
 				join_code,
 				to_char(tbi.created_dt,'YYYY-MM-DD') as created_dt, 
 				tbi.branch_tel,
 				tbi.branch_addr,
-				tbi.business_hours
+				tbi.business_hours,
+				std_due_date
 		FROM tb_branch_mng tbm 
 				join tb_branch_info tbi on tbm.branch_code = tbi.branch_code
-				join tb_user tu on tbm.branch_code = tu.branch_code and tu.user_role = 'ADMIN' and tu.user_status = 'Y'
+				join tb_user tu on tbm.branch_code = tu.branch_code and tu.user_role = 'ADMIN'
 		<where>
 			tbm.branch_code != 'b0000'
 			<if test='branchCode!=null and branchCode!=""'>and tbm.branch_code like '%'|| #{branchCode} ||'%'</if>
-			<if test='branchName!=null and branchName!=""'>and tbm.branch_name like '%'|| #{branchName} ||'%'</if>
+			<if test='adminId!=null and adminId!=""'>and tu.id like '%'|| #{adminId} ||'%'</if>
 			<if test='joinCode!=null and joinCode!=""'>and join_code like '%'|| #{joinCode} ||'%'</if>
+			<if test='userStatus!=null and userStatus!=""'>and user_status like '%'|| #{userStatus} ||'%'</if>
 		</where>
 		ORDER BY tbm.branch_code;
 	</select>
@@ -123,7 +125,7 @@
 			branch_name, branch_tel, std_due_date, created_id, created_dt, modified_id, modified_dt, branch_code
 		)
 		values (
-			#{branch_name}, #{branch_tel}, cast(#{std_due_date} as integer), #{login_id}, now(), #{login_id}, now(), 
+			#{branch_name}, #{branch_tel}, #{std_due_date}, #{login_id}, now(), #{login_id}, now(), 
 			(select branch_code from tb_branch_mng where branch_name=#{branch_name})
 		);
 		insert into tb_user (
@@ -141,7 +143,6 @@
 			(select branch_code from tb_branch_mng where branch_name=#{branch_name})
 		);
 	</insert>
-
 	
 	<update id="updateBranchInfo" parameterType="map">
 		update tb_branch_info
@@ -150,6 +151,7 @@
 			branch_tel = #{branch_tel},
 			branch_addr = #{branch_addr},
 			business_hours = #{business_hours},
+			std_due_date = #{std_due_date},
 			modified_id = #{login_id},
 			modified_dt = now()
 		where
@@ -177,6 +179,42 @@
 		delete from tb_branch_mng where seq_no=#{seq_no}
 	</delete>
 	
+	<update id="resetMngPwd" parameterType="map">
+		update tb_user
+		set password = #{password},
+			modified_dt = now(),
+			modified_id = #{login_id}
+		where id = #{manager_id}
+	</update>
+	
+	<update id="updateManager" parameterType="map">
+		update tb_branch_info
+		set 
+			branch_name = #{branch_name},
+			modified_id = #{login_id},
+			modified_dt = now()
+		where
+			branch_code = (select branch_code from tb_branch_mng where join_code=#{join_code});
+		
+		update tb_branch_mng
+		set
+			branch_name = #{branch_name},
+			modified_id = #{login_id}, 
+			modified_dt = now()
+		where 
+			branch_code = (select branch_code from tb_branch_mng where join_code=#{join_code});
+			
+		update tb_user
+		set
+			id = #{id},
+			name = #{branch_name},
+			user_status = #{user_status},
+			modified_id = #{login_id},
+			modified_dt = now()
+		where
+			branch_code = (select branch_code from tb_branch_mng where join_code=#{join_code});
+	</update>
+	<!--=============== 지점 관리 ===============-->
 	<select id="getReservationMasterData" parameterType="map"  resultType="map">
 		SELECT
 			a.branch_code,
@@ -184,25 +222,25 @@
 			a.rsv_date,
 			c.worker_num,
 			a."1t",
-			COUNT(b.select_time) FILTER (WHERE b.select_time = '1t') AS "1t_cnt",
+			COUNT(b.select_time) FILTER (WHERE b.select_time = 't1') AS "1t_cnt",
 			a."2t",
-			COUNT(b.select_time) FILTER (WHERE b.select_time = '2t') AS "2t_cnt",
+			COUNT(b.select_time) FILTER (WHERE b.select_time = 't2') AS "2t_cnt",
 			a."3t",
-			COUNT(b.select_time) FILTER (WHERE b.select_time = '3t') AS "3t_cnt",
+			COUNT(b.select_time) FILTER (WHERE b.select_time = 't3') AS "3t_cnt",
 			a."4t",
-			COUNT(b.select_time) FILTER (WHERE b.select_time = '4t') AS "4t_cnt",
+			COUNT(b.select_time) FILTER (WHERE b.select_time = 't4') AS "4t_cnt",
 			a."5t",
-			COUNT(b.select_time) FILTER (WHERE b.select_time = '5t') AS "5t_cnt",
+			COUNT(b.select_time) FILTER (WHERE b.select_time = 't5') AS "5t_cnt",
 			a."6t",
-			COUNT(b.select_time) FILTER (WHERE b.select_time = '6t') AS "6t_cnt",
+			COUNT(b.select_time) FILTER (WHERE b.select_time = 't6') AS "6t_cnt",
 			a."7t",
-			COUNT(b.select_time) FILTER (WHERE b.select_time = '7t') AS "7t_cnt",
+			COUNT(b.select_time) FILTER (WHERE b.select_time = 't7') AS "7t_cnt",
 			a."8t",
-			COUNT(b.select_time) FILTER (WHERE b.select_time = '8t') AS "8t_cnt",
+			COUNT(b.select_time) FILTER (WHERE b.select_time = 't8') AS "8t_cnt",
 			a."9t",
-			COUNT(b.select_time) FILTER (WHERE b.select_time = '9t') AS "9t_cnt",
+			COUNT(b.select_time) FILTER (WHERE b.select_time = 't9') AS "9t_cnt",
 			a."10t",
-			COUNT(b.select_time) FILTER (WHERE b.select_time = '10t') AS "10t_cnt"
+			COUNT(b.select_time) FILTER (WHERE b.select_time = 't10') AS "10t_cnt"
 		FROM tb_reservation_master a
 			JOIN tb_reservation_info c on a.rsv_month =c.rsv_month  AND a.branch_code = c.branch_code 
 			LEFT OUTER JOIN tb_reservation_list b on a.branch_code = b.branch_code AND a.rsv_month = b.rsv_month AND a.rsv_date = b.rsv_date
@@ -403,22 +441,35 @@
 	</update>
 	<!--=============== 예약 현황 조회 ===============-->	
 	<select id="getReservationStatusList" parameterType="map" resultType="map">
-		SELECT rsv_date, a.user_id, c."name", c.phone_number, TO_CHAR(a.created_dt, 'YYYY-MM-DD') AS created_dt, a.select_time,
+		SELECT rsv_date, a.user_id, 
+			c."name", c.phone_number, c.due_date, c.user_status, c.massage_cnt, c.remark, c.massage_total,
+			coalesce(la.has_reservation,0) as massage_reservation_cnt,
+			<!-- CASE
+				WHEN la.has_reservation = c.massage_total and massage_cnt = 0 THEN 'Y'
+				ELSE 'N'
+			END AS reserve_cnt_status, -->
+			TO_CHAR(c.created_dt, 'YYYY-MM-DD') AS created_dt,
+				TO_CHAR(a.created_dt, 'YYYY-MM-DD') AS created_dt, a.select_time,
 				CASE 
-					WHEN a.select_time = '1t' THEN b."t1_name"
-					WHEN a.select_time = '2t' THEN b."t2_name"
-					WHEN a.select_time = '3t' THEN b."t3_name"
-					WHEN a.select_time = '4t' THEN b."t4_name"
-					WHEN a.select_time = '5t' THEN b."t5_name"
-					WHEN a.select_time = '6t' THEN b."t6_name"
-					WHEN a.select_time = '7t' THEN b."t7_name"
-					WHEN a.select_time = '8t' THEN b."t8_name"
-					WHEN a.select_time = '9t' THEN b."t9_name"
-					WHEN a.select_time = '10t' THEN b."t10_name"
+					WHEN a.select_time = 't1' THEN b."t1_name"
+					WHEN a.select_time = 't2' THEN b."t2_name"
+					WHEN a.select_time = 't3' THEN b."t3_name"
+					WHEN a.select_time = 't4' THEN b."t4_name"
+					WHEN a.select_time = 't5' THEN b."t5_name"
+					WHEN a.select_time = 't6' THEN b."t6_name"
+					WHEN a.select_time = 't7' THEN b."t7_name"
+					WHEN a.select_time = 't8' THEN b."t8_name"
+					WHEN a.select_time = 't9' THEN b."t9_name"
+					WHEN a.select_time = 't10' THEN b."t10_name"
 				END AS "reservation_time"
 		FROM tb_reservation_list a
 		JOIN tb_reservation_info b ON a.branch_code = b.branch_code AND a.rsv_month = b.rsv_month
 		JOIN tb_user c on a.user_id = c."id"
+		LEFT OUTER JOIN
+			(
+				SELECT user_id, branch_code, COUNT(*) AS has_reservation
+				FROM tb_reservation_list
+				GROUP BY user_id, branch_code) la ON c.branch_code = la.branch_code AND c.id = la.user_id
 		<where>
 			<choose>
 				<when test="super_branch_code == null or super_branch_code == ''">
@@ -590,4 +641,31 @@
 		WHERE rsv_month = #{rsv_month} AND branch_code = #{super_branch_code}
 	)
 	</select>
+	
+	<delete id="removeReservationByAdmin" parameterType="map">
+		delete from tb_reservation_list
+		where user_id = #{user_id} and rsv_date = #{rsv_date} and select_time = #{select_time}
+	</delete>
+	
+	<update id="changeMagCnt" parameterType="map">
+		UPDATE tb_user
+		<set>
+			<if test="flag == 'i'.toString()">
+				massage_cnt = massage_cnt - 1
+			</if>
+			<if test="flag == 'd'.toString()">
+				massage_cnt = massage_cnt + 1
+			</if>
+		</set>
+		WHERE id = #{user_id}
+	</update>
+	
+	<insert id="saveCancelLog" parameterType="map">
+		INSERT INTO tb_cancel_log(
+			branch_code, rsv_date, select_time, created_id, created_dt, reservation_id
+		)
+		VALUES(
+			#{branch_code}, #{rsv_date}, #{select_time}, #{login_id}, now(), #{user_id}
+		)
+	</insert>
 </mapper>

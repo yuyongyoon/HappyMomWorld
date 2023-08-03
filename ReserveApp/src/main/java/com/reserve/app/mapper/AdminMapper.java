@@ -25,6 +25,10 @@ public interface AdminMapper {
 	
 	void deleteBranchInfo(Map<String, Object> param);
 	
+	void resetMngPwd(Map<String, Object> param);
+
+	void updateManager(Map<String, Object> param);
+	
 	List<Map<String,Object>> getReservationMasterData(Map<String,Object> param);
 	
 	void addReservationMasterData(List<Map<String,Object>> param);
@@ -52,4 +56,10 @@ public interface AdminMapper {
 	List<Map<String,Object>> getReservationStatusList(Map<String,Object> param);
 	
 	List<Map<String,Object>> getReservationModal(Map<String,Object> param);
+	
+	void removeReservationByAdmin (Map<String, Object> param);
+	
+	void changeMagCnt(Map<String, Object> param);
+	
+	void saveCancelLog(Map<String,Object> param);
 }

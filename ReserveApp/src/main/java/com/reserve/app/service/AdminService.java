@@ -148,7 +148,6 @@ public class AdminService {
 		}
 		return msg;
 	}
-	// (수정중)
 	public String updateBranchInfo(HashMap<String, Object> param) {
 		String msg = "success";
 		
@@ -160,7 +159,46 @@ public class AdminService {
 		}
 		return msg;
 	}
+	public Map<String, Object> resetMngPwd(Map<String, Object> param) throws Exception {
+		SHA512PasswordEncoder sha512Service = new SHA512PasswordEncoder();
+		Map<String, Object> resetPwd = new HashMap<String, Object>();
+		
+		int p1 = (int)(Math.random() * 10);
+		int p2 = (int)(Math.random() * 10);
+		int p3 = (int)(Math.random() * 10);
+		int p4 = (int)(Math.random() * 10);
+			
+		char p5 = (char)((int)(Math.random()*26)+97);
+		char p6 = (char)((int)(Math.random()*26)+97);
+		char p7 = (char)((int)(Math.random()*26)+65);
+		char p8 = (char)((int)(Math.random()*26)+65);
+			
+		String pwd = "@" + p5 + Integer.toString(p1) + p6+ p7 + Integer.toString(p2) + Integer.toString(p3) + p8 + Integer.toString(p4);
+		
+		String encodePwd = sha512Service.encode(pwd);
+
+		String rawPassword = pwd;
+		
+		param.put("raw_pw", rawPassword);
+		param.put("password", encodePwd);
+
+		mapper.resetMngPwd(param);
+		resetPwd.put("raw_pw", param.get("raw_pw"));
+		
+		return resetPwd;
+	}
 	
+	public String updateManager(HashMap<String, Object> param) {
+		String msg = "success";
+		
+		try {
+			mapper.updateManager((Map<String,Object>) param);
+		}catch (Exception e) {
+			e.printStackTrace();
+			msg = "fail";
+		}
+		return msg;
+	}
 	public List<Map<String, Object>> getReservationMasterData(Map<String,Object> param){
 		return mapper.getReservationMasterData(param);
 	}
@@ -263,5 +301,18 @@ public class AdminService {
 		}
 		System.out.println(result);
 		return result;
+	}
+	
+	public String removeReservationByAdmin(Map<String,Object> param){ 
+		String msg = "success";
+		try {
+			mapper.removeReservationByAdmin(param);
+			mapper.changeMagCnt(param);
+			mapper.saveCancelLog(param);
+		}catch (Exception e) {
+			e.printStackTrace();
+			msg = "fail";
+		}
+		return msg;
 	}
 }

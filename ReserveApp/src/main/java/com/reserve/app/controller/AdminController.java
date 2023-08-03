@@ -49,15 +49,21 @@ public class AdminController {
 	}
 	
 	//지점 정보 관리 화면
-	@RequestMapping(value = "/print_master", method = RequestMethod.GET)
+	@RequestMapping(value = "/info_master", method = RequestMethod.GET)
 	public String viewBranchMaster(Model model, HttpServletRequest request) throws Exception {
-		return "admin/print_master";
+		return "admin/info_master";
 	}
 	
 	//지점 관리 화면
 	@RequestMapping(value = "/branch_manager", method = RequestMethod.GET)
 	public String viewBranchManager(Model model, HttpServletRequest request) throws Exception {
 		return "admin/branch_manager";
+	}
+	
+	//qr 코드 관리 화면
+	@RequestMapping(value = "/qrcode_manager", method = RequestMethod.GET)
+	public String viewQrcodeManager(Model model, HttpServletRequest request) throws Exception {
+		return "admin/qrcode_manager";
 	}
 	
 	//=======================nav 지점 코드 가져오기=====================
@@ -106,15 +112,6 @@ public class AdminController {
 		return result;
 	}
 	
-	/*
-	 * @RequestMapping(value = "/saveBranchInfo", method = RequestMethod.POST)
-	 * 
-	 * @ResponseBody public Map<String,Object> saveBranchInfo(HttpServletRequest
-	 * request, @RequestBody Map<String,Object> param) throws Exception {
-	 * Map<String,Object> result = new HashMap<String,Object>(); String msg =
-	 * adminService.saveBranchInfo(param); result.put("msg", msg); return result; }
-	 */
-	
 	// 관리자 아이디 중복 확인
 	@RequestMapping(value = "/checkId", method = RequestMethod.POST)
 	@ResponseBody
@@ -137,6 +134,20 @@ public class AdminController {
 	public Map<String,Object> updateBranchInfo(HttpServletRequest request, @RequestBody HashMap<String,Object> param) throws Exception {
 		Map<String,Object> result = new HashMap<String,Object>();
 		String msg = adminService.updateBranchInfo(param);
+		result.put("msg", msg);
+		return result;
+	}
+	@RequestMapping(value="/resetMngPwd")
+	@ResponseBody
+	public Map<String, Object> resetMngPwd(@RequestBody Map<String, Object> param, HttpServletResponse response) throws Exception{
+		return adminService.resetMngPwd(param);
+	}
+	// 지점 정보 수정
+	@RequestMapping(value = "/updateManager", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String,Object> updateManager(HttpServletRequest request, @RequestBody HashMap<String,Object> param) throws Exception {
+		Map<String,Object> result = new HashMap<String,Object>();
+		String msg = adminService.updateManager(param);
 		result.put("msg", msg);
 		return result;
 	}
@@ -226,6 +237,15 @@ public class AdminController {
 		List<Map<String,Object>> rsvList_modal = adminService.getReservationModal(param);
 		result.put("rsvListModal", rsvList_modal);
 		result.put("listSize", rsvList_modal.size());
+		return result;
+	}
+	
+	@RequestMapping(value = "/removeReservationByAdmin", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String,Object> removeReservationByAdmin(HttpServletRequest request, @RequestBody Map<String,Object> param) throws Exception {
+		Map<String,Object> result = new HashMap<String,Object>();
+		String msg = adminService.removeReservationByAdmin(param);
+		result.put("msg", msg);
 		return result;
 	}
 }
