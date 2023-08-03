@@ -270,7 +270,8 @@ $(document).ready(function() {
 					branch_tel		: $('#input_branchTel_edit').val(),
 					branch_addr		: $('#input_branchAddr_edit').val(),
 					business_hours	: $('#input_branchTime_edit').val(),
-					join_code		: $('#input_joinCode_edit').val()
+					join_code		: $('#input_joinCode_edit').val(),
+					std_due_date	: Number($('#input_stdDueDate_edit').val())
 			}
 			ajaxCom.updateBranchInfo(param);
 			console.log('지점 수정 >>',param);
@@ -316,7 +317,10 @@ $(document).ready(function() {
 
 	//기타 함수 객체
 	fnCom = {
-
+		selectFun: function(id){
+			console.log("id :", id[id.selectedIndex])
+		}
+	
 	}; //fnCom END
 	
 	const branchGrid = tuiGrid.createGrid(
@@ -347,6 +351,7 @@ $(document).ready(function() {
 					$('#input_branchAddr_edit').val(rowData.branch_addr);
 					$('#input_branchTime_edit').val(rowData.business_hours);
 					$('#input_joinCode_edit').val(rowData.join_code);
+					$('#input_stdDueDate_edit').val(rowData.std_due_date);
 					
 					$('#editBranch_modal').modal('show');
 				}
@@ -364,6 +369,17 @@ $(document).ready(function() {
 	);
 	// 지점 조회(메인)
 	ajaxCom.getBranchList();
+	
+	// 사용 여부 변경 시
+	$('#select_userStatus').change(function(event) {
+		if(this.value == "Y"){	
+			ajaxCom.getBranchList();
+		}else{
+			ajaxCom.getBranchList();
+		}
+		console.log(this.value)
+	});
+	
 	
 	// 비밀 번호 학인
 	let pwdPattern = /^.{8,}$/;
@@ -441,7 +457,7 @@ $(document).ready(function() {
 								</div>
 								<div class="col-md-3 col-sm-6 searchDiv">
 									<label for="input_joinCode" class="search-label float-left mt-2">사용 여부</label>
-									<select id="select_userStatus" class="form-control-sm mt-2">
+									<select id="select_userStatus" class="form-control mt-2">
 										<option value="Y">사용</option>
 										<option value="N">미사용</option>
 									</select>
@@ -575,6 +591,14 @@ $(document).ready(function() {
 													</div>
 													<div class="col-sm-10">
 														<input type="text" class="form-control" id="input_branchTime_edit">
+													</div>
+												</div>
+												<div class="form-group row pb-0">
+													<div class="col-sm-2">
+														<label class="control-label mt-2">임신 주수</label>
+													</div>
+													<div class="col-sm-10">
+														<input type="text" class="form-control" id="input_stdDueDate_edit">
 													</div>
 												</div>
 												<div class="form-group row pb-0">

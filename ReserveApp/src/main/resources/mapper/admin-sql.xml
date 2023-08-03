@@ -99,7 +99,8 @@
 				to_char(tbi.created_dt,'YYYY-MM-DD') as created_dt, 
 				tbi.branch_tel,
 				tbi.branch_addr,
-				tbi.business_hours
+				tbi.business_hours,
+				std_due_date
 		FROM tb_branch_mng tbm 
 				join tb_branch_info tbi on tbm.branch_code = tbi.branch_code
 				join tb_user tu on tbm.branch_code = tu.branch_code and tu.user_role = 'ADMIN'
@@ -150,6 +151,7 @@
 			branch_tel = #{branch_tel},
 			branch_addr = #{branch_addr},
 			business_hours = #{business_hours},
+			std_due_date = #{std_due_date},
 			modified_id = #{login_id},
 			modified_dt = now()
 		where
@@ -439,7 +441,15 @@
 	</update>
 	<!--=============== 예약 현황 조회 ===============-->	
 	<select id="getReservationStatusList" parameterType="map" resultType="map">
-		SELECT rsv_date, a.user_id, c."name", c.phone_number, TO_CHAR(a.created_dt, 'YYYY-MM-DD') AS created_dt, a.select_time,
+		SELECT rsv_date, a.user_id, 
+			c."name", c.phone_number, c.due_date, c.user_status, c.massage_cnt, c.remark, c.massage_total,
+			coalesce(la.has_reservation,0) as massage_reservation_cnt,
+			<!-- CASE
+				WHEN la.has_reservation = c.massage_total and massage_cnt = 0 THEN 'Y'
+				ELSE 'N'
+			END AS reserve_cnt_status, -->
+			TO_CHAR(c.created_dt, 'YYYY-MM-DD') AS created_dt,
+				TO_CHAR(a.created_dt, 'YYYY-MM-DD') AS created_dt, a.select_time,
 				CASE 
 					WHEN a.select_time = 't1' THEN b."t1_name"
 					WHEN a.select_time = 't2' THEN b."t2_name"
@@ -455,6 +465,11 @@
 		FROM tb_reservation_list a
 		JOIN tb_reservation_info b ON a.branch_code = b.branch_code AND a.rsv_month = b.rsv_month
 		JOIN tb_user c on a.user_id = c."id"
+		LEFT OUTER JOIN
+			(
+				SELECT user_id, branch_code, COUNT(*) AS has_reservation
+				FROM tb_reservation_list
+				GROUP BY user_id, branch_code) la ON c.branch_code = la.branch_code AND c.id = la.user_id
 		<where>
 			<choose>
 				<when test="super_branch_code == null or super_branch_code == ''">
