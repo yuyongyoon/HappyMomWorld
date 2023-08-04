@@ -75,18 +75,29 @@
 			CASE
 				WHEN a.rsv_date::date <![CDATA[<]]> CURRENT_DATE THEN 'NO'
 				WHEN (
-					(a."1t" - COALESCE(COUNT(CASE WHEN b.select_time = '1t' THEN 1 END), 0)) > 0 OR
-					(a."2t" - COALESCE(COUNT(CASE WHEN b.select_time = '2t' THEN 1 END), 0)) > 0 OR
-					(a."3t" - COALESCE(COUNT(CASE WHEN b.select_time = '3t' THEN 1 END), 0)) > 0 OR
-					(a."4t" - COALESCE(COUNT(CASE WHEN b.select_time = '4t' THEN 1 END), 0)) > 0 OR
-					(a."5t" - COALESCE(COUNT(CASE WHEN b.select_time = '5t' THEN 1 END), 0)) > 0 OR
-					(a."6t" - COALESCE(COUNT(CASE WHEN b.select_time = '6t' THEN 1 END), 0)) > 0 OR
-					(a."7t" - COALESCE(COUNT(CASE WHEN b.select_time = '7t' THEN 1 END), 0)) > 0 OR
-					(a."8t" - COALESCE(COUNT(CASE WHEN b.select_time = '8t' THEN 1 END), 0)) > 0 OR
-					(a."9t" - COALESCE(COUNT(CASE WHEN b.select_time = '9t' THEN 1 END), 0)) > 0 OR
-					(a."10t" - COALESCE(COUNT(CASE WHEN b.select_time = '10t' THEN 1 END), 0)) > 0
-				)
-				THEN 'YES'
+					(a."1t" - COALESCE(COUNT(CASE WHEN b.select_time = 't1' THEN 0 END), 0)) <![CDATA[>]]> 0 OR
+					(a."2t" - COALESCE(COUNT(CASE WHEN b.select_time = 't2' THEN 0 END), 0)) <![CDATA[>]]> 0 OR
+					(a."3t" - COALESCE(COUNT(CASE WHEN b.select_time = 't3' THEN 0 END), 0)) <![CDATA[>]]> 0 OR
+					(a."4t" - COALESCE(COUNT(CASE WHEN b.select_time = 't4' THEN 0 END), 0)) <![CDATA[>]]> 0 OR
+					(a."5t" - COALESCE(COUNT(CASE WHEN b.select_time = 't5' THEN 0 END), 0)) <![CDATA[>]]> 0 OR
+					(a."6t" - COALESCE(COUNT(CASE WHEN b.select_time = 't6' THEN 0 END), 0)) <![CDATA[>]]> 0 OR
+					(a."7t" - COALESCE(COUNT(CASE WHEN b.select_time = 't7' THEN 0 END), 0)) <![CDATA[>]]> 0 OR
+					(a."8t" - COALESCE(COUNT(CASE WHEN b.select_time = 't8' THEN 0 END), 0)) <![CDATA[>]]> 0 OR
+					(a."9t" - COALESCE(COUNT(CASE WHEN b.select_time = 't9' THEN 0 END), 0)) <![CDATA[>]]> 0 OR
+					(a."10t" - COALESCE(COUNT(CASE WHEN b.select_time = 't10' THEN 0 END), 0)) <![CDATA[>]]> 0
+				) THEN 'YES'
+				WHEN (
+					(a."1t" - COALESCE(COUNT(CASE WHEN b.select_time = 't1' THEN 0 END), 0)) = 0 AND
+					(a."2t" - COALESCE(COUNT(CASE WHEN b.select_time = 't2' THEN 0 END), 0)) = 0 AND
+					(a."3t" - COALESCE(COUNT(CASE WHEN b.select_time = 't3' THEN 0 END), 0)) = 0 AND
+					(a."4t" - COALESCE(COUNT(CASE WHEN b.select_time = 't4' THEN 0 END), 0)) = 0 AND
+					(a."5t" - COALESCE(COUNT(CASE WHEN b.select_time = 't5' THEN 0 END), 0)) = 0 AND
+					(a."6t" - COALESCE(COUNT(CASE WHEN b.select_time = 't6' THEN 0 END), 0)) = 0 AND
+					(a."7t" - COALESCE(COUNT(CASE WHEN b.select_time = 't7' THEN 0 END), 0)) = 0 AND
+					(a."8t" - COALESCE(COUNT(CASE WHEN b.select_time = 't8' THEN 0 END), 0)) = 0 AND
+					(a."9t" - COALESCE(COUNT(CASE WHEN b.select_time = 't9' THEN 0 END), 0)) = 0 AND
+					(a."10t" - COALESCE(COUNT(CASE WHEN b.select_time = 't10' THEN 0 END), 0)) = 0
+				) then 'NO'
 				ELSE 'NO'
 			END AS "is_available"
 		FROM tb_reservation_master a

@@ -105,7 +105,7 @@ $(document).ready(function() {
 		},
 		btn_updateAccount : function(){
 			
-			if($('#input_massage_total').val() < $('#input_rsv_cnt').val()){
+			if(Number($('#input_massage_total').val()) < Number($('#input_rsv_cnt').val())){
 				alert('전체 마사지 횟수가 예약 건수보다 작을 수 없습니다.\n예약을 취소 한 후 변경해주세요.');
 				$('#input_massage_total').val(rowData.massage_total);
 				return false;
@@ -189,7 +189,7 @@ $(document).ready(function() {
 					});
 					
 					$('#input_massage_total').on('change', function(e){
-						if($('#input_massage_total').val() < $('#input_rsv_cnt').val()){
+						if(Number($('#input_massage_total').val()) < Number($('#input_rsv_cnt').val())){
 							alert('전체 마사지 횟수가 예약 건수보다 작을 수 없습니다.\n예약을 취소 한 후 변경해주세요.');
 							$('#input_massage_total').val(rowData.massage_total);
 						}

@@ -106,7 +106,7 @@
 				join tb_user tu on tbm.branch_code = tu.branch_code and tu.user_role = 'ADMIN'
 		<where>
 			tbm.branch_code != 'b0000'
-			<if test='branchCode!=null and branchCode!=""'>and tbm.branch_code like '%'|| #{branchCode} ||'%'</if>
+			<if test='branchName!=null and branchName!=""'>and tbm.branch_name like '%'|| #{branchName} ||'%'</if>
 			<if test='adminId!=null and adminId!=""'>and tu.id like '%'|| #{adminId} ||'%'</if>
 			<if test='joinCode!=null and joinCode!=""'>and join_code like '%'|| #{joinCode} ||'%'</if>
 			<if test='userStatus!=null and userStatus!=""'>and user_status like '%'|| #{userStatus} ||'%'</if>

@@ -30,25 +30,6 @@ $(document).ready(function() {
 				}
 			});
 		},
-		/* //
-		saveBranchData: function(param){
-			$.doPost({
-				url		: "/admin/saveBranchInfo",
-				data	: {data : param},
-				success	: function(result){
-					if(result.msg == 'success') {
-						alert('저장 되었습니다.');
-						ajaxCom.getBranchList();
-					} else {
-						alert(result.msg);
-					}
-				},
-				error	: function(xhr,status){
-					alert('오류가 발생했습니다.');
-				}
-			});
-		}, */
-		// 중복 확인
 		checkId: function(param) {
 			$.doPost({
 				url	 	: "/admin/checkId",
@@ -226,7 +207,6 @@ $(document).ready(function() {
 			}
 			
 			if(checkFlag){
-				console.log($('#input_stdDueDate_add').val() == '')
 				let param = {
 						branch_name	: $('#input_branchName_add').val(),
 						id			: $('#input_branchId_add').val(),
@@ -235,8 +215,6 @@ $(document).ready(function() {
 						std_due_date: $('#input_stdDueDate_add').val() == '' ? Number(30) : Number($('#input_stdDueDate_add').val())
 						
 				}
-				console.log(param)
-				//console.log('지점 추가 >>',param);
 				ajaxCom.addBranchInfo(param);
 			}
 			
@@ -273,7 +251,6 @@ $(document).ready(function() {
 					std_due_date	: Number($('#input_stdDueDate_edit').val())
 			}
 			ajaxCom.updateBranchInfo(param);
-			console.log('지점 수정 >>',param);
 		},
 		// modal 닫기 버튼 - 수정 modal
 		btn_editBranch_close : function(){
@@ -290,7 +267,6 @@ $(document).ready(function() {
 				manager_id : $('#input_mngId_edit').val()
 			}
 			ajaxCom.resetMngPwd(param);
-			console.log('비밀번호 초기화 >>',param);
 			
 		},
 		btn_updateMng: function(){
@@ -301,7 +277,6 @@ $(document).ready(function() {
 					join_code	: $('#input_joinCode_edit').val()
 			}
 			ajaxCom.updateManager(param);
-			console.log('관리자 수정 >>',param);
 		},
 		btn_updateMng_close: function(){
 			let modalId = $(this).closest(".modal").attr("id");
@@ -317,7 +292,7 @@ $(document).ready(function() {
 	//기타 함수 객체
 	fnCom = {
 		selectFun: function(id){
-			console.log("id :", id[id.selectedIndex])
+// 			console.log("id :", id[id.selectedIndex])
 		}
 	
 	}; //fnCom END
@@ -359,8 +334,7 @@ $(document).ready(function() {
 					$('#input_joinCode_edit').val(rowData.join_code);
 					$('#input_mngId_edit').val(rowData.id);
 					$('#input_mngName_edit').val(rowData.branch_name);
-					$('#input_mngEnabled_edit').val();
-					
+					$('#input_mngEnabled_edit').val(rowData.user_status).prop('selected', true);
 					$('#editManager_modal').modal('show');
 				}
 			}
@@ -519,7 +493,7 @@ $(document).ready(function() {
 													</div>
 												</div>
 												<div class="row form-sub m-0" id="div_curPwd_msg" style="padding:0px;">
-													<span class="float-left" id="span_curPwd_msg" style="color:red; margin-left:10px; margin-bottom: 5px;"></span>
+													<span class="float-left" id="span_curPwd_msg" style="color:red;margin-bottom: 0px;margin-left: 120px;margin-top: 10px;"></span>
 												</div>
 												<div class="form-group row pb-0">
 													<div class="col-sm-3">
@@ -530,7 +504,7 @@ $(document).ready(function() {
 													</div>
 												</div>
 												<div class="row form-sub m-0" id="div_newPwd_msg" style="padding:0px;">
-													<span class="float-left" id="span_newPwd_msg" style="color:red; margin-left:10px; margin-bottom: 5px;"></span>
+													<span class="float-left" id="span_newPwd_msg" style="color:red;margin-bottom: 0px;margin-left: 120px;margin-top: 10px;"></span>
 												</div>
 												<div class="form-group row pb-0">
 													<div class="col-sm-3">
