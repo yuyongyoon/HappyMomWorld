@@ -83,8 +83,7 @@ $(document).ready(function() {
 					success	: function(result) {
 						$('#reservationCnt').text(result.reservationStatusList.length);
 						statusGrid.resetData(result.reservationStatusList);
-// 						console.log(result.reservationStatusL
-		  ist)
+// 						console.log(result.reservationStatusList)
 					},
 					error	: function(xhr,status){
 						alert('오류가 발생했습니다.');
@@ -198,7 +197,7 @@ $(document).ready(function() {
 					rsv_date	: data.rsv_date,
 					flag		: 'd'
 				}
-// 				ajaxCom.removeReservation(param);
+				ajaxCom.removeReservation(param);
 			} 
 		},
 		// 마사지 확인
@@ -296,9 +295,9 @@ $(document).ready(function() {
 					$('#editRsvInfo_modal').modal('show');
 				}
 				
-				if(colName=="cancle"){
-					console.log(statusGrid.getColumn(cancle))
-				}
+// 				if(colName=="cancle"){
+// 					console.log(statusGrid.getColumn(cancle))
+// 				}
 			},
 		}
 	);
