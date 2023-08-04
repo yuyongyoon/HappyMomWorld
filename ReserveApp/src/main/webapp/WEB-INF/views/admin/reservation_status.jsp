@@ -28,7 +28,7 @@ $(document).ready(function() {
 		}
 	});
 	let modalPicker;
-	let modalGrid;
+	let changeRsvGrid;
 
 	ajaxCom = {
 			getReservationStatusList : function() {
@@ -107,7 +107,7 @@ $(document).ready(function() {
 					success	: function(result) {
 // 						console.log('modal list >>',result.rsvListModal)
 						//그리드 삭제
-						modalGrid.resetData(result.rsvListModal);
+						changeRsvGrid.resetData(result.rsvListModal);
 					},
 					error	: function(xhr,status){
 						alert('오류가 발생했습니다.');
@@ -177,7 +177,7 @@ $(document).ready(function() {
 					format: 'yyyy-MM-dd'
 				}
 			});
-			tuiGrid.destroyGrid(modalGrid);
+			tuiGrid.destroyGrid(changeRsvGrid);
 			$('#changeRsv_modal').modal('show');
 			
 			//체인지 이벤트
@@ -310,11 +310,30 @@ $(document).ready(function() {
 		}
 	});
 	// id 클릭 시 modal 팝업과 동시에 grid 생성
+	$('#editRsvInfo_modal').on('shown.bs.modal', function(e){
+		
+		changeRsvGrid = tuiGrid.createGrid (
+				{
+					gridId : 'grid_userRsvList_modal',
+					height : 300,
+					scrollX : true,
+					scrollY : true,
+					readOnlyColorFlag : false,
+					columns: [
+						{header : '예약 날짜',		name : 'rsv_time',	width: 250,	align:'center', sortable: true},
+						{header : '예약 시간',		name : 'rsv_time',	width: 250,	align:'center', sortable: true},
+						{header : '예약 지점',		name : 'rsv_time',	width: 250,	align:'center', sortable: true},
+					]
+				},
+				[],
+				{}
+			);
+	});
 	$('#changeRsv_modal').on('shown.bs.modal', function(e){
 		
-		modalGrid = tuiGrid.createGrid (
+		changeRsvGrid = tuiGrid.createGrid (
 				{
-					gridId : 'grid_userInfo_modal',
+					gridId : 'grid_changeRsv_modal',
 					height : 300,
 					scrollX : true,
 					scrollY : true,
@@ -462,10 +481,10 @@ $(document).ready(function() {
 </div>
 <!-- 예약자 정보 수정 modal -->
 <div class="modal fade" id="editRsvInfo_modal" tabindex="-1" role="dialog" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-centered" role="document">
+	<div class="modal-dialog modal-lg modal-dialog-centered" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h4 class="modal-title" id="user_edit_modalTitle">예약자 정보 수정</h4>
+				<h4 class="modal-title" id="user_edit_modalTitle">회원 예약 리스트</h4>
 			</div>
 			<div class="modal-body">
 				<div class="col-12">
@@ -493,7 +512,12 @@ $(document).ready(function() {
 							<input type="tel" class="form-control" id="input_phoneNumber_edit">
 						</div>
 					</div>
-					<div class="form-group row pb-0">
+					<div class="modal-body">
+						<div>
+							<div id="grid_userRsvList_modal"></div>
+						</div>
+					</div>
+					<!-- <div class="form-group row pb-0">
 						<div class="col-sm-3">
 							<label class="control-label mt-2">출산 예정일</label>
 						</div>
@@ -545,7 +569,7 @@ $(document).ready(function() {
 						<div class="col-sm-9">
 							<textarea class="form-control" id="input_rmk_edit" style="height: 70px;resize: none;"></textarea>
 						</div>
-					</div>
+					</div> -->
 				</div>
 			</div>
 			<div class="modal-footer">
@@ -562,7 +586,6 @@ $(document).ready(function() {
 			<div class="modal-header">
 				<h4 class="modal-title">예약 변경</h4>
 			</div>
-			
 			<div class="form-group row pb-0"  style="margin: 6px;">
 				<label class="control-label mt-2 mr-3">날짜</label>
 				<div class="tui-datepicker-input tui-datetime-input tui-has-focus" style="margin-bottom: 6px;">
@@ -571,10 +594,9 @@ $(document).ready(function() {
 				</div>
 				<div class="datepicker-cell" id="div_datepicker_modal" style="margin-top: -1px;"></div>
 			</div>
-			
 			<div class="modal-body">
 				<div>
-					<div id="grid_userInfo_modal"></div>
+					<div id="grid_changeRsv_modal"></div>
 				</div>
 			</div>
 			<div class="modal-footer">
