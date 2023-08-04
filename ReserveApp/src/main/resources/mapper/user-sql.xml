@@ -107,7 +107,7 @@
 			LEFT JOIN (
 				SELECT rsv_date, COUNT(*) AS cnt
 				FROM tb_reservation_list
-				WHERE rsv_month = #{rsv_month} AND branch_code = #{branch_code} AND select_time = '${timeSlot}t'
+				WHERE rsv_month = #{rsv_month} AND branch_code = #{branch_code} AND select_time = 't${timeSlot}'
 				GROUP BY rsv_date
 			) t${index+1} ON a.rsv_date = t${index+1}.rsv_date
 		</foreach>
@@ -142,10 +142,10 @@
 	
 	<insert id="saveCancelLog" parameterType="map">
 		INSERT INTO tb_cancel_log(
-			branch_code, rsv_date, select_time, created_id, created_dt
+			branch_code, rsv_date, select_time, created_id, created_dt, reservation_id
 		)
 		VALUES(
-			#{branch_code}, #{rsv_date}, #{select_time}, #{login_id}, now()
+			#{branch_code}, #{rsv_date}, #{select_time}, #{login_id}, now(), #{login_id}
 		)
 	</insert>
 	

@@ -12,8 +12,8 @@ $(document).ready(function() {
 			$.doPost({
 				url		: "/admin/getBranchList",
 				data	: {
-					branchCode	: $('#input_branchCode').val(),
 					branchName	: $('#input_branchName').val(),
+					adminId		: $('#input_mngId').val(),
 					joinCode	: $('#input_joinCode').val(),
 					userStatus	: $('#select_userStatus').val()
 				},
@@ -23,7 +23,6 @@ $(document).ready(function() {
 					
 					if(result.branchList.legnth != 0) {
 						branchGrid.resetData(result.branchList);
-						//console.log(result.branchList);
 					}
 				},
 				error	: function(xhr,status){
@@ -336,7 +335,7 @@ $(document).ready(function() {
 				{header : '관리자 아이디',	name : 'id', 				align:'left', style:'cursor:pointer;text-decoration:underline;', sortable: true},
 				{header : '전화번호',		name : 'branch_tel', 		align:'left'},
 				{header : '가입코드',		name : 'join_code',			align:'left' },
-				{header : '등록일',		name : 'created_dt',		align:'left' }
+				{header : '등록일',		name : 'created_dt',			align:'left' }
 			]
 		},
 		[],//초기 데이터
@@ -374,10 +373,9 @@ $(document).ready(function() {
 	$('#select_userStatus').change(function(event) {
 		if(this.value == "Y"){	
 			ajaxCom.getBranchList();
-		}else{
+		} else{
 			ajaxCom.getBranchList();
 		}
-		console.log(this.value)
 	});
 	
 	
@@ -445,23 +443,22 @@ $(document).ready(function() {
 							<div class="row search flex-grow-1">
 								<div class="col-md-3 col-sm-6 searchDiv">
 									<label for="input_branchName" class="search-label float-left mt-2">지점 이름</label>
-									<input type="text" id="input_branchCode" class="form-control form-control-sm mt-2"/>
+									<input type="text" id="input_branchName" class="form-control form-control-sm mt-2"/>
 								</div>
 								<div class="col-md-3 col-sm-6 searchDiv">
 									<label for="input_mngId" class="search-label float-left mt-2">관리자 Id</label>
-									<input type="text" id="input_branchName" class="form-control form-control-sm mt-2"/>
+									<input type="text" id="input_mngId" class="form-control form-control-sm mt-2"/>
 								</div>
 								<div class="col-md-3 col-sm-6 searchDiv">
 									<label for="input_joinCode" class="search-label float-left mt-2">가입 코드</label>
 									<input type="text" id="input_joinCode" class="form-control form-control-sm mt-2"/>
 								</div>
 								<div class="col-md-3 col-sm-6 searchDiv">
-									<label for="input_joinCode" class="search-label float-left mt-2">사용 여부</label>
-									<select id="select_userStatus" class="form-control mt-2">
+									<label for="select_userStatus" class="search-label float-left mt-2">사용 여부</label>
+									<select id="select_userStatus" class="form-control mt-2" style="padding: 3px;">
 										<option value="Y">사용</option>
 										<option value="N">미사용</option>
 									</select>
-<!-- 									<input type="text" id="input_joinCode" class="form-control form-control-sm mt-2"/> -->
 								</div>
 							</div>
 							
@@ -495,17 +492,17 @@ $(document).ready(function() {
 													<div class="col-sm-3">
 														<label class="control-label mt-2">관리자 ID</label>
 													</div>
-													<div class="col-sm-7">
+													<div class="col-sm-6" style="margin-top: 6px;padding-right: 0px;">
 														<input type="text" class="form-control" id="input_branchId_add">
 													</div>
-													<div class="col-sm-2 form-group form-floating-label d-flex align-items-center justify-content-center">
+													<div class="col-sm-3 form-group form-floating-label d-flex align-items-center justify-content-center">
 														<button id="btn_checkId_add" type="button" class="btn btn-secondary btn-sm">중복 확인</button>
 													</div>
 												</div>
 												<div class="row form-sub m-0" id="div_checkId_msg" style="padding:0px;">
-													<span class="float-left" id="span_checkId_msg" style="color:red; margin-left:10px; margin-bottom: 5px;">아이디 경고 메세지</span>
+													<span class="float-left" id="span_checkId_msg" style="color:red;margin-left:120px;">아이디 경고 메세지</span>
 												</div>
-												<div class="form-group row pb-0">
+												<div class="form-group row pb-0" style="padding-top: 5px;">
 													<div class="col-sm-3">
 														<label class="control-label mt-2" style="border: 0px;">전화번호</label>
 													</div>
@@ -537,7 +534,9 @@ $(document).ready(function() {
 												</div>
 												<div class="form-group row pb-0">
 													<div class="col-sm-3">
-														<label class="control-label mt-2" style="border: 0px;">기준 임신 주수</label>
+														<label class="control-label mt-2" style="border: 0px;">기준 임신 주수
+														<i class="fas fa-question-circle" data-toggle="popover" data-placement="bottom" data-content="마사지 예약 안내를 위한 기준이 되는 임신 주수를 입력해주세요." style="cursor:pointer;"></i>
+														</label>
 													</div>
 													<div class="col-sm-9">
 														<input type="number" class="form-control" id="input_stdDueDate_add" min=28>
@@ -562,50 +561,52 @@ $(document).ready(function() {
 										<div class="modal-body">
 											<div class="col-12">
 												<div class="form-group row pb-0">
-													<div class="col-sm-2">
+													<div class="col-sm-3">
 														<label class="control-label mt-2">지점 이름</label>
 													</div>
-													<div class="col-sm-10">
+													<div class="col-sm-9">
 														<input type="text" class="form-control" id="input_branchName_edit">
 													</div>
 												</div>
 												<div class="form-group row pb-0">
-													<div class="col-sm-2">
+													<div class="col-sm-3">
 														<label class="control-label mt-2" style="border: 0px;">전화번호</label>
 													</div>
-													<div class="col-sm-10">
+													<div class="col-sm-9">
 														<input type="text" class="form-control" id="input_branchTel_edit">
 													</div>
 												</div>
 												<div class="form-group row pb-0">
-													<div class="col-sm-2">
+													<div class="col-sm-3">
 														<label class="control-label mt-2" style="border: 0px;">주소</label>
 													</div>
-													<div class="col-sm-10">
+													<div class="col-sm-9">
 														<input type="text" class="form-control" id="input_branchAddr_edit">
 													</div>
 												</div>
 												<div class="form-group row pb-0">
-													<div class="col-sm-2">
+													<div class="col-sm-3">
 														<label class="control-label mt-2">운영 시간</label>
 													</div>
-													<div class="col-sm-10">
+													<div class="col-sm-9">
 														<input type="text" class="form-control" id="input_branchTime_edit">
 													</div>
 												</div>
 												<div class="form-group row pb-0">
-													<div class="col-sm-2">
-														<label class="control-label mt-2">임신 주수</label>
+													<div class="col-sm-3">
+														<label class="control-label mt-2">기준 임신 주수
+														<i class="fas fa-question-circle" data-toggle="popover" data-placement="bottom" data-content="마사지 예약 안내를 위한 기준이 되는 임신 주수를 입력해주세요." style="cursor:pointer;"></i>
+														</label>
 													</div>
-													<div class="col-sm-10">
-														<input type="text" class="form-control" id="input_stdDueDate_edit">
+													<div class="col-sm-9">
+														<input type="number" class="form-control" id="input_stdDueDate_edit" min=28>
 													</div>
 												</div>
 												<div class="form-group row pb-0">
-													<div class="col-sm-2">
+													<div class="col-sm-3">
 														<label class="control-label mt-2">가입코드</label>
 													</div>
-													<div class="col-sm-10">
+													<div class="col-sm-9">
 														<input type="text" class="form-control" id="input_joinCode_edit" disabled>
 													</div>
 												</div>
@@ -632,7 +633,7 @@ $(document).ready(function() {
 														<label class="control-label mt-2">ID</label>
 													</div>
 													<div class="col-sm-10">
-														<input type="text" class="form-control" id="input_mngId_edit">
+														<input type="text" class="form-control" id="input_mngId_edit" disabled>
 													</div>
 												</div>
 												<div class="form-group row pb-0">
@@ -640,7 +641,7 @@ $(document).ready(function() {
 														<label class="control-label mt-2" style="border: 0px;">이름</label>
 													</div>
 													<div class="col-sm-10">
-														<input type="text" class="form-control" id="input_mngName_edit" maxlength='12'>
+														<input type="text" class="form-control" id="input_mngName_edit">
 													</div>
 												</div>
 												<div class="form-group row pb-0">

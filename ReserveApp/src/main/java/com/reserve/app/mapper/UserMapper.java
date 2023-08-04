@@ -17,9 +17,9 @@ public interface UserMapper {
 	
 	Map<String, Object> getMassageCnt(Map<String, Object> param);
 	
-	void removeReservation (Map<String, Object> param);
-	
 	List<Map<String, Object>> getAvailableDate(Map<String, Object> param);
+	
+	void removeReservation (Map<String, Object> param);
 	
 	int getReservationCnt();
 	

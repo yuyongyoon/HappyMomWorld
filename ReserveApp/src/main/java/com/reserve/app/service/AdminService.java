@@ -302,4 +302,17 @@ public class AdminService {
 		System.out.println(result);
 		return result;
 	}
+	
+	public String removeReservationByAdmin(Map<String,Object> param){ 
+		String msg = "success";
+		try {
+			mapper.removeReservationByAdmin(param);
+			mapper.changeMagCnt(param);
+			mapper.saveCancelLog(param);
+		}catch (Exception e) {
+			e.printStackTrace();
+			msg = "fail";
+		}
+		return msg;
+	}
 }

@@ -239,4 +239,13 @@ public class AdminController {
 		result.put("listSize", rsvList_modal.size());
 		return result;
 	}
+	
+	@RequestMapping(value = "/removeReservationByAdmin", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String,Object> removeReservationByAdmin(HttpServletRequest request, @RequestBody Map<String,Object> param) throws Exception {
+		Map<String,Object> result = new HashMap<String,Object>();
+		String msg = adminService.removeReservationByAdmin(param);
+		result.put("msg", msg);
+		return result;
+	}
 }

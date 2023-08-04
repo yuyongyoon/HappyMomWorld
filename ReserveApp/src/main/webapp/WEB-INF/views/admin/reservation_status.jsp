@@ -35,9 +35,15 @@ $(document).ready(function() {
 				let startDate;
 				let endDate;
 				
-				if($('input[name="searchRange"]:checked').val() == 'day'){
+				if($('input[name="searchRange"]:checked').val() == 'today'){
 					startDate = cfn_tuiDateFormat(today);
 					endDate = cfn_tuiDateFormat(today);
+				} else if($('input[name="searchRange"]:checked').val() == 'tomorrow'){
+					const tomorrow = new Date(today);
+					tomorrow.setDate(today.getDate() + 1);
+					
+					startDate = cfn_tuiDateFormat(tomorrow);
+					endDate = cfn_tuiDateFormat(tomorrow);
 				} else if($('input[name="searchRange"]:checked').val() == 'week') {
 					startDate = cfn_tuiDateFormat(today);
 					endDate = cfn_tuiDateFormat(new Date(today.getFullYear(), today.getMonth(), today.getDate()+6));
@@ -77,7 +83,8 @@ $(document).ready(function() {
 					success	: function(result) {
 						$('#reservationCnt').text(result.reservationStatusList.length);
 						statusGrid.resetData(result.reservationStatusList);
-						console.log(result.reservationStatusList)
+// 						console.log(result.reservationStatusL
+		  ist)
 					},
 					error	: function(xhr,status){
 						alert('오류가 발생했습니다.');
@@ -102,6 +109,23 @@ $(document).ready(function() {
 // 						console.log('modal list >>',result.rsvListModal)
 						//그리드 삭제
 						modalGrid.resetData(result.rsvListModal);
+					},
+					error	: function(xhr,status){
+						alert('오류가 발생했습니다.');
+					}
+				});
+			},
+			removeReservation: function(param){
+				$.doPost({
+					url	 	: "/admin/removeReservationByAdmin",
+					data 	: param,
+					success	: function(result) {
+						if(result.msg == 'success') {
+							alert('취소되었습니다.');
+							ajaxCom.getReservationStatusList();
+						} else {
+							alert('오류가 발생했습니다.');
+						}
 					},
 					error	: function(xhr,status){
 						alert('오류가 발생했습니다.');
@@ -165,9 +189,16 @@ $(document).ready(function() {
 		},
 		// 예약 취소
 		reservationCancle: function(props, rowKey){
+			console.log(props)
 			if (confirm("예약을 취소하시겠습니까?")) {
-				alert('취소되었습니다.');
-				ajaxCom.getReservationStatusList();
+				let data = statusGrid.getRow(rowKey);
+				let param = {
+					user_id		: data.user_id,
+					select_time : data.select_time,
+					rsv_date	: data.rsv_date,
+					flag		: 'd'
+				}
+// 				ajaxCom.removeReservation(param);
 			} 
 		},
 		// 마사지 확인
@@ -200,20 +231,20 @@ $(document).ready(function() {
 			rowHeight : 32,
 			minRowHeight : 25,
 			columns: [
-				{header : '예약ID',		name : 'user_id',			align:'left', sortable: true,  style:'cursor:pointer;text-decoration:underline;', sortable: true},
-				{header : '예약자',		name : 'name',				align:'left', sortable: true},
-				{header : '전화번호',		name : 'phone_number',		align:'left', sortable: true},
-				{header : '예약일',		name : 'rsv_date',			align:'left',	sortable: true},
-				{header : '예약시간',		name : 'reservation_time',	align:'left', sortable: true},
-				{header : '등록일',		name : 'created_dt',		align:'left', sortable: true},
-				{header : '등록시',		name : 'select_time',				hidden:true},
-				{header : '출산 예정일',	name : 'due_date',					hidden:true},
+				{header : '예약ID',				name : 'user_id',			align:'left', sortable: true,  style:'cursor:pointer;text-decoration:underline;', sortable: true},
+				{header : '예약자',				name : 'name',				align:'left', sortable: true},
+				{header : '전화번호',			name : 'phone_number',		align:'left', sortable: true},
+				{header : '예약일',				name : 'rsv_date',			align:'left', sortable: true},
+				{header : '예약시간',			name : 'reservation_time',	align:'left', sortable: true},
+				{header : '등록일',				name : 'created_dt',		align:'left', sortable: true},
+				{header : '등록시',				name : 'select_time',				hidden:true},
+				{header : '출산 예정일',		name : 'due_date',					hidden:true},
 				{header : '예약 마사지횟수',	name : 'massage_reservation_cnt',	hidden:true},
 				{header : '잔여 마사지횟수',	name : 'massage_cnt',				hidden:true},
 				{header : '전체 마사지횟수',	name : 'massage_total',				hidden:true},
-				{header : '사용여부',		name : 'user_status',		hidden:true},
-				{header : '비고',			name : 'remark',					hidden:true},
-				{header : '예약변경',		name : 'change',	width : 150, align:'center', 
+				{header : '사용여부',			name : 'user_status',				hidden:true},
+				{header : '비고',				name : 'remark',					hidden:true},
+				{header : '예약변경',			name : 'change',	width : 150, align:'center', 
 					renderer: {
 						type : ButtonRenderer,
 						options : {
@@ -222,7 +253,7 @@ $(document).ready(function() {
 						}
 					}
 				},
-				{header : '예약취소',		name : 'cancle',	width : 150, align:'center',
+				{header : '예약취소',			name : 'cancle',	width : 150, align:'center',
 					renderer: {
 						type : ButtonRenderer,
 						options : {
@@ -231,7 +262,7 @@ $(document).ready(function() {
 						}
 					}
 				},
-				{header : '마사지 확인',	name : 'check',		width : 150,	align:'center',
+				{header : '마사지 확인',		name : 'check',		width : 150,	align:'center',
 					renderer: {
 						type : ButtonRenderer,
 						options : {
@@ -249,7 +280,6 @@ $(document).ready(function() {
 			cellclick : function(rowKey,colName,grid){
 				if(colName=="user_id"){
 					let rowData = statusGrid.getRow(rowKey);
-					console.log('row :', rowKey, 'col :', colName,);
 					
 					ajaxCom.getReservationStatusList()
 					
@@ -265,7 +295,11 @@ $(document).ready(function() {
  					
 					$('#editRsvInfo_modal').modal('show');
 				}
-			}
+				
+				if(colName=="cancle"){
+					console.log(statusGrid.getColumn(cancle))
+				}
+			},
 		}
 	);
 	
@@ -304,9 +338,30 @@ $(document).ready(function() {
 			);
 			ajaxCom.getReservationModal();
 	});
+	
 	$('#input_datepicker_modal').change(function(){
 		console.log("rsv date: ", $('#input_datepicker_modal').val())
 	});
+	
+	//라디오버튼 change 이벤트
+	$('input[name="searchRange"]').change(function() {
+		ajaxCom.getReservationStatusList();
+	})
+	
+	searchPicker.on('change:start', function(){
+		$("#radio_range").prop("checked", true);
+		ajaxCom.getReservationStatusList();
+	})
+	
+	searchPicker.on('change:end', function(){
+		$("#radio_range").prop("checked", true);
+		ajaxCom.getReservationStatusList();
+	})
+	
+	monthPicker.on('change', function(){
+		$("#radio_month").prop("checked", true);
+		ajaxCom.getReservationStatusList();
+	})
 }); //END $(document).ready
 </script>
 
@@ -321,7 +376,7 @@ $(document).ready(function() {
 								<div class="col-md-12">
 									<div class="row">
 										<div class="col-sm-6">
-											<span class="row-title">예약 현황 조회</span>
+											<span class="row-title">예약 현황</span>
 										</div>
 										<div class="col-sm-6">
 											<div class="button-list float-right">
@@ -340,15 +395,19 @@ $(document).ready(function() {
 										<td colspan="6">
 											<div class="row ml-1">
 												<div class="custom-control custom-radio custom-control-inline">
-													<input type="radio" id="radio_day" name="searchRange" class="custom-control-input" value="day">
-													<label class="custom-control-label" for="radio_day">오늘</label>
+													<input type="radio" id="radio_today" name="searchRange" class="custom-control-input" value="today" checked="checked">
+													<label class="custom-control-label" for="radio_today">오늘</label>
+												</div>
+												<div class="custom-control custom-radio custom-control-inline">
+													<input type="radio" id="radio_tomorrow" name="searchRange" class="custom-control-input" value="tomorrow">
+													<label class="custom-control-label" for="radio_tomorrow">내일</label>
 												</div>
 												<div class="custom-control custom-radio custom-control-inline">
 													<input type="radio" id="radio_week" name="searchRange" class="custom-control-input" value="week">
 													<label class="custom-control-label" for="radio_week">주</label>
 												</div>
 												<div class="custom-control custom-radio custom-control-inline">
-													<input type="radio" id="radio_month" name="searchRange" class="custom-control-input" value="month" checked="checked">
+													<input type="radio" id="radio_month" name="searchRange" class="custom-control-input" value="month">
 													<label class="custom-control-label" for="radio_month">월</label>
 													<div class="tui-datepicker-input tui-datetime-input tui-has-focus" style="margin-bottom: 6px;">
 														<input type="text" id="datepicker_input_create" aria-label="Year-Month">
@@ -357,8 +416,8 @@ $(document).ready(function() {
 													<div class="datepicker-cell" id="datepicker_create" style="margin-top: -1px;"></div>
 												</div>
 												<div class="custom-control custom-radio custom-control-inline">
-													<input type="radio" id="radio_picker" name="searchRange" class="custom-control-input" value="range">
-													<label class="custom-control-label" for="radio_picker">기간선택</label>
+													<input type="radio" id="radio_range" name="searchRange" class="custom-control-input" value="range">
+													<label class="custom-control-label" for="radio_range">기간선택</label>
 													<div class="tui-datepicker-input tui-datetime-input ml-1">
 														<input id="input_startDate" type="text" aria-label="Date">
 														<span class="tui-ico-date"></span>

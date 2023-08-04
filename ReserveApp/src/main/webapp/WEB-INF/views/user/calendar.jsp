@@ -163,7 +163,7 @@ $(document).ready(function() {
 
 			keys.forEach(function(key) {
 				let value = availableData[key];
-				if (value !== 0) {
+				if (value > 0) {
 					keysWithValueNotZero.push(key);
 				}
 			});

@@ -56,4 +56,10 @@ public interface AdminMapper {
 	List<Map<String,Object>> getReservationStatusList(Map<String,Object> param);
 	
 	List<Map<String,Object>> getReservationModal(Map<String,Object> param);
+	
+	void removeReservationByAdmin (Map<String, Object> param);
+	
+	void changeMagCnt(Map<String, Object> param);
+	
+	void saveCancelLog(Map<String,Object> param);
 }

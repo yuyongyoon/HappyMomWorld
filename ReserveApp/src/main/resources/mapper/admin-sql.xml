@@ -107,7 +107,7 @@
 		<where>
 			tbm.branch_code != 'b0000'
 			<if test='branchCode!=null and branchCode!=""'>and tbm.branch_code like '%'|| #{branchCode} ||'%'</if>
-			<if test='branchName!=null and branchName!=""'>and tbm.branch_name like '%'|| #{branchName} ||'%'</if>
+			<if test='adminId!=null and adminId!=""'>and tu.id like '%'|| #{adminId} ||'%'</if>
 			<if test='joinCode!=null and joinCode!=""'>and join_code like '%'|| #{joinCode} ||'%'</if>
 			<if test='userStatus!=null and userStatus!=""'>and user_status like '%'|| #{userStatus} ||'%'</if>
 		</where>
@@ -222,25 +222,25 @@
 			a.rsv_date,
 			c.worker_num,
 			a."1t",
-			COUNT(b.select_time) FILTER (WHERE b.select_time = '1t') AS "1t_cnt",
+			COUNT(b.select_time) FILTER (WHERE b.select_time = 't1') AS "1t_cnt",
 			a."2t",
-			COUNT(b.select_time) FILTER (WHERE b.select_time = '2t') AS "2t_cnt",
+			COUNT(b.select_time) FILTER (WHERE b.select_time = 't2') AS "2t_cnt",
 			a."3t",
-			COUNT(b.select_time) FILTER (WHERE b.select_time = '3t') AS "3t_cnt",
+			COUNT(b.select_time) FILTER (WHERE b.select_time = 't3') AS "3t_cnt",
 			a."4t",
-			COUNT(b.select_time) FILTER (WHERE b.select_time = '4t') AS "4t_cnt",
+			COUNT(b.select_time) FILTER (WHERE b.select_time = 't4') AS "4t_cnt",
 			a."5t",
-			COUNT(b.select_time) FILTER (WHERE b.select_time = '5t') AS "5t_cnt",
+			COUNT(b.select_time) FILTER (WHERE b.select_time = 't5') AS "5t_cnt",
 			a."6t",
-			COUNT(b.select_time) FILTER (WHERE b.select_time = '6t') AS "6t_cnt",
+			COUNT(b.select_time) FILTER (WHERE b.select_time = 't6') AS "6t_cnt",
 			a."7t",
-			COUNT(b.select_time) FILTER (WHERE b.select_time = '7t') AS "7t_cnt",
+			COUNT(b.select_time) FILTER (WHERE b.select_time = 't7') AS "7t_cnt",
 			a."8t",
-			COUNT(b.select_time) FILTER (WHERE b.select_time = '8t') AS "8t_cnt",
+			COUNT(b.select_time) FILTER (WHERE b.select_time = 't8') AS "8t_cnt",
 			a."9t",
-			COUNT(b.select_time) FILTER (WHERE b.select_time = '9t') AS "9t_cnt",
+			COUNT(b.select_time) FILTER (WHERE b.select_time = 't9') AS "9t_cnt",
 			a."10t",
-			COUNT(b.select_time) FILTER (WHERE b.select_time = '10t') AS "10t_cnt"
+			COUNT(b.select_time) FILTER (WHERE b.select_time = 't10') AS "10t_cnt"
 		FROM tb_reservation_master a
 			JOIN tb_reservation_info c on a.rsv_month =c.rsv_month  AND a.branch_code = c.branch_code 
 			LEFT OUTER JOIN tb_reservation_list b on a.branch_code = b.branch_code AND a.rsv_month = b.rsv_month AND a.rsv_date = b.rsv_date
@@ -641,4 +641,31 @@
 		WHERE rsv_month = #{rsv_month} AND branch_code = #{super_branch_code}
 	)
 	</select>
+	
+	<delete id="removeReservationByAdmin" parameterType="map">
+		delete from tb_reservation_list
+		where user_id = #{user_id} and rsv_date = #{rsv_date} and select_time = #{select_time}
+	</delete>
+	
+	<update id="changeMagCnt" parameterType="map">
+		UPDATE tb_user
+		<set>
+			<if test="flag == 'i'.toString()">
+				massage_cnt = massage_cnt - 1
+			</if>
+			<if test="flag == 'd'.toString()">
+				massage_cnt = massage_cnt + 1
+			</if>
+		</set>
+		WHERE id = #{user_id}
+	</update>
+	
+	<insert id="saveCancelLog" parameterType="map">
+		INSERT INTO tb_cancel_log(
+			branch_code, rsv_date, select_time, created_id, created_dt, reservation_id
+		)
+		VALUES(
+			#{branch_code}, #{rsv_date}, #{select_time}, #{login_id}, now(), #{user_id}
+		)
+	</insert>
 </mapper>

@@ -76,8 +76,13 @@ class ButtonRenderer {
 				props.columnInfo.renderer.options.click.call(this, props, rowKey);
 			}
 		});
-
+		
+//		if(props.columnInfo.name == 'change' || props.columnInfo.name == 'cancle'){
+//			el.disabled = 'disabled'
+//		}
+		
 		this.el = el;
+		
 		this.render();
 	}
 
@@ -325,7 +330,6 @@ const tuiGrid = {
 			if(event.hasOwnProperty('onload')){
 				event.onload.call(this,ev);
 			}
-			
 		});
 		grid.on('mouseover', ev => {
 			options.columns.forEach(col=>{
