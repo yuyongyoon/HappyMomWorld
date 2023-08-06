@@ -386,7 +386,9 @@ $(document).ready(function() {
 			pwd_check = true;
 		}
 	})
-}); //END $(document).ready
+});
+
+$('#select-branch').css('display', 'none');
 
 </script>
 <div class="main-panel">

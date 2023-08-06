@@ -1,24 +1,14 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
-<script src="/static/common/js/qrcode/jquery.qrcode.min.js"></script>
-<script src="/static/common/js/pdf/html2canvas.js"></script>
-<script src="/static/common/js/pdf/jspdf.min.js"></script>
 <script>
 $(document).ready(function() {
-	$('#qrcode').qrcode({width: 400,height: 400,text: "http://121.140.47.102:28900/login"});
-	let superBranchCode
-	let branchName;
-	let branchTel;
-	let branchAddr;
-	let branchHours;
-	let branchJoinCode;
-	let branchRemark;
-
 	ajaxCom = {
 		getBranchPrintInfo: function(){
+			let superBranchCode;
 			if($('#role').val() == 'SUPERADMIN'){
 				superBranchCode = $('#select-branch');
-				$('#btn_branchInfo').css('display', 'none');
+				$('#btn_saveBranchInfo').css('display', 'none');
+				$('#btn_saveBranchReservationInfo').css('display', 'none');
 			}
 			
 			if($('#select-branch').val() != ''){
@@ -35,20 +25,12 @@ $(document).ready(function() {
 				success	: function(result) {
 					if(result.branchPrintInfo != null){
 						let data = result.branchPrintInfo;
-						branchName = data.branch_name;
-						branchTel = data.branch_tel;
-						branchAddr = data.branch_addr;
-						branchHours = data.business_hours;
-						branchJoinCode = data.join_code;
-						branchRemark = data.remark;
-
 						$('#input_brName').val(data.branch_name);
 						$('#input_brTel').val(data.branch_tel);
 						$('#input_brAddr').val(data.branch_addr);
 						$('#input_brHours').val(data.business_hours);
 						$('#input_brJoincode').val(data.join_code);
 						$('#input_brCode').val(data.join_code);
-						$('#input_brRemark').val(data.remark);
 					}
 				},
 				error	: function(xhr,status){
@@ -70,22 +52,58 @@ $(document).ready(function() {
 					alert('오류가 발생했습니다.');
 				}
 			});
+		},
+		getRecentlyBranchReservationInfo: function(){
+			let param;
+			console.log($('#select-branch').val() != '')
+			console.log($('#select-branch'))
+// 			console.log(($('#select-branch').val() != ''&& $('#role').val() == 'SUPERADMIN'))
+			if($('#select-branch').val() != '' && $('#role').val() == 'SUPERADMIN'){
+				console.log('참')
+				param = {
+					super_branch_code : $('#select-branch').val()
+				}
+			} else {
+				param = {
+					super_branch_code : ''
+				}
+			}
+			
+			console.log(param)
+			
+			$.doPost({
+				url	 	: "/admin/getRecentlyBranchReservationInfo",
+				data 	: param,
+				success	: function(result) {
+					if(result.recentlyBranchReservationInfo != null){
+						if(result.recentlyBranchReservationInfo.rsv_month == '2023-00'){
+							$('#rsv_month').text('기본값');
+						} else {
+							$('#rsv_month').text(result.recentlyBranchReservationInfo.rsv_month + ' 기준');
+						}
+						$('#input_1t').val(result.recentlyBranchReservationInfo.t1_name);
+						$('#input_2t').val(result.recentlyBranchReservationInfo.t2_name);
+						$('#input_3t').val(result.recentlyBranchReservationInfo.t3_name);
+						$('#input_4t').val(result.recentlyBranchReservationInfo.t4_name);
+						$('#input_5t').val(result.recentlyBranchReservationInfo.t5_name);
+						$('#input_6t').val(result.recentlyBranchReservationInfo.t6_name);
+						$('#input_7t').val(result.recentlyBranchReservationInfo.t7_name);
+						$('#input_8t').val(result.recentlyBranchReservationInfo.t8_name);
+						$('#input_9t').val(result.recentlyBranchReservationInfo.t9_name);
+						$('#input_10t').val(result.recentlyBranchReservationInfo.t10_name);
+					}
+				},
+				error	: function(xhr,status){
+					alert('오류가 발생했습니다.');
+				}
+			});
 		}
 	};
 	
 	btnCom = {
-		btn_branchInfo: function(){
-			$('#modal_brName').val(branchName);
-			$('#modal_brTell').val(branchTel);
-			$('#modal_brAddr').val(branchAddr);
-			$('#modal_brHours').val(branchHours);
-			$('#modal_brCode').val(branchJoinCode);
-			$('#modal_brRemark').val(branchRemark);
-			$('#branchInfo_modal').modal('show');
-		},
-		btn_saveBranchPrintInfo: function(){
-			if($('#modal_brName').val() != '' && $('#modal_brTell').val() != '' && $('#modal_brAddr').val() != '' 
-					&& $('#modal_brHours').val() != '' && $('#modal_brCode').val() != '' && $('#modal_brRemark').val() != '') {
+		btn_saveBranchInfo: function(){
+			if($('#input_brName').val() != '' && $('#input_brTell').val() != '' && $('#input_brAddr').val() != '' 
+					&& $('#input_brHours').val() != '' && $('#input_brCode').val() != '' && $('#input_brRemark').val() != '') {
 				let param = {
 						branch_name : $('#modal_brName').val(),
 						branch_tel : $('#modal_brTell').val(),
@@ -101,146 +119,198 @@ $(document).ready(function() {
 			}
 			
 		},
-		btn_cancle: function(){
-			$('#branchInfo_modal').modal('hide');
-		},
-		btn_pdfDownload: function(){
-			html2canvas($('#pdfDiv')[0]).then(function(canvas) {
-				let imgData = canvas.toDataURL('image/png');
-	
-				let margin = 10;
-				let imgWidth = 210 - (10 * 2);
-				let pageHeight = imgWidth * 1.414;
-				let imgHeight = canvas.height * imgWidth / canvas.width;
-				let heightLeft = imgHeight;
-				
-				let doc = new jsPDF('p', 'mm');
-				let position = margin;
-				
-				doc.addImage(imgData, 'PNG', margin, position, imgWidth, imgHeight);
-				heightLeft -= pageHeight;
-				
-				while (heightLeft >= 20) {
-					position = heightLeft - imgHeight;
-					doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-					doc.addPage();
-					heightLeft -= pageHeight;
-				}
-	
-				doc.save('notice.pdf');
-			});
+		btn_saveBranchReservationInfo: function(){
+			console.log('클릭');
 		}
 	};
 	
 	ajaxCom.getBranchPrintInfo();
+	ajaxCom.getRecentlyBranchReservationInfo();
 }); //END $(document).ready
 
 
 $('#select-branch').on('change', function(){
 	ajaxCom.getBranchPrintInfo();
+	ajaxCom.getRecentlyBranchReservationInfo();
 })
 </script>
-<style>
-#pdfDiv input, #pdfDiv label, #pdfDiv textarea {
-	font-size: 20px!important;
-	font-weight: bolder;
-}
-.form-control:disabled {
-	background-color: white!important;
-	color: black!important;
-}
-</style>
 <div class="main-panel">
 	<div class="content">
 		<div class="page-inner">
 			<div class="row">
 				<div class="col-md-12">
-					<div class="card">
-						<div class="card-body d-flex flex-column">
-							<div class="row">
-								<div class="col-md-12">
+					<div class="row">
+						<div class="col-md-6">
+							<div class="card">
+								<div class="card-header">
+									<div class="card-title" style="font-size:20px;">지점 정보</div>
+								</div>
+								<div class="card-body">
 									<div class="row">
-										<div class="col-sm-6">
-											<span class="row-title">예약 안내문 관리</span>
-										</div>
-										<div class="col-sm-6">
-											<div class="button-list float-right">
-												<button type="button" id="btn_branchInfo" class="header-btn btn btn-secondary float-left ml-2 mb-2">지점 정보 수정</button>
-												<button type="button" id="btn_pdfDownload" class="header-btn btn btn-secondary float-left ml-2 mb-2">다운로드</button>
+										<div class="col-12">
+											<div class="row">
+												<div class="col-md-12">
+													<label for="input_brName">지점 이름</label>
+													<input type="text" class="form-control" id="input_brName">
+												</div>
+											</div>
+											<div class="row mt-3">
+												<div class="col-md-12">
+													<label for="input_brTel">전화번호</label>
+													<input type="text" class="form-control" id="input_brTel">
+												</div>
+											</div>
+											<div class="row mt-3">
+												<div class="col-md-12">
+													<label for="input_brAddr">주소</label>
+													<input type="text" class="form-control" id="input_brAddr">
+												</div>
+											</div>
+											<div class="row mt-3">
+												<div class="col-md-12">
+													<label for="input_brHours">운영시간</label>
+													<input type="text" class="form-control" id="input_brHours">
+												</div>
+											</div>
+											<div class="row mt-3">
+												<div class="col-md-12">
+													<label for="input_brCode">가입코드</label>
+													<input type="text" class="form-control" id="input_brCode" disabled>
+												</div>
+											</div>
+											<div class="row mt-3">
+												<div class="col-md-12">
+													<button type="button" class="btn btn-secondary float-right" id="btn_saveBranchInfo">저장</button>
+												</div>
 											</div>
 										</div>
 									</div>
 								</div>
 							</div>
-							<hr style="border: 1px solid lightgray;width: 100%;">
-							<div id="pdfDiv">
-								<div class="col-md-12">
-									<div class="card-body">
-										<h1 style="text-align: center;font-size:3.5rem;font-weight:border;" class="mb-2">산전 마사지 예약 안내</h1>
-										<div class="row">
-											<div class="col-8">
-												<div class="row mt-5">
-													<div class="col-md-2">
-														<label>지점 이름</label>
-													</div>
-													<div class="col-md-10">
-														<input type="text" class="form-control" id="input_brName" disabled>
-													</div>
-												</div>
-												<div class="row mt-3">
-													<div class="col-md-2">
-														<label>전화번호</label>
-													</div>
-													<div class="col-md-10">
-														<input type="text" class="form-control" id="input_brTel" disabled>
-													</div>
-												</div>
-												<div class="row mt-3">
-													<div class="col-md-2">
-														<label>주소</label>
-													</div>
-													<div class="col-md-10">
-														<input type="text" class="form-control" id="input_brAddr" disabled>
-													</div>
-												</div>
-												<div class="row mt-3">
-													<div class="col-md-2">
-														<label>운영시간</label>
-													</div>
-													<div class="col-md-10">
-														<input type="text" class="form-control" id="input_brHours" disabled>
-													</div>
-												</div>
-												<div class="row mt-3">
-													<div class="col-md-2">
-														<label>가입코드</label>
-													</div>
-													<div class="col-md-10">
-														<input type="text" class="form-control" id="input_brCode" disabled>
-													</div>
-												</div>
-												<div class="row mt-3">
-													<div class="col-md-2">
-													<label>안내문구</label>
-													</div>
-													<div class="col-md-10">
-														<textarea class="form-control" id="input_brRemark" rows="3" style="resize: none;" disabled></textarea>
+						</div>
+						
+						<div class="col-md-6">
+							<div class="card">
+								<div class="card-header">
+									<div class="card-title" style="font-size:20px;">예약 시간 정보</div>
+								</div>
+								<div class="card-body">
+									<div class="row">
+										<div class="col-12">
+											<div class="col-md-12" style="text-align: right;">
+												<span id="rsv_month"></span>
+											</div>
+											<div class="row mt-2">
+												<div class="col-md-12">
+													<div class="row form-group">
+														<div class="col-sm-2">
+															<label class="control-label mt-2" style="border: 0px;" for="input_1t">1 Time</label>
+														</div>
+														<div class="col-sm-4">
+															<input type="text" class="form-control" id="input_1t">
+														</div>
+														<div class="col-sm-2">
+															<label class="control-label mt-2" style="border: 0px;" for="input_2t">2 Time</label>
+														</div>
+														<div class="col-sm-4">
+															<input type="text" class="form-control" id="input_2t">
+														</div>
 													</div>
 												</div>
 											</div>
-											<div class="col-4">
-												<div id="qrcode" class="ml-5" style="margin-top: 60px;"></div>
+											<div class="row mt-2">
+												<div class="col-md-12">
+													<div class="row form-group">
+														<div class="col-sm-2">
+															<label class="control-label mt-2" style="border: 0px;" for="input_3t">3 Time</label>
+														</div>
+														<div class="col-sm-4">
+															<input type="text" class="form-control" id="input_3t">
+														</div>
+														<div class="col-sm-2">
+															<label class="control-label mt-2" style="border: 0px;" for="input_4t">4 Time</label>
+														</div>
+														<div class="col-sm-4">
+															<input type="text" class="form-control" id="input_4t">
+														</div>
+													</div>
+												</div>
+											</div>
+											
+											<div class="row mt-2">
+												<div class="col-md-12">
+													<div class="row form-group">
+														<div class="col-sm-2">
+															<label class="control-label mt-2" style="border: 0px;" for="input_5t">5 Time</label>
+														</div>
+														<div class="col-sm-4">
+															<input type="text" class="form-control" id="input_5t">
+														</div>
+														<div class="col-sm-2">
+															<label class="control-label mt-2" style="border: 0px;" for="input_6t">6 Time</label>
+														</div>
+														<div class="col-sm-4">
+															<input type="text" class="form-control" id="input_6t">
+														</div>
+													</div>
+												</div>
+											</div>
+											
+											<div class="row mt-2">
+												<div class="col-md-12">
+													<div class="row form-group">
+														<div class="col-sm-2">
+															<label class="control-label mt-2" style="border: 0px;" for="input_7t">7 Time</label>
+														</div>
+														<div class="col-sm-4">
+															<input type="text" class="form-control" id="input_7t">
+														</div>
+														<div class="col-sm-2">
+															<label class="control-label mt-2" style="border: 0px;" for="input_8t">8 Time</label>
+														</div>
+														<div class="col-sm-4">
+															<input type="text" class="form-control" id="input_8t">
+														</div>
+													</div>
+												</div>
+											</div>
+											
+											<div class="row mt-2">
+												<div class="col-md-12">
+													<div class="row form-group">
+														<div class="col-sm-2">
+															<label class="control-label mt-2" style="border: 0px;" for="input_9t">9 Time</label>
+														</div>
+														<div class="col-sm-4">
+															<input type="text" class="form-control" id="input_9t">
+														</div>
+														<div class="col-sm-2">
+															<label class="control-label mt-2" style="border: 0px;" for="input_10t">10 Time</label>
+														</div>
+														<div class="col-sm-4">
+															<input type="text" class="form-control" id="input_10t">
+														</div>
+													</div>
+												</div>
+											</div>
+											
+											<div class="row mt-2 mb-2">
+												<div class="col-md-12">
+													<button type="button" class="btn btn-secondary float-right" id="btn_saveBranchReservationInfo">저장</button>
+												</div>
 											</div>
 										</div>
 									</div>
 								</div>
 							</div>
+						</div>
+					</div>
 							
 							<div class="modal fade" id="branchInfo_modal" tabindex="-1" role="dialog" aria-hidden="true">
 								<div class="modal-dialog modal-dialog-centered" role="document">
 									<div class="modal-content">
 										<div class="modal-header">
-											<h4 class="modal-title">지점 정보</h4>
+											<h4 class="modal-title">예약 정보</h4>
 										</div>
 										<div class="modal-body">
 											<div class="col-12">
@@ -295,7 +365,7 @@ $('#select-branch').on('change', function(){
 											</div>
 										</div>
 										<div class="modal-footer">
-											<button type="button" class="btn btn-secondary" id="btn_saveBranchPrintInfo">저장</button>
+											
 											<button type="button" class="btn btn-info" id="btn_cancle">취소</button>
 										</div>
 									</div>
@@ -305,6 +375,6 @@ $('#select-branch').on('change', function(){
 					</div>
 				</div>	
 			</div>
-		</div>
-	</div>
+<!-- 		</div> -->
+<!-- 	</div> -->
 </div>

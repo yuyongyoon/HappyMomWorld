@@ -1,5 +1,6 @@
 package com.reserve.app.service;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -232,7 +233,7 @@ public class AdminService {
 		int cntBranchReservationInfo = mapper.getCntBranchReservationInfo(param);
 		
 		if(cntBranchReservationInfo == 0) {
-			param.put("rsv_month", "2023-00"); //기본값 하드코딩
+			param.put("rsv_month", "2023-00");
 			return mapper.getBranchReservationInfo(param);
 		} else {
 			return mapper.getBranchReservationInfo(param);
@@ -269,11 +270,11 @@ public class AdminService {
 		return mapper.getBranchPrintInfo(param);
 	}
 	
-	public String saveBranchPrintInfo(Map<String,Object> param) {
+	public String saveBranchInfo(Map<String,Object> param) {
 		String msg = "success";
 		
 		try {
-			mapper.saveBranchPrintInfo(param);
+			mapper.saveBranchInfo(param);
 		} catch (Exception e) {
 			e.printStackTrace();
 			msg = "fail";
@@ -286,20 +287,12 @@ public class AdminService {
 	}
 	
 	public List<Map<String, Object>> getReservationModal(Map<String, Object> param) throws Exception {
+		//수정중
+		param.put("timeSlots", Arrays.asList("1", "2", "3", "4", "5", "6", "7", "8", "9", "10"));
+		System.out.println("========timeSlots========");
+		System.out.println(param);
 		List<Map<String, Object>> result = mapper.getReservationModal(param);
 		
-		int i = 0;
-		while(i < result.size()) {
-			int cnt = Integer.parseInt(result.get(i).get("cnt").toString());
-			result.get(i).remove("col");
-			result.get(i).remove("cnt");
-			if(cnt == 0) {
-				result.remove(i);
-				i--;
-			}
-			i++;
-		}
-		System.out.println(result);
 		return result;
 	}
 	
@@ -315,4 +308,21 @@ public class AdminService {
 		}
 		return msg;
 	}
+	
+	public Map<String,Object> getRecentlyBranchReservationInfo(Map<String,Object>param) throws Exception{
+		return mapper.getRecentlyBranchReservationInfo(param);
+	}
+	
+	public String updateRsvStatus(Map<String,Object> param){ 
+		String msg = "success";
+		try {
+			mapper.updateRsvStatus(param);
+		}catch (Exception e) {
+			e.printStackTrace();
+			msg = "fail";
+		}
+		return msg;
+	}
+	
+	
 }

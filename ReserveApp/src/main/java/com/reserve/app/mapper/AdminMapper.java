@@ -51,7 +51,7 @@ public interface AdminMapper {
 	
 	Map<String, Object> getBranchPrintInfo(Map<String,Object> param);
 	
-	void saveBranchPrintInfo(Map<String,Object> param);
+	void saveBranchInfo(Map<String,Object> param);
 	//=================================== 예약 현황 ===================================
 	List<Map<String,Object>> getReservationStatusList(Map<String,Object> param);
 	
@@ -62,4 +62,8 @@ public interface AdminMapper {
 	void changeMagCnt(Map<String, Object> param);
 	
 	void saveCancelLog(Map<String,Object> param);
+	
+	Map<String,Object> getRecentlyBranchReservationInfo(Map<String,Object> param);
+	
+	void updateRsvStatus(Map<String,Object> param);
 }

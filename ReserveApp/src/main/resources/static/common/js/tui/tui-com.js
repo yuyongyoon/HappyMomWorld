@@ -62,8 +62,10 @@ function dateTimeFormat(obj) {
 class ButtonRenderer {
 	constructor(props) {
 		const el = document.createElement('button');
-		const className = 'btn btn-secondary btn-sm reply-btn-action btn-xs';
+		const className = 'btn btn-secondary btn-xs';
 		const value = props.columnInfo.renderer.options.value;
+		
+//		console.log(props.columnInfo.renderer.options.name)
 
 		el.value = value;
 		el.type = 'button';
@@ -270,7 +272,7 @@ const tuiGrid = {
 		});
 		grid.on('click', (ev) => {
 			if(event.hasOwnProperty('cellclick') && ev.targetType=='cell'){
-				event.cellclick.call(this,ev.rowKey,ev.columnName,ev.instance);
+				event.cellclick.call(this,ev.rowKey,ev.columnName,ev.instance, ev);
 			}
 		});
 		grid.on('check', ev => {

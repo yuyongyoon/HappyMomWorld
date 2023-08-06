@@ -134,17 +134,17 @@ $(document).ready(function() {
 						
 						cfn_tableResize('table_div', 300);
 					} else {
-						std_worker = result.branchReservationInfo.worker_num;
-						std_1t = result.branchReservationInfo.t1_name;
-						std_2t = result.branchReservationInfo.t2_name;
-						std_3t = result.branchReservationInfo.t3_name;
-						std_4t = result.branchReservationInfo.t4_name;
-						std_5t = result.branchReservationInfo.t5_name;
-						std_6t = result.branchReservationInfo.t6_name;
-						std_7t = result.branchReservationInfo.t7_name;
-						std_8t = result.branchReservationInfo.t8_name;
-						std_9t = result.branchReservationInfo.t9_name;
-						std_10t = result.branchReservationInfo.t10_name;
+// 						std_worker = result.branchReservationInfo.worker_num;
+// 						std_1t = result.branchReservationInfo.t1_name;
+// 						std_2t = result.branchReservationInfo.t2_name;
+// 						std_3t = result.branchReservationInfo.t3_name;
+// 						std_4t = result.branchReservationInfo.t4_name;
+// 						std_5t = result.branchReservationInfo.t5_name;
+// 						std_6t = result.branchReservationInfo.t6_name;
+// 						std_7t = result.branchReservationInfo.t7_name;
+// 						std_8t = result.branchReservationInfo.t8_name;
+// 						std_9t = result.branchReservationInfo.t9_name;
+// 						std_10t = result.branchReservationInfo.t10_name;
 					}
 				},
 				error	: function(xhr,status){

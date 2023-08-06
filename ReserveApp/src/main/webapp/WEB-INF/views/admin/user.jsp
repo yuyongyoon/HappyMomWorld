@@ -32,11 +32,6 @@ $(document).ready(function() {
 	
 	ajaxCom = {
 		getUserList : function() {
-			let userIdOrName = $('#input_id_name').val();
-			let phoneNumber = $('#input_phone').val();
-			let startDate = $('#input_startDate').val();
-			let endDate = $('#input_endDate').val();
-			
 			if($('#role').val() == 'SUPERADMIN'){
 				let superBranchCode = $('#select-branch');
 			}
@@ -50,11 +45,12 @@ $(document).ready(function() {
 			$.doPost({
 				url	 	: "/admin/getUserList",
 				data 	: {
-					userIdOrName	: userIdOrName,
-					phoneNumber		: phoneNumber,
-					startDate		: startDate,
-					endDate			: endDate,
-					super_branch_code : superBranchCode
+					userIdOrName	: $('#input_id_name').val(),
+					phoneNumber		: $('#input_phone').val(),
+					startDate		: $('#input_startDate').val(),
+					endDate			: $('#input_endDate').val(),
+					super_branch_code : superBranchCode,
+					rsv_status		: $('#select_rsvStatus').val()
 				},
 				success	: function(result) {
 					$('#userCnt').text(result.userList.length);
@@ -200,7 +196,11 @@ $(document).ready(function() {
 	);
 
 	ajaxCom.getUserList();
+	$('#select_rsvStatus').on('change', function(){
+		ajaxCom.getUserList();
+	})
 });
+
 </script>
 
 <div class="main-panel">
@@ -227,29 +227,37 @@ $(document).ready(function() {
 							</div>
 							
 							<div class="row search flex-grow-1">
-								<div class="col-md-3 col-sm-6 searchDiv">
+								<div class="col-md-3 col-sm-4 searchDiv">
 									<label for="input_id" class="search-label float-left mt-2">ID / 이름</label>
 									<input type="text" id="input_id_name" class="form-control form-control-sm mt-2"/>
 								</div>
-								<div class="col-md-3 col-sm-6 searchDiv">
+								<div class="col-md-3 col-sm-4 searchDiv">
 									<label for="input_phone" class="search-label float-left mt-2">전화번호</label>
 									<input type="text" id="input_phone" class="form-control form-control-sm mt-2"/>
 								</div>
-								<div class="col-md-3 col-sm-6 searchDiv">
+								<div class="col-md-4 col-sm-8 searchDiv">
 									<label for="input_startDate" class="search-label float-left mt-2">기간</label>
-									<div class="tui-datepicker-input tui-datetime-input">
-										<input id="input_startDate" type="text" aria-label="Date">
-										<span class="tui-ico-date"></span>
-										<div id="startDate-container" style="margin-left: -1px;"></div>
+									<div class="row">
+										<div class="tui-datepicker-input tui-datetime-input">
+											<input id="input_startDate" type="text" aria-label="Date">
+											<span class="tui-ico-date"></span>
+											<div id="startDate-container" style="margin-left: -1px;"></div>
+										</div>
+										<div style="margin: 10px;margin-bottom: 0px;"><span>~</span></div>
+										<div class="tui-datepicker-input tui-datetime-input">
+											<input id="input_endDate" type="text" aria-label="Date">
+											<span class="tui-ico-date"></span>
+											<div id="endDate-container" style="margin-left: -1px;"></div>
+										</div>
 									</div>
 								</div>
-								<div class="col-md-3 col-sm-6 searchDiv">
-									<label for="input_endDate" class="search-label float-left mt-2">~</label>
-									<div class="tui-datepicker-input tui-datetime-input">
-										<input id="input_endDate" type="text" aria-label="Date">
-										<span class="tui-ico-date"></span>
-										<div id="endDate-container" style="margin-left: -1px;"></div>
-									</div>
+								<div class="col-md-2 col-sm-4 searchDiv">
+									<label for="select_rsvStatus" class="search-label float-left mt-2">예약 완료</label>
+									<select id="select_rsvStatus" class="form-control mt-2" style="padding: 3px;">
+										<option value="">선택</option>
+										<option value="Y">YES</option>
+										<option value="N">NO</option>
+									</select>
 								</div>
 							</div>
 							

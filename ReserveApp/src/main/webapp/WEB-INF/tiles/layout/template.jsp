@@ -6,6 +6,7 @@
 		<meta charset="UTF-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
+		<link rel="icon" href="/static/favicon.ico" type="image/x-icon"/>
 		<title>해피맘월드 예약 관리 시스템</title>
 	</head>
 	<body>

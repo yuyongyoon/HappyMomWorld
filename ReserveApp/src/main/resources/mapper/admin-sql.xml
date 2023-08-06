@@ -13,14 +13,7 @@
 	<!--=============== 회원 관리 ===============-->
 	<select id="getUserList" parameterType="map" resultType="map">
 		SELECT
-			a.id,
-			a.name,
-			a.phone_number,
-			a.due_date,
-			a.user_role,
-			a.massage_cnt,
-			a.massage_total,
-			coalesce(b.has_reservation,0) as massage_reservation_cnt,
+			a.id, a.name, a.phone_number, a.due_date, a.user_role, a.massage_cnt, a.massage_total, coalesce(b.has_reservation,0) as massage_reservation_cnt,
 			CASE
 				WHEN b.has_reservation = a.massage_total and massage_cnt = 0 THEN 'Y'
 				ELSE 'N'
@@ -56,6 +49,17 @@
 			<if test="startDate != null and startDate != '' and endDate != null and endDate != ''">
 				AND a.created_dt BETWEEN TO_TIMESTAMP(#{startDate}, 'YYYY-MM-DD') AND TO_TIMESTAMP(#{endDate}, 'YYYY-MM-DD') + INTERVAL '1 day' - INTERVAL '1 second'
 			</if>
+			<if test="rsv_status != null and rsv_status != ''">
+				<choose>
+					<when test="rsv_status == 'Y'.toString()">
+						AND a.massage_cnt = 0
+					</when>
+					<otherwise>
+						AND a.massage_cnt <![CDATA[>]]> 0
+					</otherwise>
+				</choose>
+			</if>
+			
 		</where>
 		ORDER BY a.created_dt DESC, a.id ASC
 	</select>
@@ -412,7 +416,7 @@
 	</select>
 	
 	<select id="getBranchPrintInfo" parameterType="map"  resultType="map">
-		SELECT a.branch_name, a.branch_tel, a.branch_addr, a.business_hours, a.remark, b.join_code
+		SELECT a.branch_name, a.branch_tel, a.branch_addr, a.business_hours, b.join_code
 		FROM tb_branch_info a
 		LEFT OUTER JOIN tb_branch_mng b on a.branch_code = b.branch_code 
 		<where>
@@ -427,14 +431,13 @@
 		</where>
 	</select>
 	
-	<update id="saveBranchPrintInfo" parameterType="map">
+	<update id="saveBranchInfo" parameterType="map">
 		UPDATE tb_branch_info
 		SET 
 			branch_name = #{branch_name},
 			branch_tel = #{branch_tel},
 			branch_addr = #{branch_addr},
 			business_hours = #{business_hours},
-			remark = #{remark},
 			modified_id = #{login_id},
 			modified_dt = now()
 		WHERE branch_code = #{branch_code}
@@ -443,11 +446,7 @@
 	<select id="getReservationStatusList" parameterType="map" resultType="map">
 		SELECT rsv_date, a.user_id, 
 			c."name", c.phone_number, c.due_date, c.user_status, c.massage_cnt, c.remark, c.massage_total,
-			coalesce(la.has_reservation,0) as massage_reservation_cnt,
-			<!-- CASE
-				WHEN la.has_reservation = c.massage_total and massage_cnt = 0 THEN 'Y'
-				ELSE 'N'
-			END AS reserve_cnt_status, -->
+			coalesce(la.has_reservation,0) as massage_reservation_cnt, a.rsv_status,
 			TO_CHAR(c.created_dt, 'YYYY-MM-DD') AS created_dt,
 				TO_CHAR(a.created_dt, 'YYYY-MM-DD') AS created_dt, a.select_time,
 				CASE 
@@ -491,9 +490,9 @@
 			<if test="startDate != null and startDate != '' and endDate != null and endDate != ''">
 				AND rsv_date::date BETWEEN TO_TIMESTAMP(#{startDate}, 'YYYY-MM-DD') AND TO_TIMESTAMP(#{endDate}, 'YYYY-MM-DD') + INTERVAL '1 day' - INTERVAL '1 second'
 			</if>
-			<if test='remark != null and remark != ""'>
+			<if test='rsv_status != null and rsv_status != ""'>
 				AND (
-					UPPER(c.remark) LIKE '%' || UPPER(#{remark}) || '%'
+					rsv_status = #{rsv_status}
 				)
 			</if>
 		</where>
@@ -501,145 +500,53 @@
 	</select>
 	
 	<select id="getReservationModal" parameterType="map" resultType="map">
-	SELECT
-	't1' AS col,
-	(
-		select "1t"
-		from tb_reservation_master
-		WHERE rsv_month = #{rsv_month} AND branch_code = #{super_branch_code} AND rsv_date = #{rsv_date}
-	) - 
-	(SELECT COUNT(*) FROM tb_reservation_list WHERE rsv_month = #{rsv_month} AND branch_code = #{super_branch_code} AND select_time = '1t' AND rsv_date = #{rsv_date}) AS cnt,
-	(
-		select t1_name
-		from tb_reservation_info tri 
-		<where>
-			rsv_month = #{rsv_month}
-			<choose>
-				<when test="super_branch_code == null or super_branch_code == ''">
-					AND branch_code = #{branch_code}
-				</when>
-				<otherwise>
-					AND branch_code = #{super_branch_code}
-				</otherwise>
-			</choose>
-		</where>
-	) as rsv_time
-	UNION ALL
-	SELECT	't2' AS col,
-	(
-		select "2t"
-		from tb_reservation_master
-		WHERE rsv_month = #{rsv_month} AND branch_code = #{super_branch_code} AND rsv_date = #{rsv_date}
-	) - 
-	(SELECT COUNT(*) FROM tb_reservation_list WHERE rsv_month = #{rsv_month} AND branch_code = #{super_branch_code} AND select_time = '2t' AND rsv_date = #{rsv_date}) AS cnt,
-	(
-		select t2_name
-		from tb_reservation_info tri 
-		WHERE rsv_month = #{rsv_month} AND branch_code = #{super_branch_code}
-	)
-	UNION ALL
-	select	't3' AS col,
-	(
-		select "3t"
-		from tb_reservation_master
-		WHERE rsv_month = #{rsv_month} AND branch_code = #{super_branch_code} AND rsv_date = #{rsv_date}
-	) - 
-	(SELECT COUNT(*) FROM tb_reservation_list WHERE rsv_month = #{rsv_month} AND branch_code = #{super_branch_code} AND select_time = '3t' AND rsv_date = #{rsv_date}) AS cnt,
-	(
-		select t3_name
-		from tb_reservation_info tri 
-		WHERE rsv_month = #{rsv_month} AND branch_code = #{super_branch_code}
-	)
-	UNION ALL
-	SELECT	't4' AS column,
-	(
-		select "4t"
-		from tb_reservation_master
-		WHERE rsv_month = #{rsv_month} AND branch_code = #{super_branch_code} AND rsv_date = #{rsv_date}
-	) - 
-	(SELECT COUNT(*) FROM tb_reservation_list WHERE rsv_month = #{rsv_month} AND branch_code = #{super_branch_code} AND select_time = '4t' AND rsv_date = #{rsv_date}) AS cnt,
-	(
-		select t4_name
-		from tb_reservation_info tri 
-		WHERE rsv_month = #{rsv_month} AND branch_code = #{super_branch_code})
-	UNION ALL
-	SELECT	't5' AS column,
-	(
-		select "5t"
-		from tb_reservation_master
-		WHERE rsv_month = #{rsv_month} AND branch_code = #{super_branch_code} AND rsv_date = #{rsv_date}
-	) - 
-	(SELECT COUNT(*) FROM tb_reservation_list WHERE rsv_month = #{rsv_month} AND branch_code = #{super_branch_code} AND select_time = '5t' AND rsv_date = #{rsv_date}) AS cnt,
-	(
-		select t5_name
-		from tb_reservation_info tri 
-		WHERE rsv_month = #{rsv_month} AND branch_code = #{super_branch_code}
-	)
-	UNION ALL
-	SELECT	't6' AS column,
-	(
-		select "6t"
-		from tb_reservation_master
-		WHERE rsv_month = #{rsv_month} AND branch_code = #{super_branch_code} AND rsv_date = #{rsv_date}
-	) - 
-	(SELECT COUNT(*) FROM tb_reservation_list WHERE rsv_month = #{rsv_month} AND branch_code = #{super_branch_code} AND select_time = '6t' AND rsv_date = #{rsv_date}) AS cnt,
-	(
-		select t6_name
-		from tb_reservation_info tri 
-		WHERE rsv_month = #{rsv_month} AND branch_code = #{super_branch_code}
-	)
-	UNION ALL
-	SELECT	't7' AS column,
-	(
-		select "7t"
-		from tb_reservation_master
-		WHERE rsv_month = #{rsv_month} AND branch_code = #{super_branch_code} AND rsv_date = #{rsv_date}
-	) - 
-	(SELECT COUNT(*) FROM tb_reservation_list WHERE rsv_month = #{rsv_month} AND branch_code = #{super_branch_code} AND select_time = '7t' AND rsv_date = #{rsv_date}) AS cnt,
-	(
-		select t7_name
-		from tb_reservation_info tri 
-		WHERE rsv_month = #{rsv_month} AND branch_code = #{super_branch_code}
-	)
-	UNION ALL
-	SELECT	't8' AS column,
-	(
-		select "8t"
-		from tb_reservation_master
-		WHERE rsv_month = #{rsv_month} AND branch_code = #{super_branch_code} AND rsv_date = #{rsv_date}
-	) - 
-	(SELECT COUNT(*) FROM tb_reservation_list WHERE rsv_month = #{rsv_month} AND branch_code = #{super_branch_code} AND select_time = '8t' AND rsv_date = #{rsv_date}) AS cnt,
-	(
-		select t8_name
-		from tb_reservation_info tri 
-		WHERE rsv_month = #{rsv_month} AND branch_code = #{super_branch_code}
-		)
-	UNION ALL
-	SELECT	't9' AS column,
-	(
-		select "9t"
-		from tb_reservation_master
-		WHERE rsv_month = #{rsv_month} AND branch_code = #{super_branch_code} AND rsv_date = #{rsv_date}
-	) - 
-	(SELECT COUNT(*) FROM tb_reservation_list WHERE rsv_month = #{rsv_month} AND branch_code = #{super_branch_code} AND select_time = '9t' AND rsv_date = #{rsv_date}) AS cnt,
-	(
-		select t9_name
-		from tb_reservation_info tri 
-		WHERE rsv_month = #{rsv_month} AND branch_code = #{super_branch_code}
-	)
-	UNION ALL
-	SELECT	't10' AS column,
-	(
-		select "10t"
-		from tb_reservation_master
-		WHERE rsv_month = #{rsv_month} AND branch_code = #{super_branch_code} AND rsv_date = #{rsv_date}
-	) - 
-	(SELECT COUNT(*) FROM tb_reservation_list WHERE rsv_month = #{rsv_month} AND branch_code = #{super_branch_code} AND select_time = '10t' AND rsv_date = #{rsv_date}) AS cnt,
-	(
-		select t10_name
-		from tb_reservation_info tri 
-		WHERE rsv_month = #{rsv_month} AND branch_code = #{super_branch_code}
-	)
+		<foreach collection="timeSlots" item="timeSlot" separator="UNION ALL">
+			SELECT
+				't${timeSlot}' AS col,
+				(	SELECT "${timeSlot}t"
+					FROM tb_reservation_master 
+					<where>
+						rsv_month = #{rsv_month} AND rsv_date = #{rsv_date}
+						<choose>
+							<when test="super_branch_code == null or super_branch_code == ''">
+								and branch_code = #{branch_code}
+							</when>
+							<otherwise>
+								and branch_code = #{super_branch_code}
+							</otherwise>
+						</choose>
+					</where>
+				)
+				<![CDATA[-]]>
+				(	SELECT COUNT(*)
+					FROM tb_reservation_list
+					<where>
+						rsv_month = #{rsv_month} AND rsv_date = #{rsv_date} AND select_time = 't${timeSlot}'
+						<choose>
+							<when test="super_branch_code == null or super_branch_code == ''">
+								and branch_code = #{branch_code}
+							</when>
+							<otherwise>
+								and branch_code = #{super_branch_code}
+							</otherwise>
+						</choose>
+					</where>
+				) AS cnt,
+				(	SELECT "t${timeSlot}_name"
+					FROM tb_reservation_info tri 
+					<where>
+						rsv_month = #{rsv_month}
+						<choose>
+							<when test="super_branch_code == null or super_branch_code == ''">
+								and branch_code = #{branch_code}
+							</when>
+							<otherwise>
+								and branch_code = #{super_branch_code}
+							</otherwise>
+						</choose>
+					</where>
+				) as rsv_time
+		</foreach>
 	</select>
 	
 	<delete id="removeReservationByAdmin" parameterType="map">
@@ -668,4 +575,27 @@
 			#{branch_code}, #{rsv_date}, #{select_time}, #{login_id}, now(), #{user_id}
 		)
 	</insert>
+	
+	<select id="getRecentlyBranchReservationInfo" parameterType="map" resultType="map">
+		SELECT rsv_month, t1_name, t2_name, t3_name, t4_name, t5_name, t6_name, t7_name, t8_name, t9_name, t10_name
+		FROM tb_reservation_info
+		<where>
+			<choose>
+				<when test="super_branch_code == null or super_branch_code == ''">
+					and branch_code = #{branch_code}
+				</when>
+				<otherwise>
+					and branch_code = #{super_branch_code}
+				</otherwise>
+			</choose>
+		</where>
+		ORDER BY rsv_month desc
+		limit 1
+	</select>
+	
+	<update id="updateRsvStatus" parameterType="map">
+		UPDATE tb_reservation_list
+		SET rsv_status = #{rsv_status}
+		WHERE user_id = #{user_id} and select_time = #{select_time} and rsv_date = #{rsv_date}
+	</update>
 </mapper>

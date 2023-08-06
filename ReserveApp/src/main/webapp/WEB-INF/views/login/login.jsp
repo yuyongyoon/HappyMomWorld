@@ -6,7 +6,7 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 	
-		<link rel="icon" href="/static/assets/img/icon.ico" type="image/x-icon"/>
+		<link rel="icon" href="/static/favicon.ico" type="image/x-icon"/>
 	
 		<script src="/static/assets/js/plugin/webfont/webfont.min.js"></script>
 		<script>
