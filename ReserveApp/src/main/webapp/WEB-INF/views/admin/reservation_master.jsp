@@ -103,7 +103,7 @@ $(document).ready(function() {
 						$('#reservation_tbody').find('tr').remove();
 						$('#btn_initCreate').css('display', '');
 						$('#btn_tableReset').css('display', 'none');
-						$('#role').val() == 'SUPERADMIN' ? $('#input_stdWorker').val('') : $('#input_stdWorker').val(result.branchReservationInfo.worker_num);
+// 						$('#role').val() == 'SUPERADMIN' ? $('#input_stdWorker').val('') : $('#input_stdWorker').val(result.branchReservationInfo.worker_num);
 						if($('#role').val() != 'SUPERADMIN'){
 							fnCom.createTable(result);
 						}
@@ -112,7 +112,7 @@ $(document).ready(function() {
 						$('#btn_tableReset').css('display', 'none');
 						$('#btn_clearFilter').css('display', '');
 						$('.td_filter').css('display', '');
-						$('#role').val() == 'SUPERADMIN' ? $('#input_stdWorker').val('') : $('#input_stdWorker').val(result.branchReservationInfo.worker_num);
+// 						$('#role').val() == 'SUPERADMIN' ? $('#input_stdWorker').val('') : $('#input_stdWorker').val(result.branchReservationInfo.worker_num);
 						fnCom.createTable(result);
 					}
 					
@@ -122,7 +122,7 @@ $(document).ready(function() {
 						$('#td_time').css('display', 'none');
 						$('#btn_set').css('display', 'none');
 						$('#btn_save').css('display', 'none');
-						$('.stdWorker').css('display', 'none');
+// 						$('.stdWorker').css('display', 'none');
 						$('.td_filter').css('display', 'none');
 						$('#btn_clearFilter').css('display','none')
 						
@@ -159,7 +159,7 @@ $(document).ready(function() {
 			
 			let ranchReservationInfo = {
 					rsv_month	: $('#datepicker_input_create').val(),
-					worker_num	: $('#input_stdWorker').val(),
+// 					worker_num	: $('#input_stdWorker').val(),
 					t1_name		: std_1t,
 					t2_name		: std_2t,
 					t3_name		: std_3t,
@@ -210,7 +210,7 @@ $(document).ready(function() {
 						std_8t = param.t8_name;
 						std_9t = param.t9_name;
 						std_10t = param.t10_name;
-						$('#input_stdWorker').val(std_worker);
+// 						$('#input_stdWorker').val(std_worker);
 						$('#btn_get').click();
 						alert('저장되었습니다.');
 						$('#rsv_set_modal').modal('hide');
@@ -233,10 +233,10 @@ $(document).ready(function() {
 			$('#reservation_tbody').find('tr').remove();
 			$('#btn_tableReset').css('display','');
 			
-			if($('#input_stdWorker').val() == null || $('#input_stdWorker').val() == ''){
-				alert('기준 근무자 수를 입력해주세요.');
-				return false;
-			}
+// 			if($('#input_stdWorker').val() == null || $('#input_stdWorker').val() == ''){
+// 				alert('기준 근무자 수를 입력해주세요.');
+// 				return false;
+// 			}
 			
 			for(let i = 0; i <= 10; i++) {
 				$('#span_'+i+'t').text($('#input_'+i+'t').val());
@@ -258,9 +258,10 @@ $(document).ready(function() {
 			datesArray.forEach(day => {
 				trData += '<tr value="'+cfn_tuiDateFormat(day)+'">'
 				trData += '<td>' + cfn_tuiDateFormat(day) +'</td>'
-				trData += '<td>'+$('#input_stdWorker').val()+'</td>'
+// 				trData += '<td>'+$('#input_stdWorker').val()+'</td>'
 				for(let i = 1; i <= 10; i++){
-					trData += '<td value="'+i+'t" input_val="'+$('#input_stdWorker').val()+'"><input type="number" min="0" value="'+$('#input_stdWorker').val()+'"></td>'
+// 					trData += '<td value="'+i+'t" input_val="'+$('#input_stdWorker').val()+'"><input type="number" min="0" value="0"></td>'
+					trData += '<td value="'+i+'t" input_val="0"><input type="number" min="0" value="0"></td>'
 				}
 				trData += '</tr>'
 			})
@@ -349,8 +350,8 @@ $(document).ready(function() {
 		btn_save: function(){
 			let selectMonth = $('#datepicker_input_create').val();
 			let trList = $('#reservation_tbody tr');
-			let workerNum = $('#input_stdWorker').val();
-			std_worker = $('#input_stdWorker').val();
+// 			let workerNum = $('#input_stdWorker').val();
+// 			std_worker = $('#input_stdWorker').val();
 			
 			if(trList.length <= 0){
 				alert('예약 테이블을 먼저 생성해주세요.');
@@ -364,7 +365,7 @@ $(document).ready(function() {
 				let obj = {
 					rsv_month: selectMonth,
 					rsv_date: rsvDate,
-					rsv_worker: workerNum
+// 					rsv_worker: workerNum
 				};
 
 				for (var i = 1; i <= 10; i++) {
@@ -392,12 +393,12 @@ $(document).ready(function() {
 				$('#reservation_tbody').find('tr').remove();
 				$('#btn_initCreate').css('display','');
 				$('#btn_tableReset').css('display','none');
-				$('#select_filter').val('none');
-				$('.td_filter').css('display', 'none');
-				$('#btn_clearFilter').css('display','none');
-				$('#td_day').css('display','none');
-				$('#td_time').css('display','none');
-				$('.td_range').css('display','none');
+// 				$('#select_filter').val('none');
+// 				$('.td_filter').css('display', 'none');
+// 				$('#btn_clearFilter').css('display','none');
+// 				$('#td_day').css('display','none');
+// 				$('#td_time').css('display','none');
+// 				$('.td_range').css('display','none');
 			}
 		},
 		btn_set: function(){
@@ -457,9 +458,8 @@ $(document).ready(function() {
 			list.masterList.forEach(function(data){
 				trData += '<tr value="'+data.rsv_date+'">'
 				trData += '<td>' + data.rsv_date +'</td>'
-				trData += '<td>'+data.worker_num+'</td>'
+// 				trData += '<td>'+data.worker_num+'</td>'
 				for(let i = 1; i <= 10; i++){
-					console.log(data[i+'t_cnt'], data[i+'t'])
 					if(data[i+'t_cnt'] == 0){
 						trData += '<td value="'+i+'t" input_val="'+data[i+'t']+'"><input type="number" min="'+data[i+'t_cnt']+'" value="'+data[i+'t']+'"></td>'
 					} else {
@@ -473,11 +473,11 @@ $(document).ready(function() {
 		}
 	};
 	
-	$('#input_stdWorker').blur(function(){
-		if($('#input_stdWorker').val() < 0){
-			$('#input_stdWorker').val(0);
-		}
-	});
+// 	$('#input_stdWorker').blur(function(){
+// 		if($('#input_stdWorker').val() < 0){
+// 			$('#input_stdWorker').val(0);
+// 		}
+// 	});
 	
 	stdMonthPicker.on('change', function(){
 		ajaxCom.getReservationMasterData();
@@ -559,17 +559,18 @@ $(document).on('input', '#reservation_tbody input[type="number"]', function() {
 													</div>
 													<div class="datepicker-cell" id="datepicker_create" style="margin-top: -1px;"></div>
 												</td>
-												<th class="stdWorker">기준 근무자 수</th>
-												<td class="stdWorker">
-													<input type="number" id="input_stdWorker" class="form-control form-control-sm" style="width:50%" min="0">
-												</td>
-												<td id="td_tableBtnList" style="text-align:center;">
-													<button type="button" id="btn_initCreate" class="header-btn btn btn-warning btn-sm">생성</button>
+<!-- 												<th class="stdWorker">기준 근무자 수</th> -->
+<!-- 												<td class="stdWorker"> -->
+<!-- 													<input type="number" id="input_stdWorker" class="form-control form-control-sm" style="width:50%" min="0"> -->
+<!-- 												</td> -->
+												<td colspan="4" id="td_tableBtnList" style="text-align:center;">
+													<button type="button" id="btn_initCreate" class="header-btn btn btn-warning btn-sm">테이블 생성</button>
 													<button type="button" id="btn_tableReset" class="header-btn btn btn-warning btn-sm">테이블 초기화</button>
-												</td>
-												<td style="text-align:center;">
 													<button type="button" id="btn_clearFilter" class="header-btn btn btn-warning btn-sm">필터 초기화</button>
 												</td>
+<!-- 												<td style="text-align:center;"> -->
+													
+<!-- 												</td> -->
 											</tr>
 											
 											<tr id="td_day" style="border-bottom: 1px solid lightgray">
@@ -604,7 +605,7 @@ $(document).on('input', '#reservation_tbody input[type="number"]', function() {
 														<label class="custom-control-label" for="checkbox_0">일</label>
 													</div>
 												</td>
-												<th>변경할 근무자 수</th>
+												<th>근무자 수</th>
 												<td>
 													<input type="number" id="input_workerForDay" class="form-control form-control-sm" style="width:100%" min="0">
 												</td>
@@ -656,7 +657,7 @@ $(document).on('input', '#reservation_tbody input[type="number"]', function() {
 														<label class="custom-control-label" for="checkbox_10t">10 Time</label>
 													</div>
 												</td>
-												<th>변경할 근무자 수</th>
+												<th>근무자 수</th>
 												<td>
 													<input type="number" id="input_workerForTime" class="form-control form-control-sm" style="width:100%" min="0">
 												</td>
@@ -676,7 +677,6 @@ $(document).on('input', '#reservation_tbody input[type="number"]', function() {
 										<thead>
 											<tr>
 												<th scope="col" style="width: 100px;">날짜</th>
-												<th scope="col" style="width: 100px;">생성 당시 <br> 기준 근무자 수</th>
 												<th scope="col" style="width: 80px;">1 Time<br><span id="span_1t"></span></th>
 												<th scope="col" style="width: 80px;">2 Time<br><span id="span_2t"></span></th>
 												<th scope="col" style="width: 80px;">3 Time<br><span id="span_3t"></span></th>

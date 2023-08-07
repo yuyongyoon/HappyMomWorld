@@ -94,8 +94,7 @@
 	</select>
 	<!--=============== 지점 관리 ===============-->
 	<select id="getBranchList" parameterType="map"  resultType="map">
-		SELECT	seq_no,
-				tu.id,
+		SELECT	tu.id,
 				tu.user_status,
 				tbm.branch_code as branch_code_col, 
 				tbm.branch_name, 
@@ -326,13 +325,13 @@
 	
 	<insert id="addbranchReservationInfo" parameterType="map">
 		INSERT into tb_reservation_info (
-			branch_code, rsv_month, worker_num,
+			branch_code, rsv_month, 
 			t1_name, t2_name, t3_name, t4_name, t5_name,
 			t6_name, t7_name, t8_name, t9_name, t10_name,
 			created_id, created_dt, modified_id, modified_dt
 		)
 		VALUES (
-			#{branch_code}, #{rsv_month}, #{worker_num}::int,
+			#{branch_code}, #{rsv_month}, 
 			#{t1_name}, #{t2_name}, #{t3_name}, #{t4_name}, #{t5_name},
 			#{t6_name}, #{t7_name}, #{t8_name}, #{t9_name}, #{t10_name},
 			#{login_id}, now(), #{login_id}, now()
@@ -342,7 +341,6 @@
 	<update id="updatebranchReservationInfo" parameterType="map">
 		UPDATE tb_reservation_info
 		SET 
-			worker_num = #{worker_num}::int,
 			t1_name = #{t1_name},
 			t2_name = #{t2_name},
 			t3_name = #{t3_name},
