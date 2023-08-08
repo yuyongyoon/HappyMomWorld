@@ -173,14 +173,14 @@ public class AdminController {
 		return result;
 	}
 	
-	@RequestMapping(value = "/saveBranchReservationInfo", method = RequestMethod.POST)
-	@ResponseBody
-	public Map<String,Object> saveBranchReservationInfo(HttpServletRequest request, @RequestBody Map<String,Object> param) throws Exception {
-		Map<String,Object> result = new HashMap<String,Object>();
-		String msg = adminService.saveBranchReservationInfo(param);
-		result.put("msg", msg);
-		return result;
-	}
+//	@RequestMapping(value = "/saveBranchReservationInfo", method = RequestMethod.POST)
+//	@ResponseBody
+//	public Map<String,Object> saveBranchReservationInfo(HttpServletRequest request, @RequestBody Map<String,Object> param) throws Exception {
+//		Map<String,Object> result = new HashMap<String,Object>();
+//		String msg = adminService.saveBranchReservationInfo(param);
+//		result.put("msg", msg);
+//		return result;
+//	}
 	
 	//=======================대시보드 controller=====================
 	@RequestMapping(value = "/getCalendarEvent", method = RequestMethod.POST)
@@ -201,15 +201,69 @@ public class AdminController {
 		return result;
 	}
 	
-	//=======================지점 정보 관리 controller=====================
-	@RequestMapping(value = "/getRecentlyBranchReservationInfo", method = RequestMethod.POST)
+	@RequestMapping(value = "/getDashInfo", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String,Object> getRecentlyBranchReservationInfo(HttpServletRequest request, @RequestBody Map<String,Object> param) throws Exception {
+	public Map<String,Object> getDashInfo(HttpServletRequest request, @RequestBody Map<String,Object> param) throws Exception {
 		Map<String,Object> result = new HashMap<String,Object>();
-		Map<String,Object> recentlyBranchReservationInfo = adminService.getRecentlyBranchReservationInfo(param);
-		result.put("recentlyBranchReservationInfo", recentlyBranchReservationInfo);
+		Map<String,Object> rsvLastMonth = adminService.getRsvLastMonth(param);
+		List<Map<String,Object>> recentJoinData = adminService.getRecentJoinData(param);
+		List<Map<String,Object>> recentRsvData = adminService.getRecentRsvData(param);
+		List<Map<String,Object>> nonRsvData = adminService.getNonRsvData(param);
+		
+		result.put("rsvLastMonth", rsvLastMonth);
+		result.put("recentJoinData", recentJoinData);
+		result.put("recentRsvData", recentRsvData);
+		result.put("nonRsvData", nonRsvData);
 		return result;
 	}
+	
+	@RequestMapping(value = "/getRecentJoinData", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String,Object> getRecentJoinData(HttpServletRequest request, @RequestBody Map<String,Object> param) throws Exception {
+		Map<String,Object> result = new HashMap<String,Object>();
+		List<Map<String,Object>> recentJoinData = adminService.getRecentJoinData(param);
+		
+		result.put("recentJoinData", recentJoinData);
+		return result;
+	}
+	
+	@RequestMapping(value = "/getRecentRsvData", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String,Object> getRecentRsvData(HttpServletRequest request, @RequestBody Map<String,Object> param) throws Exception {
+		Map<String,Object> result = new HashMap<String,Object>();
+		List<Map<String,Object>> recentRsvData = adminService.getRecentRsvData(param);
+		
+		result.put("recentRsvData", recentRsvData);
+		return result;
+	}
+
+	@RequestMapping(value = "/getNonRsvData", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String,Object> getNonRsvData(HttpServletRequest request, @RequestBody Map<String,Object> param) throws Exception {
+		Map<String,Object> result = new HashMap<String,Object>();
+		List<Map<String,Object>> nonRsvData = adminService.getNonRsvData(param);
+		
+		result.put("nonRsvData", nonRsvData);
+		return result;
+	}
+	
+	@RequestMapping(value = "/saveMsgLog", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String,Object> saveMsgLog(HttpServletRequest request, @RequestBody Map<String,Object> param) throws Exception {
+		Map<String,Object> result = new HashMap<String,Object>();
+		String msg = adminService.saveMsgLog(param);
+		result.put("msg", msg);
+		return result;
+	}
+	//=======================지점 정보 관리 controller=====================
+//	@RequestMapping(value = "/getRecentlyBranchReservationInfo", method = RequestMethod.POST)
+//	@ResponseBody
+//	public Map<String,Object> getRecentlyBranchReservationInfo(HttpServletRequest request, @RequestBody Map<String,Object> param) throws Exception {
+//		Map<String,Object> result = new HashMap<String,Object>();
+//		Map<String,Object> recentlyBranchReservationInfo = adminService.getRecentlyBranchReservationInfo(param);
+//		result.put("recentlyBranchReservationInfo", recentlyBranchReservationInfo);
+//		return result;
+//	}
 	
 	@RequestMapping(value = "/saveBranchInfo", method = RequestMethod.POST)
 	@ResponseBody
@@ -220,12 +274,12 @@ public class AdminController {
 		return result;
 	}
 	
-	@RequestMapping(value = "/getBranchPrintInfo", method = RequestMethod.POST)
+	@RequestMapping(value = "/getBranchInfo", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String,Object> getBranchPrintInfo(HttpServletRequest request, @RequestBody Map<String,Object> param) throws Exception {
+	public Map<String,Object> getBranchInfo(HttpServletRequest request, @RequestBody Map<String,Object> param) throws Exception {
 		Map<String,Object> result = new HashMap<String,Object>();
-		Map<String,Object> branchPrintInfo = adminService.getBranchPrintInfo(param);
-		result.put("branchPrintInfo", branchPrintInfo);
+		Map<String,Object> branchInfo = adminService.getBranchInfo(param);
+		result.put("branchInfo", branchInfo);
 		return result;
 	}
 	

@@ -38,7 +38,7 @@ public interface AdminMapper {
 	
 	void deleteReservationMasterData(Map<String,Object> param);
 	
-	int getCntBranchReservationInfo(Map<String,Object> param);
+//	int getCntBranchReservationInfo(Map<String,Object> param);
 	
 	Map<String, Object> getBranchReservationInfo(Map<String,Object> param);
 	
@@ -52,7 +52,7 @@ public interface AdminMapper {
 	
 	List<Map<String,Object>> getSeletedDateReservationList(Map<String,Object> param);
 	
-	Map<String, Object> getBranchPrintInfo(Map<String,Object> param);
+	Map<String, Object> getBranchInfo(Map<String,Object> param);
 	
 	void saveBranchInfo(Map<String,Object> param);
 	//=================================== 예약 현황 ===================================
@@ -68,7 +68,21 @@ public interface AdminMapper {
 	
 	void saveCancelLog(Map<String,Object> param);
 	
-	Map<String,Object> getRecentlyBranchReservationInfo(Map<String,Object> param);
+//	Map<String,Object> getRecentlyBranchReservationInfo(Map<String,Object> param);
 	
 	void updateRsvStatus(Map<String,Object> param);
+	
+	Map<String, Object> getRsvLastMonth(Map<String,Object> param);
+	
+	List<Map<String,Object>> getRecentJoinData(Map<String,Object> param);
+	
+	List<Map<String,Object>> getRecentRsvData(Map<String,Object> param);
+	
+	List<Map<String,Object>> getNonRsvData(Map<String,Object> param);
+	
+	int getMsgLogCnt(Map<String,Object> param);
+	
+	void updateMsgLog(Map<String,Object> param);
+	
+	void saveMsgLog(Map<String,Object> param);
 }
