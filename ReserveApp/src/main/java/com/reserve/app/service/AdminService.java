@@ -131,7 +131,11 @@ public class AdminService {
 			String joinCode = "@" + p3 + Integer.toString(p1) + p4 + Integer.toString(p2);
 			param.put("join_code", joinCode);
 			
-			mapper.addBranchInfo((Map<String,Object>) param);
+			mapper.addBranchToMng((Map<String,Object>) param);
+			mapper.addBranchToInfo((Map<String,Object>) param);
+			mapper.addBranchToUser((Map<String,Object>) param);
+			mapper.addBranchInToRsv((Map<String,Object>) param);
+			
 		}catch (Exception e) {
 			e.printStackTrace();
 			if (e.getCause() instanceof PSQLException) {
@@ -287,7 +291,6 @@ public class AdminService {
 	}
 	
 	public List<Map<String, Object>> getReservationModal(Map<String, Object> param) throws Exception {
-		//수정중
 		param.put("timeSlots", Arrays.asList("1", "2", "3", "4", "5", "6", "7", "8", "9", "10"));
 		System.out.println("========timeSlots========");
 		System.out.println(param);
@@ -295,7 +298,32 @@ public class AdminService {
 		
 		return result;
 	}
-	
+	// 예약 변경
+	public String updateReservation(Map<String,Object> param){ 
+		String msg = "success";
+		try {
+			Map<String,Object> paramU = new HashMap<String,Object>();
+			Map<String,Object> paramD = new HashMap<String,Object>();
+			paramD.putAll(param);
+			paramU.putAll(param);
+			paramD.replace("rsv_date", param.get("pre_rsv_date"));
+			paramD.replace("select_time", param.get("pre_select_time"));
+			paramD.put("flag", "d");
+			paramU.put("flag", "i");
+			
+			mapper.removeReservationByAdmin(paramD); 
+			mapper.changeMagCnt(paramD);
+			mapper.saveCancelLog(paramD); 
+			mapper.updateReservationByAdmin(paramU);
+			mapper.changeMagCnt(paramU);
+			 
+		}catch (Exception e) {
+			e.printStackTrace();
+			msg = "fail";
+		}
+		return msg;
+	}
+	// 예약 취소
 	public String removeReservationByAdmin(Map<String,Object> param){ 
 		String msg = "success";
 		try {

@@ -49,7 +49,7 @@
 			end) as rsv_time
 		FROM tb_reservation_list trl 
 			join tb_reservation_info tri 
-				on trl.branch_code = tri.branch_code and trl.rsv_month = tri.rsv_month
+				on trl.branch_code = tri.branch_code
 			join tb_branch_info tbi
 				on trl.branch_code = tbi.branch_code
 		WHERE
@@ -129,7 +129,7 @@
 	<select id="reservationTimeInfo" parameterType="map" resultType="map">
 		SELECT rsv_month, t1_name, t2_name, t3_name, t4_name, t5_name, t6_name, t7_name, t8_name, t9_name, t10_name 
 		FROM tb_reservation_info
-		WHERE rsv_month = #{rsv_month} and branch_code = #{branch_code}
+		WHERE branch_code = #{branch_code}
 	</select>
 	
 	<select id="getReservationCnt" parameterType="map" resultType="int">

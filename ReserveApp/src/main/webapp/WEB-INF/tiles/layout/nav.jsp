@@ -204,12 +204,12 @@ $(document).ready(function() {
 			</div>
 			<button class="navbar-toggler sidenav-toggler ml-auto" type="button" data-toggle="collapse" data-target="collapse" aria-expanded="false" aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon">
-					<i class="fa fa-bars" style="color: #6610f2!important;"></i>
+					<i class="fa fa-bars" style="color: #716aca!important;"></i>
 				</span>
 			</button>
-			<button class="topbar-toggler more"><i class="fa fa-ellipsis-v" style="color: #6610f2!important;"></i></button>
+			<button class="topbar-toggler more"><i class="fa fa-ellipsis-v" style="color: #716aca!important;"></i></button>
 			<div class="navbar-minimize">
-				<button class="btn btn-minimize btn-rounded" style="color: #6610f2!important;">
+				<button class="btn btn-minimize btn-rounded" style="color: #716aca!important;">
 					<i class="fa fa-bars"></i>
 				</button>
 			</div>

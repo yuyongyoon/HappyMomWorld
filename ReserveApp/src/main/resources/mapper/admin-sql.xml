@@ -117,13 +117,15 @@
 		ORDER BY tbm.branch_code;
 	</select>
 	
-	<insert id="addBranchInfo" parameterType="map">
+	<insert id="addBranchToMng" parameterType="map">
 		insert into tb_branch_mng (
 			branch_name, join_code, created_id, created_dt, modified_id, modified_dt
 		)
 		values (
 			#{branch_name}, #{join_code}, #{login_id}, now(), #{login_id}, now()
 		);
+	</insert>
+	<insert id="addBranchToInfo" parameterType="map">
 		insert into tb_branch_info (
 			branch_name, branch_tel, std_due_date, created_id, created_dt, modified_id, modified_dt, branch_code
 		)
@@ -131,6 +133,8 @@
 			#{branch_name}, #{branch_tel}, #{std_due_date}, #{login_id}, now(), #{login_id}, now(), 
 			(select branch_code from tb_branch_mng where branch_name=#{branch_name})
 		);
+	</insert>
+	<insert id="addBranchToUser" parameterType="map">
 		insert into tb_user (
 			id, password, name, user_role, user_status, phone_number, created_id, created_dt, modified_id, modified_dt, branch_code
 		)
@@ -138,6 +142,8 @@
 			#{id}, #{encpwd}, #{branch_name}, 'ADMIN', 'Y', #{branch_tel}, #{login_id}, now(), #{login_id}, now(),
 			(select branch_code from tb_branch_mng where branch_name=#{branch_name})
 		);
+	</insert>	
+	<insert id="addBranchInToRsv" parameterType="map">
 		insert into tb_reservation_info (
 			rsv_month, created_id, created_dt, modified_id, modified_dt, branch_code
 		)
@@ -460,7 +466,7 @@
 					WHEN a.select_time = 't10' THEN b."t10_name"
 				END AS "reservation_time"
 		FROM tb_reservation_list a
-		JOIN tb_reservation_info b ON a.branch_code = b.branch_code AND a.rsv_month = b.rsv_month
+		JOIN tb_reservation_info b ON a.branch_code = b.branch_code 
 		JOIN tb_user c on a.user_id = c."id"
 		LEFT OUTER JOIN
 			(
@@ -490,7 +496,7 @@
 			</if>
 			<if test='rsv_status != null and rsv_status != ""'>
 				AND (
-					rsv_status = #{rsv_status}
+					rsv_status = ANY(string_to_array(#{rsv_status},','))
 				)
 			</if>
 		</where>
@@ -533,7 +539,6 @@
 				(	SELECT "t${timeSlot}_name"
 					FROM tb_reservation_info tri 
 					<where>
-						rsv_month = #{rsv_month}
 						<choose>
 							<when test="super_branch_code == null or super_branch_code == ''">
 								and branch_code = #{branch_code}
@@ -546,6 +551,41 @@
 				) as rsv_time
 		</foreach>
 	</select>
+	
+	<insert  id="updateReservationByAdmin" parameterType="map">
+		INSERT into tb_reservation_list (
+			rsv_month, rsv_date, select_time, user_id, created_id, created_dt, modified_id, modified_dt, rsv_status, branch_code
+		)
+		VALUES (
+			#{rsv_month}, #{rsv_date}, #{select_time}, #{user_id}, #{login_id}, now(), #{login_id}, now(), 'N',
+			<choose>
+				<when test="super_branch_code == null or super_branch_code == ''">
+					#{branch_code}
+				</when>
+				<otherwise>
+					#{super_branch_code}
+				</otherwise>
+			</choose>
+		)
+	</insert>
+	<!-- <update id="updateReservationByAdmin" parameterType="map">
+		UPDATE tb_reservation_list
+		<set>
+			rsv_month = #{rsv_month},
+			rsv_date = #{rsv_date},
+			select_time = #{rsv_date},
+			modified_dt = now(),
+			<choose>
+				<when test="super_branch_code == null or super_branch_code == ''">
+					modified_id = #{branch_code}
+				</when>
+				<otherwise>
+					modified_id = #{super_branch_code}
+				</otherwise>
+			</choose>
+		</set>
+		where user_id = #{user_id} and rsv_date = #{pre_rsv_date} and select_time = #{pre_select_time}
+	</update> -->
 	
 	<delete id="removeReservationByAdmin" parameterType="map">
 		delete from tb_reservation_list
@@ -567,10 +607,18 @@
 	
 	<insert id="saveCancelLog" parameterType="map">
 		INSERT INTO tb_cancel_log(
-			branch_code, rsv_date, select_time, created_id, created_dt, reservation_id
+			rsv_date, select_time, created_id, created_dt, reservation_id, branch_code
 		)
 		VALUES(
-			#{branch_code}, #{rsv_date}, #{select_time}, #{login_id}, now(), #{user_id}
+			#{rsv_date}, #{select_time}, #{login_id}, now(), #{user_id}, 
+			<choose>
+				<when test="super_branch_code == null or super_branch_code == ''">
+					#{branch_code}
+				</when>
+				<otherwise>
+					#{super_branch_code}
+				</otherwise>
+			</choose>
 		)
 	</insert>
 	
