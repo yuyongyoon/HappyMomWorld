@@ -223,7 +223,6 @@
 			a.branch_code,
 			a.rsv_month,
 			a.rsv_date,
-			c.worker_num,
 			a."1t",
 			COUNT(b.select_time) FILTER (WHERE b.select_time = 't1') AS "1t_cnt",
 			a."2t",
@@ -245,7 +244,6 @@
 			a."10t",
 			COUNT(b.select_time) FILTER (WHERE b.select_time = 't10') AS "10t_cnt"
 		FROM tb_reservation_master a
-			JOIN tb_reservation_info c on a.rsv_month =c.rsv_month  AND a.branch_code = c.branch_code 
 			LEFT OUTER JOIN tb_reservation_list b on a.branch_code = b.branch_code AND a.rsv_month = b.rsv_month AND a.rsv_date = b.rsv_date
 		<where>
 			<choose>
@@ -260,8 +258,7 @@
 		GROUP BY
 			a.branch_code,
 			a.rsv_month,
-			a.rsv_date,
-			c.worker_num
+			a.rsv_date
 		ORDER BY
 			a.rsv_month,
 			a.rsv_date
@@ -307,7 +304,7 @@
 	</select>
 	
 	<select id="getBranchReservationInfo" parameterType="map"  resultType="map">
-		SELECT worker_num, t1_name, t2_name, t3_name, t4_name, t5_name, t6_name, t7_name, t8_name, t9_name, t10_name
+		SELECT t1_name, t2_name, t3_name, t4_name, t5_name, t6_name, t7_name, t8_name, t9_name, t10_name
 		FROM tb_reservation_info
 		<where>
 			<choose>
@@ -320,7 +317,6 @@
 			</choose>
 		</where>
 		ORDER BY rsv_month desc
-		limit 1
 	</select>
 	
 	<insert id="addbranchReservationInfo" parameterType="map">
@@ -357,31 +353,35 @@
 	</update>
 	
 	<select id="getCalendarEvent" parameterType="map"  resultType="map">
-		SELECT TO_CHAR(date_series.rsv_date, 'YYYY-MM-DD') AS rsv_date, COALESCE(reservation_cnt, 0) reservation_cnt
-		FROM (
-			SELECT generate_series(
-				TO_DATE(#{rsv_month}, 'YYYY-MM')::DATE,
-				(TO_DATE(#{rsv_month}, 'YYYY-MM') + INTERVAL '1 month' - INTERVAL '1 day')::DATE,
-				INTERVAL '1 day'
-			) AS rsv_date
-		) date_series
+		SELECT a.rsv_date, COALESCE(reservation_cnt, 0) as reservation_cnt, ("1t" + "2t" + "3t" + "4t" + "5t" + "6t" + "7t" + "8t" + "9t" + "10t") as "open_rsv_cnt"
+		from tb_reservation_master a
 		LEFT JOIN (
-			select rsv_date, count(rsv_date) reservation_cnt
-			from tb_reservation_list
-			<where>
-				rsv_month like #{rsv_month}
-				<choose>
-					<when test="super_branch_code == null or super_branch_code == ''">
-						and branch_code = #{branch_code}
-					</when>
-					<otherwise>
-						and branch_code = #{super_branch_code}
-					</otherwise>
-				</choose>
-			</where>
-			group by rsv_date
-		) reservations ON date_series.rsv_date = reservations.rsv_date::date
-		ORDER BY date_series.rsv_date;
+					select rsv_date, count(rsv_date) reservation_cnt
+					from tb_reservation_list
+					<where>
+						rsv_month like #{rsv_month}
+						<choose>
+							<when test="super_branch_code == null or super_branch_code == ''">
+								and branch_code = #{branch_code}
+							</when>
+							<otherwise>
+								and branch_code = #{super_branch_code}
+							</otherwise>
+						</choose>
+					</where>
+					group by rsv_date
+		) b ON a.rsv_date = b.rsv_date
+		<where>
+			rsv_month like #{rsv_month}
+			<choose>
+				<when test="super_branch_code == null or super_branch_code == ''">
+					and branch_code = #{branch_code}
+				</when>
+				<otherwise>
+					and branch_code = #{super_branch_code}
+				</otherwise>
+			</choose>
+		</where>
 	</select>
 	
 	<select id="getSeletedDateReservationList" parameterType="map"  resultType="map">
@@ -399,7 +399,7 @@
 					WHEN a.select_time = 't10' THEN b."t10_name"
 				END AS "reservation_time"
 		FROM tb_reservation_list a
-		JOIN tb_reservation_info b ON a.branch_code = b.branch_code AND a.rsv_month = b.rsv_month
+		JOIN tb_reservation_info b ON a.branch_code = b.branch_code
 		<where>
 			a.rsv_date = #{rsv_date}
 			<choose>
@@ -413,7 +413,7 @@
 		</where>
 	</select>
 	
-	<select id="getBranchPrintInfo" parameterType="map"  resultType="map">
+	<select id="getBranchInfo" parameterType="map"  resultType="map">
 		SELECT a.branch_name, a.branch_tel, a.branch_addr, a.business_hours, b.join_code
 		FROM tb_branch_info a
 		LEFT OUTER JOIN tb_branch_mng b on a.branch_code = b.branch_code 
@@ -574,9 +574,32 @@
 		)
 	</insert>
 	
-	<select id="getRecentlyBranchReservationInfo" parameterType="map" resultType="map">
-		SELECT rsv_month, t1_name, t2_name, t3_name, t4_name, t5_name, t6_name, t7_name, t8_name, t9_name, t10_name
-		FROM tb_reservation_info
+<!-- 	<select id="getRecentlyBranchReservationInfo" parameterType="map" resultType="map"> -->
+<!-- 		SELECT rsv_month, t1_name, t2_name, t3_name, t4_name, t5_name, t6_name, t7_name, t8_name, t9_name, t10_name -->
+<!-- 		FROM tb_reservation_info -->
+<!-- 		<where> -->
+<!-- 			<choose> -->
+<!-- 				<when test="super_branch_code == null or super_branch_code == ''"> -->
+<!-- 					and branch_code = #{branch_code} -->
+<!-- 				</when> -->
+<!-- 				<otherwise> -->
+<!-- 					and branch_code = #{super_branch_code} -->
+<!-- 				</otherwise> -->
+<!-- 			</choose> -->
+<!-- 		</where> -->
+<!-- 		ORDER BY rsv_month desc -->
+<!-- 		limit 1 -->
+<!-- 	</select> -->
+	
+	<update id="updateRsvStatus" parameterType="map">
+		UPDATE tb_reservation_list
+		SET rsv_status = #{rsv_status}
+		WHERE user_id = #{user_id} and select_time = #{select_time} and rsv_date = #{rsv_date}
+	</update>
+	
+	<select id="getRsvLastMonth" parameterType="map" resultType="map">
+		SELECT rsv_month, created_dt 
+		FROM tb_reservation_master
 		<where>
 			<choose>
 				<when test="super_branch_code == null or super_branch_code == ''">
@@ -587,13 +610,151 @@
 				</otherwise>
 			</choose>
 		</where>
-		ORDER BY rsv_month desc
-		limit 1
+		GROUP BY rsv_month, branch_code, rsv_date, created_dt
+		ORDER BY rsv_month desc, rsv_date desc
+		LIMIT 1
 	</select>
 	
-	<update id="updateRsvStatus" parameterType="map">
-		UPDATE tb_reservation_list
-		SET rsv_status = #{rsv_status}
-		WHERE user_id = #{user_id} and select_time = #{select_time} and rsv_date = #{rsv_date}
+	<select id="getRecentJoinData" parameterType="map" resultType="map">
+		SELECT a.id, a.name, a.phone_number, TO_CHAR(a.created_dt, 'YYYY-MM-DD') as created_dt,
+				CASE
+					WHEN b.has_reservation = a.massage_total and massage_cnt = 0 THEN 'Y'
+					ELSE 'N'
+				END AS reserve_cnt_status,
+				CASE
+					WHEN c.status IS NOT NULL THEN c.status
+					ELSE 'N'
+				END AS msg_status
+		FROM tb_user a
+		LEFT OUTER JOIN
+			(
+				SELECT user_id, branch_code, COUNT(*) AS has_reservation
+				FROM tb_reservation_list
+				GROUP BY user_id, branch_code
+			) b ON a.branch_code = b.branch_code AND a.id = b.user_id
+		LEFT OUTER JOIN 
+			(
+				SELECT user_id, status
+				FROM tb_msg_log
+				WHERE msg_type = 'join'
+			) c ON a.id = c.user_id
+		<where>
+			DATE(a.created_dt) >= CURRENT_DATE - INTERVAL '6 day'
+			<choose>
+				<when test="super_branch_code == null or super_branch_code == ''">
+					and a.branch_code = #{branch_code}
+				</when>
+				<otherwise>
+					and a.branch_code = #{super_branch_code}
+				</otherwise>
+			</choose>
+		</where>
+		ORDER BY a.created_dt DESC
+	</select>
+	
+	<select id="getRecentRsvData" parameterType="map" resultType="map">
+		SELECT a.user_id, a.rsv_date, a.select_time, TO_CHAR(a.created_dt, 'YYYY-MM-DD') as created_dt,
+				CASE WHEN a.select_time = 't1' then b.t1_name
+					 WHEN a.select_time = 't2' then b.t2_name 
+					 WHEN a.select_time = 't3' then b.t3_name 
+					 WHEN a.select_time = 't4' then b.t4_name 
+					 WHEN a.select_time = 't5' then b.t5_name 
+					 WHEN a.select_time = 't6' then b.t6_name 
+					 WHEN a.select_time = 't7' then b.t7_name 
+					 WHEN a.select_time = 't8' then b.t8_name
+					 WHEN a.select_time = 't9' then b.t9_name
+					 WHEN a.select_time = 't10' then b.t10_name
+				END as select_time_nm,
+				CASE
+					WHEN c.status IS NOT NULL THEN c.status
+					ELSE 'N'
+				END AS msg_status
+		FROM tb_reservation_list a
+		LEFT OUTER JOIN tb_reservation_info b on b.branch_code = a.branch_code
+		LEFT OUTER JOIN 
+			(
+				SELECT user_id, status, rsv_date
+				FROM tb_msg_log
+				WHERE msg_type = 'rsv'
+			) c ON a.user_id = c.user_id and a.rsv_date = c.rsv_date
+		<where>
+			DATE(a.created_dt) >= CURRENT_DATE - INTERVAL '6 day'
+			<choose>
+				<when test="super_branch_code == null or super_branch_code == ''">
+					and a.branch_code = #{branch_code}
+				</when>
+				<otherwise>
+					and a.branch_code = #{super_branch_code}
+				</otherwise>
+			</choose>
+		</where>
+		ORDER BY a.user_id, created_dt desc
+	</select>
+	
+	<select id="getNonRsvData" parameterType="map" resultType="map">
+		SELECT a.id, a.phone_number, a.massage_total, a.massage_cnt, a.massage_total - a.massage_cnt as free_rsv_cnt, a.due_date, 
+				TO_CHAR(TO_DATE(a.due_date, 'YYYY-MM-DD') - INTERVAL '280 days', 'YYYY-MM-DD') AS last_menstrual_date,
+				TRUNC((CURRENT_DATE - To_char(TO_DATE(a.due_date, 'YYYY-MM-DD') - INTERVAL '280 days', 'YYYY-MM-DD')::date)::numeric / 7) AS pregnancy_weeks,
+				(CURRENT_DATE - To_char(TO_DATE(a.due_date, 'YYYY-MM-DD') - INTERVAL '280 days', 'YYYY-MM-DD')::date)::numeric % 7 AS pregnancy_day,
+				CASE
+					WHEN b.status IS NOT NULL THEN b.status
+					ELSE 'N'
+				END AS msg_status
+		FROM tb_user a
+		LEFT OUTER JOIN 
+			(
+				SELECT user_id, status
+				FROM tb_msg_log
+				WHERE msg_type = 'non_rsv'
+			) b ON a.id = b.user_id
+		<where>
+			a.user_role = 'USER' AND a.user_status = 'Y' AND a.massage_total - a.massage_cnt > 0
+			<choose>
+				<when test="super_branch_code == null or super_branch_code == ''">
+					and a.branch_code = #{branch_code}
+				</when>
+				<otherwise>
+					and a.branch_code = #{super_branch_code}
+				</otherwise>
+			</choose>
+		</where>
+		ORDER BY a.created_dt desc
+	</select>
+	
+	<select id="getMsgLogCnt" parameterType="map" resultType="int">
+		SELECT count(*)
+		FROM tb_msg_log
+		WHERE user_id = #{user_id} 
+				and branch_code = #{branch_code} 
+				and msg_type = #{msg_type}
+				<choose>
+					<when test="rsv_date != null">
+						AND rsv_date = #{rsv_date}
+					</when>
+				</choose>
+	</select>
+	
+	<update id="updateMsgLog" parameterType="map">
+		UPDATE tb_msg_log
+		SET status = #{msg_status},
+			modified_id = #{login_id},
+			modified_dt = now()
+		WHERE user_id = #{user_id} 
+			and branch_code = #{branch_code} 
+			and msg_type = #{msg_type}
+			<choose>
+				<when test="rsv_date != null">
+					AND rsv_date = #{rsv_date}
+				</when>
+			</choose>
 	</update>
+	
+	<insert id="saveMsgLog" parameterType="map">
+		INSERT INTO tb_msg_log(
+			branch_code, msg_type, user_id, status, created_id, created_dt, modified_id, modified_dt, rsv_date
+		)
+		VALUES (
+			#{branch_code}, #{msg_type}, #{user_id}, #{msg_status}, #{login_id}, now(), #{login_id}, now(), #{rsv_date}
+		)
+	</insert>
 </mapper>
