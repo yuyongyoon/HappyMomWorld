@@ -552,6 +552,26 @@
 		</foreach>
 	</select>
 	
+	<select id="getUserReservationList" parameterType="map" resultType="map">
+		SELECT rsv_date, rsv_status, select_time, tbi.branch_name,
+			CASE 
+				WHEN trl.select_time = 't1' THEN tri."t1_name"
+				WHEN trl.select_time = 't2' THEN tri."t2_name"
+				WHEN trl.select_time = 't3' THEN tri."t3_name"
+				WHEN trl.select_time = 't4' THEN tri."t4_name"
+				WHEN trl.select_time = 't5' THEN tri."t5_name"
+				WHEN trl.select_time = 't6' THEN tri."t6_name"
+				WHEN trl.select_time = 't7' THEN tri."t7_name"
+				WHEN trl.select_time = 't8' THEN tri."t8_name"
+				WHEN trl.select_time = 't9' THEN tri."t9_name"
+				WHEN trl.select_time = 't10' THEN tri."t10_name"
+			END AS "reservation_time"
+		FROM tb_reservation_list trl
+			JOIN tb_reservation_info tri ON trl.branch_code = tri.branch_code
+			JOIN tb_branch_info tbi on trl.branch_code = tbi.branch_code
+		WHERE user_id = #{user_id}
+	</select>
+	
 	<insert  id="updateReservationByAdmin" parameterType="map">
 		INSERT into tb_reservation_list (
 			rsv_month, rsv_date, select_time, user_id, created_id, created_dt, modified_id, modified_dt, rsv_status, branch_code
@@ -568,24 +588,6 @@
 			</choose>
 		)
 	</insert>
-	<!-- <update id="updateReservationByAdmin" parameterType="map">
-		UPDATE tb_reservation_list
-		<set>
-			rsv_month = #{rsv_month},
-			rsv_date = #{rsv_date},
-			select_time = #{rsv_date},
-			modified_dt = now(),
-			<choose>
-				<when test="super_branch_code == null or super_branch_code == ''">
-					modified_id = #{branch_code}
-				</when>
-				<otherwise>
-					modified_id = #{super_branch_code}
-				</otherwise>
-			</choose>
-		</set>
-		where user_id = #{user_id} and rsv_date = #{pre_rsv_date} and select_time = #{pre_select_time}
-	</update> -->
 	
 	<delete id="removeReservationByAdmin" parameterType="map">
 		delete from tb_reservation_list

@@ -298,6 +298,11 @@ public class AdminService {
 		
 		return result;
 	}
+	
+	public List<Map<String, Object>> getUserReservationList(Map<String, Object> param) throws Exception {
+		return mapper.getUserReservationList(param);
+	}
+	
 	// 예약 변경
 	public String updateReservation(Map<String,Object> param){ 
 		String msg = "success";

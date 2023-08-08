@@ -249,6 +249,17 @@ public class AdminController {
 		return result;
 	}
 	
+	@RequestMapping(value = "/getUserReservationList", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String,Object> getUserReservationList(HttpServletRequest request, @RequestBody Map<String,Object> param) throws Exception {
+		Map<String,Object> result = new HashMap<String,Object>();
+		List<Map<String,Object>> reservationStatusList = adminService.getUserReservationList(param);
+		result.put("userRsvList", reservationStatusList);
+		System.out.println("=======================getUserRsvList=========");
+		System.out.println(reservationStatusList);
+		return result;
+	}
+	
 	@RequestMapping(value = "/updateReservation", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String,Object> updateReservation(HttpServletRequest request, @RequestBody Map<String,Object> param) throws Exception {

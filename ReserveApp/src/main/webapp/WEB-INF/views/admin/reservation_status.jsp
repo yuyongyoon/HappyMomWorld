@@ -28,7 +28,7 @@ $(document).ready(function() {
 		}
 	});
 	let modalPicker;
-	let editRsvInfoGrid;
+	let getUserRsvListGrid;
 	let changeRsvGrid;
 	let selecteRow;
 	
@@ -87,6 +87,7 @@ $(document).ready(function() {
 					}
 				});
 			},
+			// 예약 변경 리스트
 			getReservationModal: function() {
 				let date = $('#input_datepicker_modal').val();
 				let month = date.substring(0,7);
@@ -111,6 +112,22 @@ $(document).ready(function() {
 							}
 						})
 						changeRsvGrid.resetData(newData);
+					},
+					error	: function(xhr,status){
+						alert('오류가 발생했습니다.');
+					}
+				});
+			},
+			// 회원 예약 리스트
+			getUserRsvListModal: function(id) {
+				$.doPost({
+					url	 	: "/admin/getUserReservationList",
+					data 	: {
+						user_id		: id
+					},
+					success	: function(result) {
+						console.log(result.userRsvList)
+						//getUserRsvListGrid.resetData(result.userRsvList);
 					},
 					error	: function(xhr,status){
 						alert('오류가 발생했습니다.');
@@ -190,7 +207,7 @@ $(document).ready(function() {
 		btn_updateRsvInfo: function(){
 			
 		},
-		btn_updateRsvInfo_close: function(){
+		btn_getRsvList_close: function(){
 			let modalId = $(this).closest(".modal").attr("id");
 			
 			if (confirm("창을 닫으면 수정한 내용이 모두 지워집니다. 닫으시겠습니까?")) {
@@ -398,18 +415,14 @@ $(document).ready(function() {
 			cellclick : function(rowKey,colName,grid,ev){
 				if(colName=="user_id"){
 					let rowData = statusGrid.getRow(rowKey);
-					ajaxCom.getReservationStatusList()
-					$('#input_userId_edit').val(rowData.user_id);
-					$('#input_userName_edit').val(rowData.name);
-					$('#input_phoneNumber_edit').val(rowData.phone_number);
-					$('#input_dueDate_edit').val(rowData.due_date);
-					$('#input_totalMssgCnt_edit').val(rowData.massage_total);
-					$('#input_rsvMssgCnt_edit').val(rowData.massage_reservation_cnt);
-					$('#input_restMssgCnt_edit').val(rowData.massage_cnt);
-					$('#input_enabled_edit').val(rowData.user_status);
-					$('#input_rmk_edit').val(rowData.remark);
+					let userId = rowData.user_id;
+					$('#input_rsvUserId').val(userId);
+					$('#input_rsvUserName').val(rowData.name);
+					$('#input_phoneNumber').val(rowData.phone_number);
  					
-					$('#editRsvInfo_modal').modal('show');
+					ajaxCom.getUserRsvListModal(userId);
+					
+					$('#getRsvList_modal').modal('show');
 				}
 			},
 		}
@@ -423,27 +436,31 @@ $(document).ready(function() {
 		}
 	});
 	// id 클릭 시 modal 팝업과 동시에 grid 생성
-	$('#editRsvInfo_modal').on('shown.bs.modal', function(e){
+	$('#getRsvList_modal').on('shown.bs.modal', function(e){
 		
-		editRsvInfoGrid = tuiGrid.createGrid (
+		getUserRsvListGrid = tuiGrid.createGrid (
 				{
 					gridId : 'grid_userRsvList_modal',
 					height : 300,
+					rowHeight : 32,
+					minRowHeight : 25,
 					scrollX : true,
 					scrollY : true,
 					readOnlyColorFlag : false,
+					rowHeaders: ['rowNum'],
 					columns: [
-						{header : '예약 날짜',		name : 'rsv_date',	width: 200,	align:'center', sortable: true},
-						{header : '예약 시간',		name : 'rsv_time',	width: 200,	align:'center', sortable: true},
-						{header : '예약 지점',		name : 'branch_name',	width: 250,	align:'center', sortable: true},
+						{header : '예약 날짜',		name : 'rsv_date',			width: 200,	align:'center', sortable: true},
+						{header : '예약 시간',		name : 'reservation_time',	width: 200,	align:'center', sortable: true},
+						{header : '지점 이름',		name : 'branch_name',		width: 200,	align:'center', sortable: true},
+						{header : '예약 상태',		name : 'rsv_status',		width: 100,	align:'center', sortable: true,	hidden:true},
 					]
 				},
 				[],
 				{}
 			);
 	});
-	$('#editRsvInfo_modal').on('hidden.bs.modal', function(e){
-		tuiGrid.destroyGrid(editRsvInfoGrid);
+	$('#getRsvList_modal').on('hidden.bs.modal', function(e){
+		tuiGrid.destroyGrid(getUserRsvListGrid);
 		//console.log('모달 닫음')
 	});
 	
@@ -452,6 +469,8 @@ $(document).ready(function() {
 				{
 					gridId : 'grid_changeRsv_modal',
 					height : 300,
+					rowHeight : 32,
+					minRowHeight : 25,
 // 					scrollX : true,
 					scrollY : true,
 					readOnlyColorFlag : false,
@@ -632,8 +651,8 @@ $(document).ready(function() {
 		</div>
 	</div>
 </div>
-<!-- 예약자 정보 수정 modal -->
-<div class="modal fade" id="editRsvInfo_modal" tabindex="-1"
+<!-- 예약자 예약 리스트 modal -->
+<div class="modal fade" id="getRsvList_modal" tabindex="-1"
 	role="dialog" aria-hidden="true">
 	<div class="modal-dialog modal-lg modal-dialog-centered"
 		role="document">
@@ -645,19 +664,19 @@ $(document).ready(function() {
 				<div class="col-12">
 					<div class="form-group row pb-0">
 						<div class="col-sm-3">
-							<label class="control-label mt-2">ID</label>
+							<label class="control-label mt-2">예약자 ID</label>
 						</div>
 						<div class="col-sm-9">
-							<input type="text" class="form-control" id="input_userId_edit"
+							<input type="text" class="form-control" id="input_rsvUserId"
 								style="border: 0px;" readonly>
 						</div>
 					</div>
 					<div class="form-group row pb-0">
 						<div class="col-sm-3">
-							<label class="control-label mt-2" style="border: 0px;">이름</label>
+							<label class="control-label mt-2" style="border: 0px;">예약자 이름</label>
 						</div>
 						<div class="col-sm-9">
-							<input type="text" class="form-control" id="input_userName_edit"
+							<input type="text" class="form-control" id="input_rsvUserName"
 								maxlength='12'>
 						</div>
 					</div>
@@ -667,7 +686,7 @@ $(document).ready(function() {
 						</div>
 						<div class="col-sm-9">
 							<input type="tel" class="form-control"
-								id="input_phoneNumber_edit">
+								id="input_phoneNumber">
 						</div>
 					</div>
 					<div class="modal-body">
@@ -675,66 +694,13 @@ $(document).ready(function() {
 							<div id="grid_userRsvList_modal"></div>
 						</div>
 					</div>
-					<!-- <div class="form-group row pb-0">
-						<div class="col-sm-3">
-							<label class="control-label mt-2">출산 예정일</label>
-						</div>
-						<div class="col-sm-9">
-							<div class="tui-datepicker-input tui-datetime-input">
-								<input type="text" id="input_dueDate_edit" aria-label="Date-Time">
-								<span class="tui-ico-date"></span>
-							</div>
-							<div id="wrapper_edit" style="margin-top: -1px;"></div>
-						</div>
-					</div>
-					<div class="form-group row pb-0">
-						<div class="col-sm-3">
-							<label class="control-label mt-2" style="border: 0px;">전체 마사지 횟수</label>
-						</div>
-						<div class="col-sm-9">
-							<input type="number" class="form-control" id="input_totalMssgCnt_edit" min=1>
-						</div>
-					</div>
-					<div class="form-group row pb-0">
-						<div class="col-sm-3">
-							<label class="control-label mt-2" style="border: 0px;">예약 마사지 횟수</label>
-						</div>
-						<div class="col-sm-3">
-							<input type="number" class="form-control" id="input_rsvMssgCnt_edit" disabled>
-						</div>
-						<div class="col-sm-3">
-						<label class="control-label mt-2" style="border: 0px;">잔여 마사지 횟수</label>
-						</div>
-						<div class="col-sm-3">
-							<input type="number" class="form-control" id="input_restMssgCnt_edit" disabled>
-						</div>
-					</div>
-					<div class="form-group row pb-0">
-						<div class="col-sm-3">
-							<label class="control-label mt-2" style="border: 0px;">사용 여부</label>
-						</div>
-						<div class="col-sm-9">
-							<select name="enabled" class="form-control" id="input_enabled_edit">
-								<option value="Y">사용</option>
-								<option value="N">미사용</option>
-							</select>
-						</div>
-					</div>
-					<div class="form-group row pb-0">
-						<div class="col-sm-3 ">
-							<label class="control-label mt-2">비고</label>
-						</div>
-						<div class="col-sm-9">
-							<textarea class="form-control" id="input_rmk_edit" style="height: 70px;resize: none;"></textarea>
-						</div>
-					</div> -->
 				</div>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary"
-					id="btn_updateRsvInfo">저장</button>
+				<!-- <button type="button" class="btn btn-secondary"
+					id="btn_updateRsvInfo">저장</button> -->
 				<button type="button" class="btn btn-info"
-					id="btn_updateRsvInfo_close">취소</button>
+					id="btn_getRsvList_close">닫기</button>
 			</div>
 		</div>
 	</div>

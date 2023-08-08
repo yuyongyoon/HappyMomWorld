@@ -18,10 +18,13 @@ public interface AdminMapper {
 	List<Map<String, Object>> getBranchNameList(Map<String, Object> param);
 	
 	List<Map<String,Object>> getBranchList(Map<String,Object> param);
-	
+		
 	void addBranchToMng(Map<String,Object> param);
+	
 	void addBranchToInfo(Map<String,Object> param);
+	
 	void addBranchToUser(Map<String,Object> param);
+	
 	void addBranchInToRsv(Map<String,Object> param);
 	
 	void updateBranchInfo(Map<String, Object> param);
@@ -59,6 +62,8 @@ public interface AdminMapper {
 	List<Map<String,Object>> getReservationStatusList(Map<String,Object> param);
 	
 	List<Map<String,Object>> getReservationModal(Map<String,Object> param);
+	
+	List<Map<String,Object>> getUserReservationList(Map<String,Object> param);
 	
 	void updateReservationByAdmin(Map<String, Object> param);
 	
