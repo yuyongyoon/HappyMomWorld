@@ -120,6 +120,7 @@ $(document).ready(function() {
 				url		: "/admin/getSeletedDateReservationList",
 				data	: param,
 				success	: function(result){
+					$('#click_dt').text(date);
 					fnCom.createTr(result.reservationList)
 				},
 				error	: function(xhr,status){
@@ -294,7 +295,7 @@ $(document).ready(function() {
 			$("#reservation_tbody").empty();
 			
 			data.forEach((reservation, index) => {
-				let row = '<tr><td>'+Number(index+1)+'</td><td>'+reservation.rsv_date+'</td><td>'+reservation.user_id+'</td>'+reservation.user_id+'<td>'+reservation.reservation_time+'</td></tr>';
+				let row = '<tr><td>'+Number(index+1)+'</td><td>'+reservation.user_name+'</td><td>'+reservation.phone_number+'</td>'+reservation.user_id+'<td>'+reservation.reservation_time.substring(0,5)+'</td></tr>';
 				
 				$("#reservation_tbody").append(row);
 			});
@@ -566,33 +567,17 @@ a:link {
 					</div>
 				</div>
 				<div class="col-md-4">
-					<div class="card" style="min-height:390px;">
-						<div class="card-body pb-0" style="margin-bottom:53px;">
-							<h2 class="mb-1 fw-bold">예약 리스트</h2>
-							<div class="table-responsive" style="overflow-y: auto;max-height: 300px;">
-								<table class="table table-head-bg-secondary">
-									<thead>
-										<tr>
-											<th scope="col" id="idx">#</th>
-											<th scope="col" id="rsv_date">예약일</th>
-											<th scope="col" id="user_id">아이디</th>
-											<th scope="col" id="reservation_time">예약시간</th>
-										</tr>
-									</thead>
-									<tbody id="reservation_tbody">
-									</tbody>
-								</table>
-							</div>
-						</div>
-					</div>
 					<div class="card">
+						<div class="card-header pb-0">
+							<h2 class="fw-bold">알림</h2>
+						</div>
 						<div class="card-body">
 							<div class="d-flex mb-2">
 								<div class="avatar">
 									<span class="avatar-title rounded-circle border border-white bg-info"><i class="fas fa-calendar-alt"></i></span>
 								</div>
 								<div class="flex-1 ml-3 pt-3 mb-3">
-									<h3 class="text-uppercase fw-bold mb-1">마지막 예약 생성 달<span class="text-warning pl-3" id="rsvLstMonth"></span></h3>
+									<h3 class="text-uppercase fw-bold mb-1">마지막 예약 생성 월<span class="text-warning pl-3" id="rsvLstMonth"></span></h3>
 								</div>
 							</div>
 							<div class="d-flex mb-2" style="cursor:pointer;" id="recentJoin">
@@ -600,7 +585,7 @@ a:link {
 									<span class="avatar-title rounded-circle border border-white bg-success"><i class="fas fa-user-clock"></i></span>
 								</div>
 								<div class="flex-1 ml-3 pt-3 mb-3">
-									<h3 class="text-uppercase fw-bold mb-1">최근에 가입한 회원 <span class="text-warning pl-3" id="recentJoinCnt"></span></h3>
+									<h3 class="text-uppercase fw-bold mb-1">최근 7일 내 가입한 회원<span class="text-warning pl-3" id="recentJoinCnt"></span></h3>
 								</div>
 							</div>
 							<div class="d-flex mb-2" style="cursor:pointer;" id="recentRsv">
@@ -608,7 +593,7 @@ a:link {
 									<span class="avatar-title rounded-circle border border-white bg-primary"><i class="far fa-calendar-plus"></i></span>
 								</div>
 								<div class="flex-1 ml-3 pt-3 mb-3">
-									<h3 class="text-uppercase fw-bold mb-1">최근에 예약한 회원 <span class="text-warning pl-3" id="recentRsvCnt"></span></h3>
+									<h3 class="text-uppercase fw-bold mb-1">최근 7일 내 예약 리스트<span class="text-warning pl-3" id="recentRsvCnt"></span></h3>
 								</div>
 							</div>
 							<div class="d-flex mb-2" style="cursor:pointer;" id="nonRsv">
@@ -616,8 +601,32 @@ a:link {
 									<span class="avatar-title rounded-circle border border-white bg-danger"><i class="fas fa-bullhorn"></i></span>
 								</div>
 								<div class="flex-1 ml-3 pt-3 mb-3">
-									<h3 class="text-uppercase fw-bold mb-1">예약 하지 않은 회원 <span class="text-warning pl-3" id="nonRsvCnt"></span></h3>
+									<h3 class="text-uppercase fw-bold mb-1">예약이 완료되지 않은 회원 <span class="text-warning pl-3" id="nonRsvCnt"></span></h3>
 								</div>
+							</div>
+						</div>
+					</div>
+					
+					<div class="card" style="min-height:370px;">
+						<div class="card-header pb-0">
+							<div class="row">
+								<h2 class="fw-bold"><span id="click_dt" class="ml-3"></span>&nbsp;예약 확인</h2>
+							</div>
+						</div>
+						<div class="card-body pb-0" >
+							<div class="table-responsive" style="overflow-y: auto;max-height: 300px;">
+								<table class="table table-head-bg-secondary">
+									<thead>
+										<tr>
+											<th scope="col" id="idx">No</th>
+											<th scope="col" id="user_name">이름</th>
+											<th scope="col" id="phone_number">전화번호</th>
+											<th scope="col" id="reservation_time">예약시간</th>
+										</tr>
+									</thead>
+									<tbody id="reservation_tbody">
+									</tbody>
+								</table>
 							</div>
 						</div>
 					</div>

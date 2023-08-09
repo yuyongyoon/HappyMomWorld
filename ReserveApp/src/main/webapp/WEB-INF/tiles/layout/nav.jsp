@@ -9,10 +9,10 @@ $(document).ready(function() {
 	
 	$('#btn_updateInfo_save').click(function(){
 		let param = {
-				id			: $('#input_userId_info').val(),		// id
-				name 		: $('#input_userName_info').val(),		// 이름
-				phone_number: $('#input_phoneNumber_info').val(),	// 전화번호
-				due_date	: updateInfo_datePicker.getDate() != null ? cfn_tuiDateFormat(updateInfo_datePicker.getDate()) : '',// 출산 예정일
+				id			: $('#input_userId_info').val(),
+				name 		: $('#input_userName_info').val(),
+				phone_number: $('#input_phoneNumber_info').val(),
+				due_date	: updateInfo_datePicker.getDate() != null ? cfn_tuiDateFormat(updateInfo_datePicker.getDate()) : '',
 		};
 		updateUserInfo(param);
 	})
@@ -63,42 +63,37 @@ $(document).ready(function() {
 		}
 	})
 
-	// 비밀번호 변경 버튼 클릭 시
 	$('.updateUserPwd_list').click(function() {
-		console.log('클릭')
 		$('#nav-updatePwd-modal').modal('show');
-		//새로운 비밀번호 확인
 		$('#input_checkNewPwd_pwd').blur(function() {
 			let pwd = $('#input_newPwd_pwd').val().trim();
 			let checkPwd = $('#input_checkNewPwd_pwd').val().trim();
 			let pwdPattern = /^.{8,}$/;
 			
-			console.log($('#input_orgPwd_pwd').val().trim() )
 			if($('#input_orgPwd_pwd').val().trim() == ''){
 				$('#checkNewPwd_msg').text('기존 비밀번호를 입력해주세요');
 				$('#checkNewPwd_msg_div').css('display', '');
 				return false;
 			} else if(!pwdPattern.test(pwd)){
 				$('#input_newPwd_pwd').val('');
-				$('#input_checkNewPwd_pwd').val(''); 
+				$('#input_checkNewPwd_pwd').val('');
 				$('#checkNewPwd_msg').text('비밀번호는 공백을 제외하고 8자 이상입니다.');
 				$('#checkNewPwd_msg_div').css('display', '');
 				return false;
-			} else if(pwd != checkPwd) {// 비밀 번호가 다를 경우
-				$('#input_checkNewPwd_pwd').val(''); // 비번 초기화
+			} else if(pwd != checkPwd) {
+				$('#input_checkNewPwd_pwd').val('');
 				$('#checkNewPwd_msg').text('비밀 번호가 다릅니다.');
 				$('#checkNewPwd_msg_div').css('display', '');
 				return false;
-			} else { // 비밀 번호가 동일할 경우
+			} else {
 				$('#input_newPwd_pwd').attr('disabled', true);
 				$('#input_checkNewPwd_pwd').attr('disabled', true);
-				$('#checkNewPwd_msg_div').css('display','none');// 에러 메세지 지우기
+				$('#checkNewPwd_msg_div').css('display','none');
 				doubleCheckPwd = true;
 			}
 		});
 	});
 	
-	// 지점 선택
 	if($('#role').val() == 'SUPERADMIN'){
 		getBranch();
 		
@@ -107,7 +102,6 @@ $(document).ready(function() {
 		})
 	}
 	
-	// 개인 정보 변경 버튼 클릭 시
 	$('#updateUserInfo_list').click(function() {
 		$('#nav-updateInfo-modal').modal('show');
 		getUserInfo();
@@ -165,7 +159,7 @@ $(document).ready(function() {
 					return false;
 				} else{
 					cfn_clearField('nav-updatePwd-modal');
-					$('#nav-updatePwd-modal').modal('hide');//창 닫기
+					$('#nav-updatePwd-modal').modal('hide');
 					alert('비밀번호가 변경되었습니다.');
 					doubleCheckPwd = false;
 				}
@@ -191,12 +185,35 @@ $(document).ready(function() {
 			}
 		});
 	}
+	
+	function showPassword(button) {
+		var inputPassword = $(button).parent().find('input');
+		if (inputPassword.attr('type') === "password") {
+			inputPassword.attr('type', 'text');
+		} else {
+			inputPassword.attr('type','password');
+		}
+	}
+
+	$('.show-password').on('click', function(){
+		showPassword(this);
+	})
 })
 </script>
-
+<style>
+.show-password{
+	position: absolute;
+	right: 20px;
+	top: 50%;
+	transform: translateY(-50%);
+	font-size: 22px;
+	cursor: pointer;
+	margin-right: 10px;
+}
+</style>
 <div class="wrapper">
 	<div class="main-header" data-background-color="purple">
-		<!-- Logo Header -->
+
 		<div class="logo-header" style="background-color:white!important">
 			
 			<div class="logo" >
@@ -216,9 +233,7 @@ $(document).ready(function() {
 				</button>
 			</div>
 		</div>
-		<!-- End Logo Header -->
 
-		<!-- Navbar Header -->
 		<nav class="navbar navbar-header navbar-expand-lg">
 			<div class="container-fluid">
 				<sec:authorize access="hasAnyRole('ROLE_SUPERADMIN')">
@@ -323,7 +338,7 @@ $(document).ready(function() {
 								<label class="control-label mt-2">출산 예정일</label>
 							</div>
 							<div class="col-sm-9">
-								<div class="tui-datepicker-input tui-datetime-input tui-has-focus">
+								<div class="tui-datepicker-input tui-datetime-input tui-has-focus tui-datepicker-custom" style="width:100%">
 									<input type="text" id="input_dueDate_info" aria-label="Date-Time">
 									<span class="tui-ico-date"></span>
 								</div>
@@ -333,7 +348,6 @@ $(document).ready(function() {
 					</div>
 				</div>
 				<div class="modal-footer">
-					<!-- <button type="button" class="btn btn-secondary" id="">비밀번호 변경</button> -->
 					<button type="button" class="btn btn-secondary" id="btn_updateInfo_save">정보 저장</button>
 					<button type="button" class="btn btn-info" id="btn_updateInfo_close">취소</button>
 				</div>
@@ -357,6 +371,9 @@ $(document).ready(function() {
 								</div>
 								<div class="col-sm-9">
 									<input type="password" class="form-control" id="input_orgPwd_pwd" autoComplete="off"/>
+									<div class="show-password">
+										<i class="flaticon-interface"></i>
+									</div>
 								</div>
 							</div>
 							<div class="col-sm-12 pb-0 mt-2" id="checkOrgPwd_msg_div">
@@ -367,7 +384,10 @@ $(document).ready(function() {
 									<label class="control-label mt-2" style="border: 0px;">새 비밀번호</label>
 								</div>
 								<div class="col-sm-9">
-									<input type="password" class="form-control" id="input_newPwd_pwd" maxlength='13' autoComplete="off"> 
+									<input type="password" class="form-control" id="input_newPwd_pwd" maxlength='13' autoComplete="off">
+									<div class="show-password">
+										<i class="flaticon-interface"></i>
+									</div>
 								</div>
 							</div>
 							<div class="form-group row pb-0">
@@ -375,7 +395,10 @@ $(document).ready(function() {
 									<label class="control-label mt-2" style="border: 0px;">새 비밀번호 확인</label>
 								</div>
 								<div class="col-sm-9">
-									<input type="password" class="form-control" id="input_checkNewPwd_pwd" maxlength='13' autoComplete="off"> 
+									<input type="password" class="form-control" id="input_checkNewPwd_pwd" maxlength='13' autoComplete="off">
+									<div class="show-password">
+										<i class="flaticon-interface"></i>
+									</div> 
 								</div>
 							</div>
 							<div class="col-sm-12 pb-0 mt-2" id="checkNewPwd_msg_div">

@@ -47,6 +47,9 @@ $(document).ready(function() {
 	let spanTag = $('<span>').addClass('btn-label').html('<i class="fas fa-sync"></i>');
 	refreshButton.append(spanTag);
 	
+	$('.fc-prev-button').attr('title', '이전 달');
+	$('.fc-next-button').attr('title', '다음 달');
+	
 	$('.fc-prev-button').click(function() {
 		let currentDate = cfn_yearMonthFormat(calendar.getDate());
 		ajaxCom.getAvailableDate(currentDate);
@@ -73,28 +76,29 @@ $(document).ready(function() {
 						calendar.removeAllEvents();
 						
 						result.calendarList.forEach(item => {
-							
-							if(item.rsv_date == cfn_tuiDateFormat(new Date())){
-								item.is_available = 'NO'
-							}
-							
-							let liColor;
-							let title;
+							if(item.rsv_cnt > 0){
+								if(item.rsv_date == cfn_tuiDateFormat(new Date())){
+									item.is_available = 'NO'
+								}
+								
+								let liColor;
+								let title;
 
-							if(item.is_available == 'YES'){
-								liColor = '#716aca';
-								title = '선택';
-							} else {
-								liColor = 'gray';
-								title = '마감';
+								if(item.is_available == 'YES'){
+									liColor = '#716aca';
+									title = '선택';
+								} else {
+									liColor = 'gray';
+									title = '마감';
+								}
+								
+								calendar.addEvent({
+									title		: title,
+									start		: item.rsv_date,
+									end			: item.rsv_date,
+									color		: liColor
+								});
 							}
-							
-							calendar.addEvent({
-								title		: title,
-								start		: item.rsv_date,
-								end			: item.rsv_date,
-								color		: liColor
-							});
 						})
 						
 						calendar.refetchEvents();
@@ -173,8 +177,11 @@ $(document).ready(function() {
 			opt = '<option value="none">예약 시간 선택</option>'
 			keysWithValueNotZero.sort().forEach(key => {
 				let name = key+'_name';
-				opt += '<option value="'+key+'">'+rsvInfo[name]+'</option>'
+				opt += '<option value="'+key+'">'+rsvInfo[name].substring(0,5)+'</option>'
 			})
+			
+			let dateVal = data.rsv_date.split('-');
+			$('#selectDate').text(dateVal[0] + '년 ' + dateVal[1] + '월 ' + dateVal[2] + '일');
 			
 			$('#rsvDate').val(data.rsv_date);
 			
@@ -282,14 +289,25 @@ a:link {
 			</div>
 			<div class="modal-body">
 				<div class="col-12">
-					<div class="form-group row pb-0">
-						<div class="col-sm-3">
-							<label for="select_rsv" class="control-label mt-2">예약 가능한 시간</label>
+					<div class="form-group pb-0">
+						<div class="row">
+							<div class="col-sm-3 mb-2">
+								<label class="control-label mt-2">선택한 시간</label>
+							</div>
+							<div class="col-sm-9 p-2 pl-3">
+								<span id="selectDate"></span>
+							</div>
 						</div>
-						<div class="col-sm-9">
-							<select class="form-control" id="selectRsv">
-							</select>
+						<div class="row">
+							<div class="col-sm-3">
+								<label for="selectRsv" class="control-label mt-2">예약 가능한 시간</label>
+							</div>
+							<div class="col-sm-9">
+								<select class="form-control" id="selectRsv"></select>
+							</div>
 						</div>
+						
+						
 						<div style="display:none;">
 							<input type="text" id="rsvDate">
 						</div>

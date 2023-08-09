@@ -34,7 +34,7 @@
 	</update>
 	
 	<select id="getReservation" parameterType="map" resultType="map">
-		SELECT trl.user_id, trl.rsv_date, tbi.branch_name, tbi.branch_tel, trl.select_time,
+		SELECT trl.user_id, trl.rsv_date, tbi.branch_name, tbi.branch_tel, trl.select_time, trl.rsv_status,
 			(case
 				when trl.select_time = 't1' then tri.t1_name
 				when trl.select_time = 't2' then tri.t2_name
@@ -71,7 +71,7 @@
 	</delete>
 	
 	<select id="getAvailableDate" parameterType="map" resultType="map">
-		SELECT a.rsv_date,
+		SELECT a.rsv_date, ("1t"+"2t"+"3t"+"4t"+"5t"+"6t"+"7t"+"8t"+"9t"+"10t") as rsv_cnt,
 			CASE
 				WHEN a.rsv_date::date <![CDATA[<]]> CURRENT_DATE THEN 'NO'
 				WHEN (
@@ -168,22 +168,4 @@
 			#{branch_code}, #{rsv_month}, #{rsv_date}, #{select_time}, #{login_id}, #{login_id}, now(), #{login_id}, now()
 		)
 	</insert>
-
-<!-- 	</select> -->
-<!-- 			SELECT a.rsv_date, -->
-<!-- 			a."1t" - COALESCE(COUNT(CASE WHEN b.select_time = '1t' THEN 1 END), 0) AS "1t", -->
-<!-- 			a."2t" - COALESCE(COUNT(CASE WHEN b.select_time = '2t' THEN 1 END), 0) AS "2t", -->
-<!-- 			a."3t" - COALESCE(COUNT(CASE WHEN b.select_time = '3t' THEN 1 END), 0) AS "3t", -->
-<!-- 			a."4t" - COALESCE(COUNT(CASE WHEN b.select_time = '4t' THEN 1 END), 0) AS "4t", -->
-<!-- 			a."5t" - COALESCE(COUNT(CASE WHEN b.select_time = '5t' THEN 1 END), 0) AS "5t", -->
-<!-- 			a."6t" - COALESCE(COUNT(CASE WHEN b.select_time = '6t' THEN 1 END), 0) AS "6t", -->
-<!-- 			a."7t" - COALESCE(COUNT(CASE WHEN b.select_time = '7t' THEN 1 END), 0) AS "7t", -->
-<!-- 			a."8t" - COALESCE(COUNT(CASE WHEN b.select_time = '8t' THEN 1 END), 0) AS "8t", -->
-<!-- 			a."9t" - COALESCE(COUNT(CASE WHEN b.select_time = '9t' THEN 1 END), 0) AS "9t", -->
-<!-- 			a."10t" - COALESCE(COUNT(CASE WHEN b.select_time = '10t' THEN 1 END), 0) AS "10t" -->
-<!-- 		FROM tb_reservation_master a -->
-<!-- 		LEFT JOIN tb_reservation_list b ON a.rsv_date = b.rsv_date AND a.branch_code = b.branch_code AND a.rsv_month = b.rsv_month -->
-<!-- 		WHERE a.branch_code = #{branch_code} AND a.rsv_month = #{rsv_month} -->
-<!-- 		GROUP BY a.rsv_date, a."1t", a."2t", a."3t", a."4t", a."5t", a."6t", a."7t", a."8t", a."9t", a."10t" -->
-<!-- 		ORDER BY a.rsv_date -->
 </mapper>
