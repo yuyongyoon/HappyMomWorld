@@ -309,8 +309,8 @@ public class AdminController {
 		Map<String,Object> result = new HashMap<String,Object>();
 		List<Map<String,Object>> reservationStatusList = adminService.getUserReservationList(param);
 		result.put("userRsvList", reservationStatusList);
-		System.out.println("=======================getUserRsvList=========");
-		System.out.println(reservationStatusList);
+		//System.out.println("=======================getUserRsvList=========");
+		//System.out.println(reservationStatusList);
 		return result;
 	}
 	

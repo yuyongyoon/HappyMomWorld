@@ -28,9 +28,9 @@ $(document).ready(function() {
 		}
 	});
 	let modalPicker;
-	let getUserRsvListGrid;
+	let userRsvListGrid;
 	let changeRsvGrid;
-	let selecteRow;
+	let userRsvListData = [];
 	
 	ajaxCom = {
 			getReservationStatusList : function() {
@@ -118,7 +118,7 @@ $(document).ready(function() {
 					}
 				});
 			},
-			// 회원 예약 리스트
+			// 회원 예약 리스트(수정중)
 			getUserRsvListModal: function(id) {
 				$.doPost({
 					url	 	: "/admin/getUserReservationList",
@@ -126,8 +126,12 @@ $(document).ready(function() {
 						user_id		: id
 					},
 					success	: function(result) {
-						console.log(result.userRsvList)
-						//getUserRsvListGrid.resetData(result.userRsvList);
+						result.userRsvList.forEach( d => {
+							userRsvListData.push(d)
+							//userRsvListGrid.append(d)
+						});
+						console.log('회원 예약 리스트>>',userRsvListData)
+						//userRsvListGrid.resetData(result.userRsvList);
 					},
 					error	: function(xhr,status){
 						alert('오류가 발생했습니다.');
@@ -366,10 +370,10 @@ $(document).ready(function() {
 			minRowHeight : 25,
 			columns: [
 				{header : '예약ID',			name : 'user_id',			align:'left',	sortable: true,  style:'cursor:pointer;text-decoration:underline;', sortable: true},
-				{header : '예약자',			name : 'name',				align:'left',	sortable: true},
-				{header : '전화번호',			name : 'phone_number',		align:'left',	sortable: true},
 				{header : '예약일',			name : 'rsv_date',			align:'left',	sortable: true},
 				{header : '예약시간',			name : 'reservation_time',	align:'left',	sortable: true},
+				{header : '예약자',			name : 'name',				align:'left',	sortable: true},
+				{header : '전화번호',			name : 'phone_number',		align:'left',	sortable: true},
 				{header : '등록일',			name : 'created_dt',		align:'left',	sortable: true},
 				{header : '마사지 확인 여부',	name : 'rsv_status',		align:'center', sortable: true, formatter: 'listItemText', disabled:true, editor: { type: 'select', options: { listItems: [{text:'확인', value:'Y'},{text:'미확인',value:'N'}]}}},
 				{header : '등록시',			name : 'select_time',						hidden:true},
@@ -422,7 +426,7 @@ $(document).ready(function() {
  					
 					ajaxCom.getUserRsvListModal(userId);
 					
-					$('#getRsvList_modal').modal('show');
+					$('#userRsvList_modal').modal('show');
 				}
 			},
 		}
@@ -436,31 +440,38 @@ $(document).ready(function() {
 		}
 	});
 	// id 클릭 시 modal 팝업과 동시에 grid 생성
-	$('#getRsvList_modal').on('shown.bs.modal', function(e){
-		
-		getUserRsvListGrid = tuiGrid.createGrid (
+	$('#userRsvList_modal').on('shown.bs.modal', function(e){
+		userRsvListGrid = tuiGrid.createGrid (
 				{
 					gridId : 'grid_userRsvList_modal',
-					height : 300,
-					rowHeight : 32,
-					minRowHeight : 25,
 					scrollX : true,
 					scrollY : true,
 					readOnlyColorFlag : false,
+					height : 250,
+					rowHeight : 32,
+					minRowHeight : 25,
 					rowHeaders: ['rowNum'],
 					columns: [
-						{header : '예약 날짜',		name : 'rsv_date',			width: 200,	align:'center', sortable: true},
-						{header : '예약 시간',		name : 'reservation_time',	width: 200,	align:'center', sortable: true},
-						{header : '지점 이름',		name : 'branch_name',		width: 200,	align:'center', sortable: true},
-						{header : '예약 상태',		name : 'rsv_status',		width: 100,	align:'center', sortable: true,	hidden:true},
-					]
+						{header : '예약 날짜',			name : 'rsv_date',			width: 200,	align:'center', sortable: true},
+						{header : '예약 시간',			name : 'reservation_time',	width: 200,	align:'center', sortable: true},
+						{header : '지점 이름',			name : 'branch_name',		width: 150,	align:'center', sortable: true},
+						{header : '실행 여부',			name : 'rsv_status',		width: 100,	align:'center', sortable: true}
+					],
+					data: [
+					    {
+					    	rsv_date: '2023-08-08', 
+					    	rsv_status: 'N', 
+					    	branch_name: 'A지점1', 
+					    	reservation_time: '10:30 ~ 11:30'
+					    }
+					  ]
 				},
 				[],
 				{}
 			);
 	});
-	$('#getRsvList_modal').on('hidden.bs.modal', function(e){
-		tuiGrid.destroyGrid(getUserRsvListGrid);
+	$('#userRsvList_modal').on('hidden.bs.modal', function(e){
+		tuiGrid.destroyGrid(userRsvListGrid);
 		//console.log('모달 닫음')
 	});
 	
@@ -493,7 +504,6 @@ $(document).ready(function() {
 			);
 			ajaxCom.getReservationModal();
 	});
-	
 	
 	$('#input_datepicker_modal').change(function(){
 		//console.log("rsv date: ", $('#input_datepicker_modal').val())
@@ -540,10 +550,8 @@ $(document).ready(function() {
 										</div>
 										<div class="col-sm-6">
 											<div class="button-list float-right">
-												<button type="button" id="btn_get"
-													class="header-btn btn btn-secondary float-left ml-2 mb-2">조회</button>
-												<button type="button" id="btn_download"
-													class="header-btn btn btn-secondary float-left ml-2 mb-2">다운로드</button>
+												<button type="button" id="btn_get" class="header-btn btn btn-secondary float-left ml-2 mb-2">조회</button>
+												<button type="button" id="btn_download" class="header-btn btn btn-secondary float-left ml-2 mb-2">다운로드</button>
 											</div>
 										</div>
 									</div>
@@ -557,48 +565,31 @@ $(document).ready(function() {
 										<th>조회기간</th>
 										<td colspan="6">
 											<div class="row ml-1">
-												<div>
+												<div class="custom-control custom-radio custom-control-inline">
+													<input type="radio" id="radio_today" name="searchRange" class="custom-control-input" value="today" checked="checked"> 
+													<label class="custom-control-label" for="radio_today">오늘</label>
+												</div>
+													<div class="custom-control custom-radio custom-control-inline">
+													<input type="radio" id="radio_tomorrow" name="searchRange" class="custom-control-input" value="tomorrow"> 
+													<label class="custom-control-label" for="radio_tomorrow">내일</label>
+												</div>
+												<div class="custom-control custom-radio custom-control-inline">
+													<input type="radio" id="radio_week" name="searchRange" class="custom-control-input" value="week"> 
+													<label class="custom-control-label" for="radio_week">주</label>
+												</div>
+												<div class="custom-control custom-radio custom-control-inline">
+													<input type="radio" id="radio_month" name="searchRange" class="custom-control-input" value="month"> 
+													<label class="custom-control-label" for="radio_month">월</label>
 													<div
-													class="custom-control custom-radio custom-control-inline">
-													<input type="radio" id="radio_today" name="searchRange"
-														class="custom-control-input" value="today"
-														checked="checked"> <label
-														class="custom-control-label" for="radio_today">오늘</label>
-												</div>
-												<div
-													class="custom-control custom-radio custom-control-inline">
-													<input type="radio" id="radio_tomorrow" name="searchRange"
-														class="custom-control-input" value="tomorrow"> <label
-														class="custom-control-label" for="radio_tomorrow">내일</label>
-												</div>
-												<div
-													class="custom-control custom-radio custom-control-inline">
-													<input type="radio" id="radio_week" name="searchRange"
-														class="custom-control-input" value="week"> <label
-														class="custom-control-label" for="radio_week">주</label>
-												</div>
-												</div>
-												
-												<div
-													class="custom-control custom-radio custom-control-inline">
-													<input type="radio" id="radio_month" name="searchRange"
-														class="custom-control-input" value="month"> <label
-														class="custom-control-label" for="radio_month">월</label>
-													<div
-														class="tui-datepicker-input tui-datetime-input tui-has-focus ml-2"
-														style="margin-bottom: 6px;">
-														<input type="text" id="datepicker_input_create"
-															aria-label="Year-Month"> <span
-															class="tui-ico-date"></span>
+														class="tui-datepicker-input tui-datetime-input tui-has-focus ml-2" style="margin-bottom: 6px;">
+														<input type="text" id="datepicker_input_create" aria-label="Year-Month"> 
+															<span class="tui-ico-date"></span>
 													</div>
-													<div class="datepicker-cell" id="datepicker_create"
-														style="margin-top: -1px;"></div>
+													<div class="datepicker-cell" id="datepicker_create" style="margin-top: -1px;"></div>
 												</div>
-												<div
-													class="custom-control custom-radio custom-control-inline">
-													<input type="radio" id="radio_range" name="searchRange"
-														class="custom-control-input" value="range"> <label
-														class="custom-control-label" for="radio_range">기간선택</label>
+												<div class="custom-control custom-radio custom-control-inline">
+													<input type="radio" id="radio_range" name="searchRange" class="custom-control-input" value="range"> 
+														<label class="custom-control-label" for="radio_range">기간선택</label>
 													<div class="tui-datepicker-input tui-datetime-input ml-2">
 														<input id="input_startDate" type="text" aria-label="Date">
 														<span class="tui-ico-date"></span>
@@ -615,21 +606,61 @@ $(document).ready(function() {
 										</td>
 									</tr>
 									<tr>
-										<th>이름 / 아이디</th>
-										<td><input type="text" id="input_id_name"
-											class="form-control form-control-sm"
-											style="width: 75%; height: 15%" /></td>
-										<th>전화번호</th>
-										<td><input type="text" id="input_phone"
-											class="form-control form-control-sm"
-											style="width: 75%; height: 15%" /></td>
-										<th>마사지 실행 여부</th>
-										<td><select id="select_rsv_status" class="form-control"
-											style="padding: 3px; width: 100%; height: 15%">
+									
+									<td colspan="12">
+										<div class="from-group row">
+											<label for="input_id_name" class="search-label float-left ml-3 mt-2">ID / 이름</label>
+											<div class="col-md-3">
+												<input type="text" id="input_id_name" class="form-control form-control-sm mt-1"/>
+											</div>
+											<label for="input_phone" class="search-label float-left ml-5 mt-2">전화번호</label>
+											<div class="col-md-3">
+												<input type="text" id="input_phone" class="form-control form-control-sm mt-1"/>
+											</div>
+											<label for="select_rsvStatus" class="search-label float-left ml-5 mt-1">마사지 실행 여부</label>
+											<div class="col-md-2">
+												<select id="select_rsvStatus" class="form-control mb-2" style="padding:3px; width:60%; height:80%;">
+													<option value="">선택</option>
+													<option value="Y">YES</option>
+													<option value="N">NO</option>
+												</select>
+											</div>
+										</div>
+									</td>
+									<!-- <td colspan="12">
+										<div class="row search flex-grow-1">
+											<div class="col-sm-4">
+												<label class="control-label mt-2">이름 / 아이디</label>
+												<input type="text" id="input_id_name" class="form-control form-control-sm mt2"/>
+											</div>
+											<div class="col-sm-4">
+												<label class="control-label mt-2">전화번호</label>
+												<input type="text" id="input_phone" class="form-control form-control-sm" style="width: 75%; height: 15%" />
+											</div>
+											<div class="col-sm-3">
+												<label class="control-label mt-2">마사지 실행 여부</label>
+												<select id="select_rsv_status" class="form-control" style="padding: 3px; width: 100%; height: 15%">
 												<option value="Y,N" selected>선택</option>
 												<option value="Y">확인</option>
 												<option value="N">미확인</option>
-										</select></td>
+												</select>
+											</div>
+										</div>
+									</td> -->
+										
+										<!-- 
+										<th>이름 / 아이디</th>
+										<td><input type="text" id="input_id_name" class="form-control form-control-sm" style="width: 75%; height: 15%" /></td>
+										<th>전화번호</th>
+										<td><input type="text" id="input_phone" class="form-control form-control-sm" style="width: 75%; height: 15%" /></td>
+										<th>마사지 실행 여부</th>
+										<td>
+											<select id="select_rsv_status" class="form-control" style="padding: 3px; width: 100%; height: 15%">
+												<option value="Y,N" selected>선택</option>
+												<option value="Y">확인</option>
+												<option value="N">미확인</option>
+											</select>
+										</td> -->
 									</tr>
 								</tbody>
 							</table>
@@ -652,8 +683,7 @@ $(document).ready(function() {
 	</div>
 </div>
 <!-- 예약자 예약 리스트 modal -->
-<div class="modal fade" id="getRsvList_modal" tabindex="-1"
-	role="dialog" aria-hidden="true">
+<div class="modal fade" id="userRsvList_modal" tabindex="-1" role="dialog" aria-hidden="true">
 	<div class="modal-dialog modal-lg modal-dialog-centered"
 		role="document">
 		<div class="modal-content">
@@ -706,8 +736,7 @@ $(document).ready(function() {
 	</div>
 </div>
 <!-- 예약 변경 modal -->
-<div class="modal fade" id="changeRsv_modal" tabindex="-1" role="dialog"
-	aria-hidden="true">
+<div class="modal fade" id="changeRsv_modal" tabindex="-1" role="dialog" aria-hidden="true">
 	<div class="modal-dialog modal-dialog-centered" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
