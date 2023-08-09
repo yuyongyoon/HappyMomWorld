@@ -30,7 +30,6 @@ $(document).ready(function() {
 	let modalPicker;
 	let userRsvListGrid;
 	let changeRsvGrid;
-	let userRsvListData = [];
 	
 	ajaxCom = {
 			getReservationStatusList : function() {
@@ -126,12 +125,6 @@ $(document).ready(function() {
 						user_id		: id
 					},
 					success	: function(result) {
-						result.userRsvList.forEach( d => {
-							userRsvListData.push(d)
-							//userRsvListGrid.append(d)
-						});
-// 						console.log('회원 예약 리스트>>',userRsvListData)
-// 						console.log(userRsvListGrid)
 						userRsvListGrid.resetData(result.userRsvList);
 					},
 					error	: function(xhr,status){
@@ -370,21 +363,21 @@ $(document).ready(function() {
 			rowHeight : 32,
 			minRowHeight : 25,
 			columns: [
-				{header : '예약ID',			name : 'user_id',			align:'left',	sortable: true,  style:'cursor:pointer;text-decoration:underline;', sortable: true},
-				{header : '예약일',			name : 'rsv_date',			align:'left',	sortable: true},
-				{header : '예약시간',			name : 'reservation_time',	align:'left',	sortable: true},
-				{header : '예약자',			name : 'name',				align:'left',	sortable: true},
-				{header : '전화번호',			name : 'phone_number',		align:'left',	sortable: true},
-				{header : '등록일',			name : 'created_dt',		align:'left',	sortable: true},
-				{header : '마사지 확인 여부',	name : 'rsv_status',		align:'center', sortable: true, formatter: 'listItemText', disabled:true, editor: { type: 'select', options: { listItems: [{text:'확인', value:'Y'},{text:'미확인',value:'N'}]}}},
-				{header : '등록시',			name : 'select_time',						hidden:true},
-				{header : '출산 예정일',		name : 'due_date',							hidden:true},
-				{header : '예약 마사지횟수',		name : 'massage_reservation_cnt',			hidden:true},
-				{header : '잔여 마사지횟수',		name : 'massage_cnt',						hidden:true},
-				{header : '전체 마사지횟수',		name : 'massage_total',						hidden:true},
-				{header : '사용여부',			name : 'user_status',						hidden:true},
-				{header : '비고',				name : 'remark',							hidden:true},
-				{header : '예약 변경',			name : 'change',	width : 100, align:'center', 
+				{header : '예약ID',			name : 'user_id',			width : 130,	align:'left',	sortable: true,  style:'cursor:pointer;text-decoration:underline;', sortable: true},
+				{header : '예약일',			name : 'rsv_date',							align:'center',	sortable: true},
+				{header : '예약시간',			name : 'reservation_time',					align:'center',	sortable: true},
+				{header : '예약자',			name : 'name',				width : 110,	align:'center',	sortable: true},
+				{header : '전화번호',			name : 'phone_number',						align:'center',	sortable: true},
+				{header : '등록일',			name : 'created_dt',		width : 200,	align:'center',	sortable: true},
+				{header : '확인 여부',			name : 'rsv_status',		width : 100,	align:'center', sortable: true, formatter: 'listItemText', disabled:true, editor: { type: 'select', options: { listItems: [{text:'확인', value:'Y'},{text:'미확인',value:'N'}]}}},
+				{header : '등록시',			name : 'select_time',					hidden:true},
+				{header : '출산 예정일',		name : 'due_date',						hidden:true},
+				{header : '예약 마사지횟수',		name : 'massage_reservation_cnt',		hidden:true},
+				{header : '잔여 마사지횟수',		name : 'massage_cnt',					hidden:true},
+				{header : '전체 마사지횟수',		name : 'massage_total',					hidden:true},
+				{header : '사용여부',			name : 'user_status',					hidden:true},
+				{header : '비고',				name : 'remark',						hidden:true},
+				{header : '예약 변경',			name : 'change',			width : 100, align:'center', 
 					renderer: {
 						type : ButtonRenderer,
 						options : {
@@ -393,20 +386,20 @@ $(document).ready(function() {
 						}
 					}
 				},
-				{header : '예약취소',			name : 'cancle',	width : 100, align:'center',
+				{header : '예약 취소',			name : 'cancle',	width : 100, align:'center',
 					renderer: {
 						type : ButtonRenderer,
 						options : {
-							value : '취소',
+							value : '예약 취소',
 							click: fnCom.reservationCancle
 						}
 					}
 				},
-				{header : '마사지 실행 여부',		name : 'check',		width : 100,	align:'center',
+				{header : '마사지 확인',		name : 'check',		width : 100,	align:'center',
 					renderer: {
 						type : ButtonRenderer,
 						options : {
-							value : '확인',
+							value : '예약 확인',
 							click: fnCom.checkMassage
 						}
 					}
@@ -451,10 +444,12 @@ $(document).ready(function() {
 					minRowHeight : 25,
 					rowHeaders: ['rowNum'],
 					columns: [
-						{header : '예약 날짜',			name : 'rsv_date',			width: 200,	align:'center', sortable: true},
-						{header : '예약 시간',			name : 'reservation_time',	width: 200,	align:'center', sortable: true},
-						{header : '지점 이름',			name : 'branch_name',		width: 150,	align:'center', sortable: true},
-						{header : '실행 여부',			name : 'rsv_status',		width: 100,	align:'center', sortable: true}
+						{header : '예약 날짜',			name : 'rsv_date',			width: 160,	align:'center', sortable: true},
+						{header : '예약 시간',			name : 'reservation_time',	width: 160,	align:'center', sortable: true},
+						{header : '지점명',			name : 'branch_name',					align:'center', sortable: true},
+						{header : '확인 여부',			name : 'rsv_status',		width: 100, align:'center', disabled: true,
+							formatter: 'listItemText',	editor: { type: 'select', options: { listItems: [{text:'확인', value:'Y'},{text:'미확인',value:'N'}]}}}
+						
 					],
 				},
 				[],
@@ -556,7 +551,7 @@ $(document).ready(function() {
 								<tbody>
 									<tr>
 										<th>조회기간</th>
-										<td colspan="6">
+										<td colspan="10">
 											<div class="row ml-1">
 												<div class="custom-control custom-radio custom-control-inline">
 													<input type="radio" id="radio_today" name="searchRange" class="custom-control-input" value="today" checked="checked"> 
@@ -599,61 +594,27 @@ $(document).ready(function() {
 										</td>
 									</tr>
 									<tr>
-									
-									<td colspan="12">
+										<th></th>
+										<td colspan="10">
 										<div class="from-group row">
 											<label for="input_id_name" class="search-label float-left ml-3 mt-2">ID / 이름</label>
 											<div class="col-md-3">
-												<input type="text" id="input_id_name" class="form-control form-control-sm mt-1"/>
+												<input type="text" id="input_id_name" class="form-control form-control-sm mb-2"/>
 											</div>
 											<label for="input_phone" class="search-label float-left ml-5 mt-2">전화번호</label>
 											<div class="col-md-3">
-												<input type="text" id="input_phone" class="form-control form-control-sm mt-1"/>
+												<input type="text" id="input_phone" class="form-control form-control-sm mb-2"/>
 											</div>
-											<label for="select_rsvStatus" class="search-label float-left ml-5 mt-1">마사지 실행 여부</label>
+											<label for="select_rsvStatus" class="search-label float-left ml-5 mt-2">마사지 확인</label>
 											<div class="col-md-2">
 												<select id="select_rsvStatus" class="form-control mb-2" style="padding:3px; width:60%; height:80%;">
 													<option value="">선택</option>
-													<option value="Y">YES</option>
-													<option value="N">NO</option>
+													<option value="Y">확인</option>
+													<option value="N">미확인</option>
 												</select>
 											</div>
 										</div>
-									</td>
-									<!-- <td colspan="12">
-										<div class="row search flex-grow-1">
-											<div class="col-sm-4">
-												<label class="control-label mt-2">이름 / 아이디</label>
-												<input type="text" id="input_id_name" class="form-control form-control-sm mt2"/>
-											</div>
-											<div class="col-sm-4">
-												<label class="control-label mt-2">전화번호</label>
-												<input type="text" id="input_phone" class="form-control form-control-sm" style="width: 75%; height: 15%" />
-											</div>
-											<div class="col-sm-3">
-												<label class="control-label mt-2">마사지 실행 여부</label>
-												<select id="select_rsv_status" class="form-control" style="padding: 3px; width: 100%; height: 15%">
-												<option value="Y,N" selected>선택</option>
-												<option value="Y">확인</option>
-												<option value="N">미확인</option>
-												</select>
-											</div>
-										</div>
-									</td> -->
-										
-										<!-- 
-										<th>이름 / 아이디</th>
-										<td><input type="text" id="input_id_name" class="form-control form-control-sm" style="width: 75%; height: 15%" /></td>
-										<th>전화번호</th>
-										<td><input type="text" id="input_phone" class="form-control form-control-sm" style="width: 75%; height: 15%" /></td>
-										<th>마사지 실행 여부</th>
-										<td>
-											<select id="select_rsv_status" class="form-control" style="padding: 3px; width: 100%; height: 15%">
-												<option value="Y,N" selected>선택</option>
-												<option value="Y">확인</option>
-												<option value="N">미확인</option>
-											</select>
-										</td> -->
+										</td>
 									</tr>
 								</tbody>
 							</table>
