@@ -146,15 +146,15 @@ $(document).ready(function() {
 			scrollY : true,
 			readOnlyColorFlag : false,
 			columns: [
-				{header : 'ID',				name : 'id',						width : 100, align:'left',	style:'cursor:pointer;text-decoration:underline;',	sortable: true},
-				{header : '이름',				name : 'name',						width : 150, align:'left',	sortable: true},
-				{header : '전화번호',			name : 'phone_number',				width : 150, align:'left',	sortable: true},
-				{header : '출산 예정일',		name : 'due_date',					width : 150, align:'left',	sortable: true},
-				{header : '예약 마사지 횟수',	name : 'massage_reservation_cnt',	width : 150, align:'center', sortable: true},
-				{header : '잔여 마사지 횟수',	name : 'massage_cnt',				width : 150, align:'center', sortable: true},
-				{header : '전체 마사지 횟수',	name : 'massage_total',				width : 150, align:'center', sortable: true},
-				{header : '예약 완료 여부',		name : 'reserve_cnt_status',		width : 150, align:'center', sortable: true, formatter: 'listItemText', disabled:true, editor: { type: 'select', options: { listItems: [{text:'YES', value:'Y'},{text:'NO',value:'N'}]}}},
-				{header : '가입일',			name : 'created_dt',				width : 150,  align:'center', sortable: true},
+				{header : 'ID',				name : 'id',						align:'left',	style:'cursor:pointer;text-decoration:underline;',	sortable: true},
+				{header : '이름',				name : 'name',						align:'left',	sortable: true},
+				{header : '전화번호',			name : 'phone_number',				align:'left',	sortable: true},
+				{header : '출산 예정일',		name : 'due_date',					align:'left',	sortable: true},
+				{header : '예약 마사지 횟수',	name : 'massage_reservation_cnt',	align:'center', sortable: true},
+				{header : '잔여 마사지 횟수',	name : 'massage_cnt',				align:'center', sortable: true},
+				{header : '전체 마사지 횟수',	name : 'massage_total',				align:'center', sortable: true},
+				{header : '예약 완료 여부',		name : 'reserve_cnt_status',		align:'center', sortable: true, formatter: 'listItemText', disabled:true, editor: { type: 'select', options: { listItems: [{text:'YES', value:'Y'},{text:'NO',value:'N'}]}}},
+				{header : '가입일',			name : 'created_dt',				align:'center', sortable: true},
 				{header : '비고',				name : 'remark',	align:'left'}
 			]
 		},
@@ -308,7 +308,7 @@ $(document).ready(function() {
 														<label class="control-label mt-2">출산 예정일</label>
 													</div>
 													<div class="col-sm-9">
-														<div class="tui-datepicker-input tui-datetime-input">
+														<div class="tui-datepicker-input tui-datetime-input tui-datepicker-custom" style="height: 70% !important;">
 															<input type="text" id="input_dueDate_edit" aria-label="Date-Time">
 															<span class="tui-ico-date"></span>
 														</div>

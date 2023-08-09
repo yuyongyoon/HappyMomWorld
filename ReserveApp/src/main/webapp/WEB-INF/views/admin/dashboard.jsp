@@ -495,6 +495,10 @@ $(document).ready(function() {
 				{}
 		);
 	});
+	
+	$('#goToRsvMaster').click(function(){
+		window.location.href = '/admin/reservation_master';
+	})
 })
 </script>
 
@@ -549,9 +553,6 @@ a:link {
 .fc-event-title-container{
 	text-align: center;
 }
-/* .modal-btn{ */
-/* 	height: 35px!important */
-/* } */
 </style>
 
 
@@ -572,7 +573,7 @@ a:link {
 							<h2 class="fw-bold">알림</h2>
 						</div>
 						<div class="card-body">
-							<div class="d-flex mb-2">
+							<div class="d-flex mb-2" style="cursor:pointer;" id="goToRsvMaster">
 								<div class="avatar">
 									<span class="avatar-title rounded-circle border border-white bg-info"><i class="fas fa-calendar-alt"></i></span>
 								</div>
