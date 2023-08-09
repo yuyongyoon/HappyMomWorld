@@ -45,9 +45,18 @@ input .form-control {
 .tui-datepicker-input {
 	margin-top: 6px;
 	height: 28px !important;
+	padding-left: 10px;
+}
+.tui-datepicker-custom {
+	width: 100% !important;
+	border-color: #ebedf2 !important;
+	padding: 0.6rem 1rem !important;
+	height: 80% !important;
+	border-radius: 0.25rem !important;
 }
 .tui-datepicker-input > input {
 	font-size: 14px !important;
+	padding-left: 0px;
 }
 .tui-datepicker {
 	z-index: 30;
@@ -67,12 +76,3 @@ input .form-control {
 input[type="checkbox"] {
 	vertical-align: middle;
 }
-/* .tui-calendar-container{ */
-/* 	width:100% */
-/* } */
-/* .tui-calendar{ */
-/* 	width:100% */
-/* } */
-/* .tui-datepicker-body{ */
-/* 	width:100% */
-/* } */

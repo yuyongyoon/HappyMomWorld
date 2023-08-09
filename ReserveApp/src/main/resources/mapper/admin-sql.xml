@@ -391,7 +391,7 @@
 	</select>
 	
 	<select id="getSeletedDateReservationList" parameterType="map"  resultType="map">
-		SELECT rsv_date, a.user_id, 
+		SELECT rsv_date, a.user_id, c.phone_number, c.name as user_name,
 				CASE 
 					WHEN a.select_time = 't1' THEN b."t1_name"
 					WHEN a.select_time = 't2' THEN b."t2_name"
@@ -406,6 +406,7 @@
 				END AS "reservation_time"
 		FROM tb_reservation_list a
 		JOIN tb_reservation_info b ON a.branch_code = b.branch_code
+		JOIN tb_user c on a.user_id = c.id 
 		<where>
 			a.rsv_date = #{rsv_date}
 			<choose>

@@ -56,7 +56,7 @@
 				tableTemplate.attr('data-id', uniqueId);
 				
 				tableTemplate.find('.rsv_date').text(data.rsv_date);
-				tableTemplate.find('.rsv_time').text(data.rsv_time);
+				tableTemplate.find('.rsv_time').text(data.rsv_time.substring(0,5));
 				tableTemplate.find('.branch_name').text(data.branch_name);
 				tableTemplate.find('.branch_tel').text(data.branch_tel);
 				tableTemplate.find('.select_time').text(data.select_time);
@@ -113,11 +113,12 @@
 								<div class="col-md-12">
 									<div class="row">
 										<div class="col-sm-6">
-											<span class="row-title">예약 확인(</span>
-											<span class="row-title" id="massageCnt"></span>
-											<span class="row-title">회 예약 / 총 </span>
-											<span class="row-title" id="massageTotal"></span>
-											<span class="row-title">회 )</span>
+											<span class="row-title">예약 확인&nbsp&nbsp&nbsp&nbsp</span>
+											<span class="row-title" style="font-size: 25px;">(</span>
+											<span class="row-title" id="massageCnt" style="font-size: 25px;"></span>
+											<span class="row-title" style="font-size: 25px;">회 예약 / 총 </span>
+											<span class="row-title" id="massageTotal" style="font-size: 25px;"></span>
+											<span class="row-title" style="font-size: 25px;">회 )</span>
 										</div>
 									</div>
 								</div>

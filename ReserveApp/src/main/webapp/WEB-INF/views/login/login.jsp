@@ -114,7 +114,7 @@
 							<label class="control-label mt-2">출산 예정일</label>
 						</div>
 						<div class="col-sm-9">
-							<div class="tui-datepicker-input tui-datetime-input">
+							<div class="tui-datepicker-input tui-datetime-input tui-datepicker-custom" style="width: 100%;">
 								<input type="text" id="dueDate_signup" aria-label="Date-Time">
 								<span class="tui-ico-date"></span>
 							</div>
