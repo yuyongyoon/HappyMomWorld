@@ -194,23 +194,6 @@ $(document).ready(function() {
 		},
 		btn_get: function(){
 			ajaxCom.getReservationStatusList();
-		},
-		/* btn_changeRsv: function(){
-			
-		}, */
-		btn_changeRsv_close: function(){
-			let modalId = $(this).closest(".modal").attr("id");
-			$('#changeRsv_modal').modal('hide');
-		},
-		btn_updateRsvInfo: function(){
-			
-		},
-		btn_getRsvList_close: function(){
-			let modalId = $(this).closest(".modal").attr("id");
-			
-			if (confirm("창을 닫으면 수정한 내용이 모두 지워집니다. 닫으시겠습니까?")) {
-				$('#' + modalId).modal('hide');
-			} 
 		}
 	}; //btnCom END
 	//기타 함수 객체
@@ -363,10 +346,10 @@ $(document).ready(function() {
 			rowHeight : 32,
 			minRowHeight : 25,
 			columns: [
-				{header : '예약ID',			name : 'user_id',			width : 130,	align:'left',	sortable: true,  style:'cursor:pointer;text-decoration:underline;', sortable: true},
+				{header : 'ID',				name : 'user_id',			width : 130,	align:'left',	sortable: true,  style:'cursor:pointer;text-decoration:underline;', sortable: true},
+				{header : '이름',				name : 'name',				width : 130,	align:'center',	sortable: true},
 				{header : '예약일',			name : 'rsv_date',							align:'center',	sortable: true},
 				{header : '예약시간',			name : 'reservation_time',					align:'center',	sortable: true},
-				{header : '예약자',			name : 'name',				width : 110,	align:'center',	sortable: true},
 				{header : '전화번호',			name : 'phone_number',						align:'center',	sortable: true},
 				{header : '등록일',			name : 'created_dt',		width : 200,	align:'center',	sortable: true},
 				{header : '확인 여부',			name : 'rsv_status',		width : 100,	align:'center', sortable: true, formatter: 'listItemText', disabled:true, editor: { type: 'select', options: { listItems: [{text:'확인', value:'Y'},{text:'미확인',value:'N'}]}}},
@@ -550,8 +533,8 @@ $(document).ready(function() {
 								style="border-top: 1px lightgray solid; border-bottom: 1px lightgray solid;">
 								<tbody>
 									<tr>
-										<th>조회기간</th>
-										<td colspan="10">
+										<th>조회 기간</th>
+										<td colspan="8">
 											<div class="row ml-1">
 												<div class="custom-control custom-radio custom-control-inline">
 													<input type="radio" id="radio_today" name="searchRange" class="custom-control-input" value="today" checked="checked"> 
@@ -594,18 +577,18 @@ $(document).ready(function() {
 										</td>
 									</tr>
 									<tr>
-										<th></th>
-										<td colspan="10">
+										<th>검색</th>
+										<td colspan="5">
 										<div class="from-group row">
-											<label for="input_id_name" class="search-label float-left ml-3 mt-2">ID / 이름</label>
+											<label for="input_id_name" class="float-left ml-3 mt-2">ID / 이름</label>
 											<div class="col-md-3">
 												<input type="text" id="input_id_name" class="form-control form-control-sm mb-2"/>
 											</div>
-											<label for="input_phone" class="search-label float-left ml-5 mt-2">전화번호</label>
+											<label for="input_phone" class="float-left ml-6 mt-2">전화번호</label>
 											<div class="col-md-3">
 												<input type="text" id="input_phone" class="form-control form-control-sm mb-2"/>
 											</div>
-											<label for="select_rsvStatus" class="search-label float-left ml-5 mt-2">마사지 확인</label>
+											<h5 for="select_rsvStatus" class="font-weight-bold pl-5 ml-5 mt-2">마사지 실행 여부</h5>
 											<div class="col-md-2">
 												<select id="select_rsvStatus" class="form-control mb-2" style="padding:3px; width:60%; height:80%;">
 													<option value="">선택</option>
@@ -643,48 +626,45 @@ $(document).ready(function() {
 		<div class="modal-content">
 			<div class="modal-header">
 				<h4 class="modal-title" id="user_edit_modalTitle">회원 예약 리스트</h4>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
 			</div>
 			<div class="modal-body">
 				<div class="col-12">
 					<div class="form-group row pb-0">
 						<div class="col-sm-3">
-							<label class="control-label mt-2">예약자 ID</label>
+							<label class="control-label mt-2 ml-4">예약자 ID</label>
 						</div>
 						<div class="col-sm-9">
-							<input type="text" class="form-control" id="input_rsvUserId"
-								style="border: 0px;" readonly>
+							<input type="text" class="form-control" id="input_rsvUserId" 
+								style="width:80%; border: 1px solid; color: black; background: transparent!important;" readonly>
 						</div>
 					</div>
 					<div class="form-group row pb-0">
 						<div class="col-sm-3">
-							<label class="control-label mt-2" style="border: 0px;">예약자 이름</label>
+							<label class="control-label mt-2 ml-4">예약자 이름</label>
 						</div>
 						<div class="col-sm-9">
-							<input type="text" class="form-control" id="input_rsvUserName"
-								maxlength='12'>
+							<input type="text" class="form-control" id="input_rsvUserName" maxlength='12' 
+								style="width:80%; border: 1px solid; color: black; background: transparent!important;" readonly>
 						</div>
 					</div>
 					<div class="form-group row pb-0">
 						<div class="col-sm-3">
-							<label class="control-label mt-2" style="border: 0px;">전화번호</label>
+							<label class="control-label mt-2 ml-4" style="border: 0px;">전화번호</label>
 						</div>
 						<div class="col-sm-9">
-							<input type="tel" class="form-control"
-								id="input_phoneNumber">
+							<input type="tel" class="form-control" id="input_phoneNumber" 
+								style="width:80%; border: 1px solid; color: black; background: transparent!important;" readonly>
 						</div>
 					</div>
 					<div class="modal-body">
 						<div>
-							<div id="grid_userRsvList_modal"></div>
+							<div id="grid_userRsvList_modal" class="form-contorl mt-2"></div>
 						</div>
 					</div>
 				</div>
-			</div>
-			<div class="modal-footer">
-				<!-- <button type="button" class="btn btn-secondary"
-					id="btn_updateRsvInfo">저장</button> -->
-				<button type="button" class="btn btn-info"
-					id="btn_getRsvList_close">닫기</button>
 			</div>
 		</div>
 	</div>
@@ -695,6 +675,9 @@ $(document).ready(function() {
 		<div class="modal-content">
 			<div class="modal-header">
 				<h4 class="modal-title">예약 변경</h4>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
 			</div>
 			<div class="form-group pb-0" style="margin: 6px;">
 				<label class="control-label mt-2 mr-3">예약할 날짜 선택</label>
@@ -709,10 +692,6 @@ $(document).ready(function() {
 				<div>
 					<div id="grid_changeRsv_modal"></div>
 				</div>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" id="btn_changeRsv">저장</button>
-				<button type="button" class="btn btn-info" id="btn_changeRsv_close">취소</button>
 			</div>
 		</div>
 	</div>
