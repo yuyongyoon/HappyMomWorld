@@ -76,3 +76,12 @@ input .form-control {
 input[type="checkbox"] {
 	vertical-align: middle;
 }
+.show-password{
+	position: absolute;
+	right: 20px;
+	top: 50%;
+	transform: translateY(-50%);
+	font-size: 22px;
+	cursor: pointer;
+	margin-right: 10px;
+}

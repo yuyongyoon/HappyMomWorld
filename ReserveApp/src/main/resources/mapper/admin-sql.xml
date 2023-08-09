@@ -14,6 +14,7 @@
 	<select id="getUserList" parameterType="map" resultType="map">
 		SELECT
 			a.id, a.name, a.phone_number, a.due_date, a.user_role, a.massage_cnt, a.massage_total, coalesce(b.has_reservation,0) as massage_reservation_cnt,
+			TRUNC((CURRENT_DATE - To_char(TO_DATE(a.due_date, 'YYYY-MM-DD') - INTERVAL '280 days', 'YYYY-MM-DD')::date)::numeric / 7) AS pregnancy_weeks,
 			CASE
 				WHEN b.has_reservation = a.massage_total and massage_cnt = 0 THEN 'Y'
 				ELSE 'N'

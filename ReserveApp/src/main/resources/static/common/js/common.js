@@ -129,6 +129,16 @@ function cfn_clearField(modalId){
 	modal.find('input, textarea').prop('disabled', false);
 }
 
+function showPassword(button) {
+	var inputPassword = $(button).parent().find('input');
+	console.log(inputPassword)
+	if (inputPassword.attr('type') == "password") {
+		inputPassword.attr('type', 'text');
+	} else {
+		inputPassword.attr('type','password');
+	}
+}
+
 $(document).ready(function() {
 	$('.row.search input').keydown(function(e){
 		if(e.keyCode===13){

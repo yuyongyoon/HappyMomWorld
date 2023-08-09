@@ -152,6 +152,10 @@ $(document).ready(function() {
 			$('#div_curPwd_msg').hide();
 			$('#div_newPwd_msg').hide();
 			$('#addBranch_modal').modal('show');
+			
+			$('.show-password').on('click', function(){
+				showPassword(this);
+			})
 		},
 		btn_download: function() {
 			tuiGrid.dataExport(branchGrid,'지점관리.xlsx');
@@ -252,7 +256,6 @@ $(document).ready(function() {
 			}
 			ajaxCom.updateBranchInfo(param);
 		},
-		// modal 닫기 버튼 - 수정 modal
 		btn_editBranch_close : function(){
 			let modalId = $(this).closest(".modal").attr("id");
 			
@@ -289,13 +292,6 @@ $(document).ready(function() {
 		}
 	}; //btnCom END
 
-	//기타 함수 객체
-	fnCom = {
-		selectFun: function(id){
-// 			console.log("id :", id[id.selectedIndex])
-		}
-	
-	}; //fnCom END
 	
 	const branchGrid = tuiGrid.createGrid(
 		//그리드 옵션
@@ -390,7 +386,10 @@ $(document).ready(function() {
 
 $('#select-branch').css('display', 'none');
 
+
+
 </script>
+
 <div class="main-panel">
 	<div class="content">
 		<div class="page-inner">
@@ -492,6 +491,9 @@ $('#select-branch').css('display', 'none');
 													</div>
 													<div class="col-sm-9">
 														<input type="password" class="form-control" id="input_curPwd_add"  maxlength='12'>
+														<div class="show-password">
+															<i class="flaticon-interface"></i>
+														</div>
 													</div>
 												</div>
 												<div class="row form-sub m-0" id="div_curPwd_msg" style="padding:0px;">
@@ -503,6 +505,9 @@ $('#select-branch').css('display', 'none');
 													</div>
 													<div class="col-sm-9">
 														<input type="password" class="form-control" id="input_newPwd_add"  maxlength='12'>
+														<div class="show-password">
+															<i class="flaticon-interface"></i>
+														</div>
 													</div>
 												</div>
 												<div class="row form-sub m-0" id="div_newPwd_msg" style="padding:0px;">

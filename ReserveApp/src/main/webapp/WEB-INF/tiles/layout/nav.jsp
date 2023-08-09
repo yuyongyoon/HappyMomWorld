@@ -185,23 +185,14 @@ $(document).ready(function() {
 			}
 		});
 	}
-	
-	function showPassword(button) {
-		var inputPassword = $(button).parent().find('input');
-		if (inputPassword.attr('type') === "password") {
-			inputPassword.attr('type', 'text');
-		} else {
-			inputPassword.attr('type','password');
-		}
-	}
 
-	$('.show-password').on('click', function(){
+	$('.show-password-nav').on('click', function(){
 		showPassword(this);
 	})
 })
 </script>
 <style>
-.show-password{
+.show-password-nav{
 	position: absolute;
 	right: 20px;
 	top: 50%;
@@ -371,7 +362,7 @@ $(document).ready(function() {
 								</div>
 								<div class="col-sm-9">
 									<input type="password" class="form-control" id="input_orgPwd_pwd" autoComplete="off"/>
-									<div class="show-password">
+									<div class="show-password-nav">
 										<i class="flaticon-interface"></i>
 									</div>
 								</div>
@@ -385,7 +376,7 @@ $(document).ready(function() {
 								</div>
 								<div class="col-sm-9">
 									<input type="password" class="form-control" id="input_newPwd_pwd" maxlength='13' autoComplete="off">
-									<div class="show-password">
+									<div class="show-password-nav">
 										<i class="flaticon-interface"></i>
 									</div>
 								</div>
@@ -396,7 +387,7 @@ $(document).ready(function() {
 								</div>
 								<div class="col-sm-9">
 									<input type="password" class="form-control" id="input_checkNewPwd_pwd" maxlength='13' autoComplete="off">
-									<div class="show-password">
+									<div class="show-password-nav">
 										<i class="flaticon-interface"></i>
 									</div> 
 								</div>

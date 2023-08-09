@@ -145,17 +145,20 @@ $(document).ready(function() {
 			scrollX : true,
 			scrollY : true,
 			readOnlyColorFlag : false,
+			rowHeight : 32,
+			minRowHeight : 25,
+			rowHeaders: ['rowNum'],
 			columns: [
 				{header : 'ID',				name : 'id',						align:'left',	style:'cursor:pointer;text-decoration:underline;',	sortable: true},
 				{header : '이름',				name : 'name',						align:'left',	sortable: true},
 				{header : '전화번호',			name : 'phone_number',				align:'left',	sortable: true},
-				{header : '출산 예정일',		name : 'due_date',					align:'left',	sortable: true},
+				{header : '출산 예정일',		name : 'due_date',					align:'center',	sortable: true},
+				{header : '임신주수',			name : 'pregnancy_weeks',			align:'center',	sortable: true},
 				{header : '예약 마사지 횟수',	name : 'massage_reservation_cnt',	align:'center', sortable: true},
 				{header : '잔여 마사지 횟수',	name : 'massage_cnt',				align:'center', sortable: true},
 				{header : '전체 마사지 횟수',	name : 'massage_total',				align:'center', sortable: true},
 				{header : '예약 완료 여부',		name : 'reserve_cnt_status',		align:'center', sortable: true, formatter: 'listItemText', disabled:true, editor: { type: 'select', options: { listItems: [{text:'YES', value:'Y'},{text:'NO',value:'N'}]}}},
-				{header : '가입일',			name : 'created_dt',				align:'center', sortable: true},
-				{header : '비고',				name : 'remark',	align:'left'}
+				{header : '가입일',			name : 'created_dt',				align:'center', sortable: true}
 			]
 		},
 		[],
@@ -227,31 +230,30 @@ $(document).ready(function() {
 							</div>
 							
 							<div class="row search flex-grow-1">
-								<div class="col-md-3 col-sm-4 searchDiv">
+								<div class="col-md-3 col-sm-6">
 									<label for="input_id" class="search-label float-left mt-2">ID / 이름</label>
 									<input type="text" id="input_id_name" class="form-control form-control-sm mt-2"/>
 								</div>
-								<div class="col-md-3 col-sm-4 searchDiv">
+								<div class="col-md-3 col-sm-6">
 									<label for="input_phone" class="search-label float-left mt-2">전화번호</label>
 									<input type="text" id="input_phone" class="form-control form-control-sm mt-2"/>
 								</div>
-								<div class="col-md-4 col-sm-8 searchDiv">
+								<div class="col-md-4 col-sm-6">
 									<label for="input_startDate" class="search-label float-left mt-2">기간</label>
 									<div class="row">
-										<div class="tui-datepicker-input tui-datetime-input">
+										<div class="tui-datepicker-input tui-datetime-input mr-2">
 											<input id="input_startDate" type="text" aria-label="Date">
 											<span class="tui-ico-date"></span>
 											<div id="startDate-container" style="margin-left: -1px;"></div>
 										</div>
-										<div style="margin: 10px;margin-bottom: 0px;"><span>~</span></div>
-										<div class="tui-datepicker-input tui-datetime-input">
+										<div class="tui-datepicker-input tui-datetime-input mb-2">
 											<input id="input_endDate" type="text" aria-label="Date">
 											<span class="tui-ico-date"></span>
 											<div id="endDate-container" style="margin-left: -1px;"></div>
 										</div>
 									</div>
 								</div>
-								<div class="col-md-2 col-sm-4 searchDiv">
+								<div class="col-md-2 col-sm-6">
 									<label for="select_rsvStatus" class="search-label float-left mt-2">예약 완료</label>
 									<select id="select_rsvStatus" class="form-control mt-2" style="padding: 3px;">
 										<option value="">선택</option>
@@ -315,7 +317,7 @@ $(document).ready(function() {
 														<div id="wrapper_edit" style="margin-top: -1px;"></div>
 													</div>
 												</div>
-												<div class="form-group row pb-0">
+												<div class="form-group row pb-0 pt-0">
 													<div class="col-sm-3">
 														<label class="control-label mt-2" style="border: 0px;">예약 마사지 횟수</label>
 													</div>
