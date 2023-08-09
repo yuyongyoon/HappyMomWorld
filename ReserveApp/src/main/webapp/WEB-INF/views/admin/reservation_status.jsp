@@ -130,8 +130,9 @@ $(document).ready(function() {
 							userRsvListData.push(d)
 							//userRsvListGrid.append(d)
 						});
-						console.log('회원 예약 리스트>>',userRsvListData)
-						//userRsvListGrid.resetData(result.userRsvList);
+// 						console.log('회원 예약 리스트>>',userRsvListData)
+// 						console.log(userRsvListGrid)
+						userRsvListGrid.resetData(result.userRsvList);
 					},
 					error	: function(xhr,status){
 						alert('오류가 발생했습니다.');
@@ -423,8 +424,6 @@ $(document).ready(function() {
 					$('#input_rsvUserId').val(userId);
 					$('#input_rsvUserName').val(rowData.name);
 					$('#input_phoneNumber').val(rowData.phone_number);
- 					
-					ajaxCom.getUserRsvListModal(userId);
 					
 					$('#userRsvList_modal').modal('show');
 				}
@@ -457,18 +456,12 @@ $(document).ready(function() {
 						{header : '지점 이름',			name : 'branch_name',		width: 150,	align:'center', sortable: true},
 						{header : '실행 여부',			name : 'rsv_status',		width: 100,	align:'center', sortable: true}
 					],
-					data: [
-					    {
-					    	rsv_date: '2023-08-08', 
-					    	rsv_status: 'N', 
-					    	branch_name: 'A지점1', 
-					    	reservation_time: '10:30 ~ 11:30'
-					    }
-					  ]
 				},
 				[],
 				{}
-			);
+		);
+		
+		ajaxCom.getUserRsvListModal($('#input_rsvUserId').val());
 	});
 	$('#userRsvList_modal').on('hidden.bs.modal', function(e){
 		tuiGrid.destroyGrid(userRsvListGrid);
