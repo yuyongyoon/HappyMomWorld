@@ -15,7 +15,7 @@
 						<h4 class="text-section">Administrator</h4>
 					</li>
 					<li class="nav-item" id="dashboard">
-						<a href="/admin/dashboard"><i class="fas fa-desktop"></i><p>대시보드</p></a>
+						<a href="/admin/dashboard"><i class="fas fa-desktop"></i><p>예약 관리</p></a>
 					</li>
 					<li class="nav-item" id="user">
 						<a href="/admin/user"><i class="fas fa-user-alt"></i><p>회원 관리</p></a>
@@ -52,7 +52,12 @@
 		</div>
 	</div>
 </div>
-		
+<style>
+p{
+	font-size: 16px!important;
+	font-weight: bolder!important;
+}
+</style>
 <script>
 $(document).ready(function() {
 	let url = window.location.href.split('/');

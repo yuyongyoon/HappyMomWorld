@@ -10,6 +10,12 @@ table tbody tr th {
 	color: white;
 	text-align: center;
 }
+label, th, button, td {
+	font-size: 14px!important;
+}
+td > input {
+	font-weight: bolder;
+}
 #reservation_tbody td[input_val] {
 	background-color: #EC7357;
 }
@@ -433,7 +439,7 @@ $(document).on('input', '#reservation_tbody input[type="number"]', function() {
 													</div>
 													<div class="datepicker-cell" id="datepicker_create" style="margin-top: -1px;"></div>
 												</td>
-												<td colspan="4" id="td_tableBtnList" style="text-align:center;">
+												<td colspan="5" id="td_tableBtnList" style="text-align:center;">
 													<button type="button" id="btn_initCreate" class="header-btn btn btn-warning btn-sm">테이블 생성</button>
 													<button type="button" id="btn_tableReset" class="header-btn btn btn-warning btn-sm">테이블 초기화</button>
 													<button type="button" id="btn_clearFilter" class="header-btn btn btn-warning btn-sm">필터 초기화</button>
@@ -493,7 +499,7 @@ $(document).on('input', '#reservation_tbody input[type="number"]', function() {
 												</td>
 											</tr>
 											
-																						<tr id="td_day" style="border-bottom: 1px solid lightgray">
+											<tr id="td_day" style="border-bottom: 1px solid lightgray">
 												<th>요일별 일괄 수정</th>
 												<td colspan="4">
 													<div class="custom-control custom-checkbox custom-control-inline">

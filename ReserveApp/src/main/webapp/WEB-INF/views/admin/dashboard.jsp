@@ -41,6 +41,10 @@ $(document).ready(function() {
 	let refreshButton = $('.fc-refresh-button');
 	let spanTag = $('<span>').addClass('btn-label').html('<i class="fas fa-sync"></i>');
 	refreshButton.append(spanTag);
+
+	$('.fc-daygrid-day-events').css('font-weight', 'bolder');
+	$('.fc-daygrid-day-events').css('margin-top','15px');
+	$('.fc-daygrid-day-events').css('font-size','18px');
 	
 	$('.fc-prev-button').click(function() {
 		let currentDate = cfn_yearMonthFormat(calendar.getDate());
@@ -85,7 +89,7 @@ $(document).ready(function() {
 								let liColor;
 								item.reservation_cnt > 0 ? liColor = '#716aca' : liColor = 'gray';
 								calendar.addEvent({
-									title		: '예약: ' + item.reservation_cnt + '건',
+									title		: '예약: ' + item.reservation_cnt + '건 / ' + item.open_rsv_cnt +'건',
 									start		: item.rsv_date,
 									end			: item.rsv_date,
 									color		: liColor
@@ -94,7 +98,10 @@ $(document).ready(function() {
 							
 						})
 						
-						calendar.refetchEvents()
+						calendar.refetchEvents();
+						$('.fc-daygrid-day-events').css('font-weight', 'bolder');
+						$('.fc-daygrid-day-events').css('margin-top','15px');
+						$('.fc-daygrid-day-events').css('font-size','18px');
 					}
 				},
 				error	: function(xhr,status){
@@ -274,7 +281,7 @@ $(document).ready(function() {
 			ajaxCom.getRecentJoinData();
 		},
 		btn_download_joinGrid: function(){
-			tuiGrid.dataExport(joinGrid,'최근_가입한_회원.xlsx');
+			tuiGrid.dataExport(joinGrid,'7일내_가입한_회원.xlsx');
 		},
 		btn_getRsvGrid: function(){
 			ajaxCom.getRecentRsvData();
@@ -403,12 +410,12 @@ $(document).ready(function() {
 						{header : '전화번호',		name : 'phone_number',	align:'left',	 sortable: true},
 						{header : '가입일',		name : 'created_dt',	align:'center', sortable: true},
 						{header : '예약 완료 여부',	name : 'reserve_cnt_status',	align:'center', sortable: true, formatter: 'listItemText', disabled:true, editor: { type: 'select', options: { listItems: [{text:'YES', value:'Y'},{text:'NO',value:'N'}]}}},
-						{header : '상태',	name : 'msg_status',	 align:'center', sortable: true, formatter: 'listItemText', disabled:true, editor: { type: 'select', options: { listItems: [{text:'확인', value:'Y'},{text:'미확인',value:'N'}]}}},
-						{header : '상태 확인',		name : 'change',	width : 80, align:'center', 
+						{header : '알림 상태',	name : 'msg_status',	 align:'center', sortable: true, formatter: 'listItemText', disabled:true, editor: { type: 'select', options: { listItems: [{text:'전송', value:'Y'},{text:'미전송',value:'N'}]}}},
+						{header : '알림 상태 변경',		name : 'change',	align:'center', 
 							renderer: {
 								type : ButtonRenderer,
 								options : {
-									value : '확인',
+									value : '변경',
 									click: fnCom.joinGridConfirm
 								}
 							}
@@ -440,8 +447,8 @@ $(document).ready(function() {
 						{header : '예약일',		name : 'rsv_date',			align:'center',	 sortable: true},
 						{header : '예약 시간',		name : 'select_time_nm',	align:'center',	 sortable: true},
 						{header : '예약한 시간',	name : 'created_dt',		align:'center', sortable: true},
-						{header : '상태',			name : 'msg_status',	 align:'center', sortable: true, formatter: 'listItemText', disabled:true, editor: { type: 'select', options: { listItems: [{text:'확인', value:'Y'},{text:'미확인',value:'N'}]}}},
-						{header : '상태 확인',		name : 'change',			align:'center', width : 100, 
+						{header : '알림 상태',			name : 'msg_status',	 align:'center', sortable: true, formatter: 'listItemText', disabled:true, editor: { type: 'select', options: { listItems: [{text:'전송', value:'Y'},{text:'미전송',value:'N'}]}}},
+						{header : '알림 상태 변경',		name : 'change',			align:'center',  
 							renderer: {
 								type : ButtonRenderer,
 								options : {
@@ -475,7 +482,6 @@ $(document).ready(function() {
 					columns: [
 						{header : 'id',				name : 'id',			align:'left',	 sortable: true},
 						{header : '전화번호',			name : 'phone_number',			align:'center',	 sortable: true},
-// 						{header : '완료 예약 건수',		name : 'massage_cnt',	align:'center',	 sortable: true},
 						{header : '잔여 예약 건수',		name : 'free_rsv_cnt',		align:'center', sortable: true},
 						{header : '전체 마사지 횟수',	name : 'massage_total',		align:'center', sortable: true},
 						{header : '임신 주수',			name : 'pregnancy_weeks',		align:'center', sortable: true},
@@ -553,6 +559,11 @@ a:link {
 .fc-event-title-container{
 	text-align: center;
 }
+.fc-daygrid-day-events'{
+	font-weight : bolder;
+	margin-top : 15px;
+	font-size : 18px;
+}
 </style>
 
 
@@ -594,7 +605,7 @@ a:link {
 									<span class="avatar-title rounded-circle border border-white bg-primary"><i class="far fa-calendar-plus"></i></span>
 								</div>
 								<div class="flex-1 ml-3 pt-3 mb-3">
-									<h3 class="text-uppercase fw-bold mb-1">최근 7일 내 예약 리스트<span class="text-warning pl-3" id="recentRsvCnt"></span></h3>
+									<h3 class="text-uppercase fw-bold mb-1">7일 간 예약 내역<span class="text-warning pl-3" id="recentRsvCnt"></span></h3>
 								</div>
 							</div>
 							<div class="d-flex mb-2" style="cursor:pointer;" id="nonRsv">
@@ -641,7 +652,7 @@ a:link {
 	<div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" style="max-width: 1000px!important;">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h2 class="modal-title" id="alertModalLabel">최근에 가입한 회원</h2>
+				<h2 class="modal-title" id="alertModalLabel">7일 내 가입한 회원</h2>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
@@ -667,7 +678,7 @@ a:link {
 	<div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" style="max-width: 1000px!important;">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h2 class="modal-title" id="alertModalLabel">최근에 예약한 회원</h2>
+				<h2 class="modal-title" id="alertModalLabel">7일 간 예약 내역</h2>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
@@ -693,7 +704,7 @@ a:link {
 	<div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" style="max-width: 1000px!important;">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h2 class="modal-title" id="alertModalLabel">예약하지 않은 회원</h2>
+				<h2 class="modal-title" id="alertModalLabel">예약이 완료 되지 않은 회원</h2>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>

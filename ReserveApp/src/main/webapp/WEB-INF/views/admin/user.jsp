@@ -1,5 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-
+<style>
+label{
+	font-size: 13px!important;
+}
+</style>
 <script>
 $(document).ready(function() { 
 	let id_check = false;
@@ -239,9 +243,9 @@ $(document).ready(function() {
 									<input type="text" id="input_phone" class="form-control form-control-sm mt-2"/>
 								</div>
 								<div class="col-md-4 col-sm-6">
-									<label for="input_startDate" class="search-label float-left mt-2">기간</label>
+									<label for="input_startDate" class="search-label float-left mt-2" >기간</label>
 									<div class="row">
-										<div class="tui-datepicker-input tui-datetime-input mr-2">
+										<div class="tui-datepicker-input tui-datetime-input">
 											<input id="input_startDate" type="text" aria-label="Date">
 											<span class="tui-ico-date"></span>
 											<div id="startDate-container" style="margin-left: -1px;"></div>

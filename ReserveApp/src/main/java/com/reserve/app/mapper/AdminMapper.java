@@ -90,4 +90,8 @@ public interface AdminMapper {
 	void updateMsgLog(Map<String,Object> param);
 	
 	void saveMsgLog(Map<String,Object> param);
+	
+	Map<String,Object> getMainUrl(Map<String,Object> param);
+	
+	void updateUrl(Map<String,Object> param);
 }

@@ -3,14 +3,47 @@
 <script src="/static/common/js/qrcode/jquery.qrcode.min.js"></script>
 <script>
 $(document).ready(function() {
-	$('#qrcode').qrcode({width: 300,height: 300,text: "http://121.140.47.102:28900/login"});
+	ajaxCom = {
+		getMainUrl: function(){
+			$.doPost({
+				url		: "/admin/getMainUrl",
+				data	: {},
+				success	: function(result){
+					let url = result.mainUrl.main_url;
+					$('#input_url').val(url);
+					$('#qrcode').qrcode({width: 300,height: 300,text: url});
+				},
+				error	: function(xhr,status){
+					alert('오류가 발생했습니다.');
+				}
+			});
+		},
+		updateUrl: function(url){
+			$.doPost({
+				url		: "/admin/updateUrl",
+				data	: {
+					main_url : url
+				},
+				success	: function(result){
+					$("#qrcode").empty();
+					ajaxCom.getMainUrl();
+				},
+				error	: function(xhr,status){
+					alert('오류가 발생했습니다.');
+				}
+			});
+		}
+	}
 
 	btnCom = {
 		btn_makeQrImg: function(){
-			$("#qrcode").empty();
-			$('#qrcode').qrcode({width: 300,height: 300,text:$('#input_url').val()});
+			if(confirm("모든 지점의 QR코드가 변경됩니다. 변경하시겠습니까?")) {
+				ajaxCom.updateUrl($('#input_url').val());
+			}
 		}
 	};
+	
+	ajaxCom.getMainUrl()
 });
 
 
@@ -41,10 +74,10 @@ $('#select-branch').css('display', 'none');
 							</div>
 							
 							<div class="input-group mt-3">
-								<input type="text" placeholder="URL 입력" class="form-control" value="http://121.140.47.102:28900" id="input_url">
+								<input type="text" placeholder="URL 입력" class="form-control" id="input_url">
 								<div class="input-group-prepend">
 									<button type="button" id="btn_makeQrImg" class="btn btn-search btn-secondary">
-										<i class="fas fa-share"></i>
+										<i class="fas fa-save" style="font-size: 25px;"></i>
 									</button>
 								</div>
 							</div>

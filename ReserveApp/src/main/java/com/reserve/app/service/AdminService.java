@@ -387,4 +387,19 @@ public class AdminService {
 		}
 		return msg;
 	}
+	
+	public Map<String,Object> getMainUrl(Map<String,Object>param) throws Exception{
+		return mapper.getMainUrl(param);
+	}
+	
+	public String updateUrl(Map<String,Object> param){
+		String msg = "success";
+		try {
+			mapper.updateUrl(param);
+		}catch (Exception e) {
+			e.printStackTrace();
+			msg = "fail";
+		}
+		return msg;
+	}
 }
