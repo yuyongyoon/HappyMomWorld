@@ -41,10 +41,10 @@
 				</sec:authorize>
 				
 				<sec:authorize access="hasAnyRole('ROLE_USER')">
-					<li class="nav-item">
+					<li class="nav-item" id="calendarli">
 						<a href="/user/calendar"><i class="fas fa-calendar"></i><p>예약 캘린더</p></a>
 					</li>
-					<li class="nav-item">
+					<li class="nav-item" id="reservation">
 						<a href="/user/reservation"><i class="fas fa-tasks"></i><p>예약 확인</p></a>
 					</li>
 				</sec:authorize>
@@ -72,6 +72,10 @@ $(document).ready(function() {
 		$('#branch_manager').addClass('active');
 	} else if(param == 'qrcode_manager'){
 		$('#qrcode_manager').addClass('active');
+	} else if(param == 'reservation'){
+		$('#reservation').addClass('active');
+	} else if(param == 'calendar'){
+		$('#calendarli').addClass('active');
 	}
 
 });
