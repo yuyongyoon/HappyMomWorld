@@ -75,7 +75,7 @@ $(document).ready(function() {
 						startDate			: startDate,
 						endDate				: endDate,
 						super_branch_code 	: superBranchCode,
-						rsv_status			: $('#select_rsv_status').val()
+						rsv_status			: $('#select_rsvStatus').val()
 					},
 					success	: function(result) {
 						$('#reservationCnt').text(result.reservationStatusList.length);
@@ -347,7 +347,7 @@ $(document).ready(function() {
 			minRowHeight : 25,
 			columns: [
 				{header : 'ID',				name : 'user_id',			width : 130,	align:'left',	sortable: true,  style:'cursor:pointer;text-decoration:underline;', sortable: true},
-				{header : '이름',				name : 'name',				width : 130,	align:'center',	sortable: true},
+				{header : '이름',				name : 'name',				width : 130,	align:'left',	sortable: true},
 				{header : '예약일',			name : 'rsv_date',							align:'center',	sortable: true},
 				{header : '예약시간',			name : 'reservation_time',					align:'center',	sortable: true},
 				{header : '전화번호',			name : 'phone_number',						align:'center',	sortable: true},
@@ -500,7 +500,7 @@ $(document).ready(function() {
 		ajaxCom.getReservationStatusList();
 	})
 	
-	$('#select_rsv_status').on('change', function() {
+	$('#select_rsvStatus').on('change', function() {
 		ajaxCom.getReservationStatusList();
 	})
 }); //END $(document).ready

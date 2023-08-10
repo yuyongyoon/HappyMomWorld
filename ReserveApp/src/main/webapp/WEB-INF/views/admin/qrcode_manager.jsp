@@ -1,8 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
 <script src="/static/common/js/qrcode/jquery.qrcode.min.js"></script>
-<!-- <script src="/static/common/js/pdf/html2canvas.js"></script> -->
-<!-- <script src="/static/common/js/pdf/jspdf.min.js"></script> -->
 <script>
 $(document).ready(function() {
 	$('#qrcode').qrcode({width: 300,height: 300,text: "http://121.140.47.102:28900/login"});

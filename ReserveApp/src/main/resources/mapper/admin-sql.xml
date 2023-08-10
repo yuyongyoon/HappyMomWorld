@@ -422,7 +422,7 @@
 	</select>
 	
 	<select id="getBranchInfo" parameterType="map"  resultType="map">
-		SELECT a.branch_name, a.branch_tel, a.branch_addr, a.business_hours, b.join_code
+		SELECT a.branch_name, a.branch_tel, a.branch_addr, a.business_hours, b.join_code, a.std_due_date
 		FROM tb_branch_info a
 		LEFT OUTER JOIN tb_branch_mng b on a.branch_code = b.branch_code 
 		<where>
@@ -444,6 +444,7 @@
 			branch_tel = #{branch_tel},
 			branch_addr = #{branch_addr},
 			business_hours = #{business_hours},
+			std_due_date = #{std_due_date}::int,
 			modified_id = #{login_id},
 			modified_dt = now()
 		WHERE branch_code = #{branch_code}

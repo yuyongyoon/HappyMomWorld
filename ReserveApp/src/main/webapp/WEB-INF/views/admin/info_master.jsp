@@ -22,6 +22,7 @@ $(document).ready(function() {
 					super_branch_code : superBranchCode
 				},
 				success	: function(result) {
+					console.log(result)
 					if(result.branchInfo != null){
 						let data = result.branchInfo;
 						$('#input_brName').val(data.branch_name);
@@ -30,6 +31,7 @@ $(document).ready(function() {
 						$('#input_brHours').val(data.business_hours);
 						$('#input_brJoincode').val(data.join_code);
 						$('#input_brCode').val(data.join_code);
+						$('#input_brDueDate').val(data.std_due_date);
 					}
 				},
 				error	: function(xhr,status){
@@ -37,7 +39,7 @@ $(document).ready(function() {
 				}
 			});
 		},
-		saveBranchPrintInfo: function(param){
+		saveBranchInfo: function(param){
 			$.doPost({
 				url	 	: "/admin/saveBranchInfo",
 				data 	: param,
@@ -57,16 +59,17 @@ $(document).ready(function() {
 	btnCom = {
 		btn_saveBranchInfo: function(){
 			if($('#input_brName').val() != '' && $('#input_brTell').val() != '' && $('#input_brAddr').val() != '' 
-					&& $('#input_brHours').val() != '' && $('#input_brCode').val() != '' && $('#input_brRemark').val() != '') {
+					&& $('#input_brHours').val() != '' && $('#input_brCode').val() != '' && $('#input_brRemark').val() != '' && $('#input_brDueDate').val() != ''){
 				let param = {
 						branch_name : $('#input_brName').val(),
 						branch_tel : $('#input_brTel').val(),
 						branch_addr : $('#input_brAddr').val(),
 						business_hours : $('#input_brHours').val(),
-						remark : $('#input_brCode').val()
+						remark : $('#input_brCode').val(),
+						std_due_date : $('#input_brDueDate').val()
 				}
 				
-				ajaxCom.saveBranchPrintInfo(param);
+				ajaxCom.saveBranchInfo(param);
 			} else {
 				alert('칸을 모두 입력해주세요.');
 				return false;
@@ -125,6 +128,12 @@ $('#select-branch').on('change', function(){
 										<div class="col-md-12">
 											<label for="input_brHours">운영시간</label>
 											<input type="text" class="form-control" id="input_brHours">
+										</div>
+									</div>
+									<div class="row mt-3">
+										<div class="col-md-12">
+											<label for="input_brDueDate">기준 임신 주수</label>
+											<input type="number" class="form-control" id="input_brDueDate">
 										</div>
 									</div>
 									<div class="row mt-3">
