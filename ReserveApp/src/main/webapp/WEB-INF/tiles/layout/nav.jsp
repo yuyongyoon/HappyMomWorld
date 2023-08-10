@@ -8,13 +8,21 @@ $(document).ready(function() {
 	let updateInfo_datePicker = '';
 	
 	$('#btn_updateInfo_save').click(function(){
-		let param = {
-				id			: $('#input_userId_info').val(),
-				name 		: $('#input_userName_info').val(),
-				phone_number: $('#input_phoneNumber_info').val(),
-				due_date	: updateInfo_datePicker.getDate() != null ? cfn_tuiDateFormat(updateInfo_datePicker.getDate()) : '',
-		};
-		updateUserInfo(param);
+		let telPattern = /(\d{3})-(\d{4})-(\d{4})$/;
+		
+		if(!telPattern.test($('#input_phoneNumber_info').val().trim())){
+			alert('전화번호를 올바르게 입력해주세요.\n(예시:010-1234-5678)');
+			$('#input_phoneNumber_info').focus();
+			return false;
+		} else {
+			let param = {
+					id			: $('#input_userId_info').val(),
+					name 		: $('#input_userName_info').val(),
+					phone_number: $('#input_phoneNumber_info').val(),
+					due_date	: updateInfo_datePicker.getDate() != null ? cfn_tuiDateFormat(updateInfo_datePicker.getDate()) : '',
+			};
+			updateUserInfo(param);
+		}
 	})
 	
 	$('#btn_updateInfo_close').click(function() {
@@ -75,13 +83,10 @@ $(document).ready(function() {
 				$('#checkNewPwd_msg_div').css('display', '');
 				return false;
 			} else if(!pwdPattern.test(pwd)){
-				$('#input_newPwd_pwd').val('');
-				$('#input_checkNewPwd_pwd').val('');
 				$('#checkNewPwd_msg').text('비밀번호는 공백을 제외하고 8자 이상입니다.');
 				$('#checkNewPwd_msg_div').css('display', '');
 				return false;
 			} else if(pwd != checkPwd) {
-				$('#input_checkNewPwd_pwd').val('');
 				$('#checkNewPwd_msg').text('비밀 번호가 다릅니다.');
 				$('#checkNewPwd_msg_div').css('display', '');
 				return false;

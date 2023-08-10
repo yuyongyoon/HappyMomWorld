@@ -100,6 +100,13 @@ $(document).ready(function() {
 			tuiGrid.dataExport(userGrid,'해피맘월드_회원정보.xlsx');
 		},
 		btn_updateAccount : function(){
+			let telPattern = /(\d{3})-(\d{4})-(\d{4})$/;
+			
+			if(!telPattern.test($('#input_phoneNumber_edit').val().trim())){
+				alert('전화번호를 올바르게 입력해주세요.\n(예시:010-1234-5678)');
+				$('#input_phoneNumber_edit').focus();
+				return false;
+			}
 			
 			if(Number($('#input_massage_total').val()) < Number($('#input_rsv_cnt').val())){
 				alert('전체 마사지 횟수가 예약 건수보다 작을 수 없습니다.\n예약을 취소 한 후 변경해주세요.');
@@ -231,21 +238,22 @@ $(document).ready(function() {
 							
 							<div class="row search flex-grow-1">
 								<div class="col-md-3 col-sm-6">
-									<label for="input_id" class="search-label float-left mt-2">ID / 이름</label>
-									<input type="text" id="input_id_name" class="form-control form-control-sm mt-2"/>
+									<label for="input_id" class="search-label float-left mt-2" style="width: 20%;">ID / 이름</label>
+									<input type="text" id="input_id_name" class="form-control form-control-sm mt-2" style="width: 50%;"/>
 								</div>
 								<div class="col-md-3 col-sm-6">
-									<label for="input_phone" class="search-label float-left mt-2">전화번호</label>
-									<input type="text" id="input_phone" class="form-control form-control-sm mt-2"/>
+									<label for="input_phone" class="search-label float-left mt-2" style="width: 20%;">전화번호</label>
+									<input type="text" id="input_phone" class="form-control form-control-sm mt-2" style="width: 60%;"/>
 								</div>
 								<div class="col-md-4 col-sm-6">
-									<label for="input_startDate" class="search-label float-left mt-2">기간</label>
+									<label for="input_startDate" class="search-label float-left mt-2" style="width: 10%;">기간</label>
 									<div class="row">
 										<div class="tui-datepicker-input tui-datetime-input mr-2">
 											<input id="input_startDate" type="text" aria-label="Date">
 											<span class="tui-ico-date"></span>
 											<div id="startDate-container" style="margin-left: -1px;"></div>
 										</div>
+										<span class="m-2"> ~ </span>
 										<div class="tui-datepicker-input tui-datetime-input mb-2">
 											<input id="input_endDate" type="text" aria-label="Date">
 											<span class="tui-ico-date"></span>
@@ -254,8 +262,8 @@ $(document).ready(function() {
 									</div>
 								</div>
 								<div class="col-md-2 col-sm-6">
-									<label for="select_rsvStatus" class="search-label float-left mt-2">예약 완료</label>
-									<select id="select_rsvStatus" class="form-control mt-2" style="padding: 3px;">
+									<label for="select_rsvStatus" class="search-label float-left mt-2" style="width: 30%;">예약 완료</label>
+									<select id="select_rsvStatus" class="form-control mt-2" style="padding: 3px; width: 50%;"">
 										<option value="">선택</option>
 										<option value="Y">YES</option>
 										<option value="N">NO</option>
@@ -302,7 +310,7 @@ $(document).ready(function() {
 														<label class="control-label mt-2" style="border: 0px;">전화번호</label>
 													</div>
 													<div class="col-sm-9">
-														<input type="tel" class="form-control" id="input_phoneNumber_edit">
+														<input type="tel" class="form-control" id="input_phoneNumber_edit" maxlength='13'>
 													</div>
 												</div>
 												<div class="form-group row pb-0">

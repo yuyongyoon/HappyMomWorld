@@ -187,6 +187,7 @@ $(document).ready(function() {
 			
 			let telPattern = /([0-9]{1}[0-9]{1})-(\d{3,4})-(\d{4})/;
 			
+			
 			if($('#input_branchName_add').val() == ''){
 				alert('이름을 입력해주세요.');
 				$('#name_signup').focus();
@@ -199,7 +200,7 @@ $(document).ready(function() {
 				$('#input_branchTel_add').focus();
 				return false;
 			} else if(!telPattern.test($('#input_branchTel_add').val().trim())){
-				alert('전화번호를 올바르게 입력해주세요.\n(예시:010-1234-5678 또는 02-1234-5678)');
+				alert('전화번호를 올바르게 입력해주세요.\n(예시:010-1234-5678)');
 				$('#input_branchTel_add').val('');
 				$('#input_branchTel_add').focus();
 				return false;
@@ -240,7 +241,7 @@ $(document).ready(function() {
 			let telPattern = /([0-9]{1}[0-9]{1})-(\d{3,4})-(\d{4})/;
 			
 			if(!telPattern.test($('#input_branchTel_edit').val().trim())){
-				alert('전화번호를 올바르게 입력해주세요.\n(예시:010-1234-5678 또는 02-1234-5678)');
+				alert('전화번호를 올바르게 입력해주세요.\n(예시:010-1234-5678)');
 				$('#input_branchTel_edit').val('');
 				$('#input_branchTel_edit').focus();
 				return false;
