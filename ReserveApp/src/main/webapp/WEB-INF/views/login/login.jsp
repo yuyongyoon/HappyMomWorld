@@ -106,7 +106,7 @@
 						<label for="name_signup" class="placeholder">이름</label>
 					</div>
 					<div class="form-group form-floating-label">
-						<input  id="number_signup" name="number__signup" class="form-control input-border-bottom" type="text" required>
+						<input  type="tel" id="number_signup" name="number__signup" class="form-control input-border-bottom"  maxlength='13' required>
 						<label for="number_signup" class="placeholder">전화번호</label>
 					</div>
 					<div class="form-group form-floating-label row pb-0">
@@ -231,7 +231,7 @@
 			})
 			
 			$('#btn_signup').click(function(){
-				let telPattern = /([0-9]{1}[0-9]{1})-(\d{3,4})-(\d{4})/;
+				let telPattern = /(\d{3})-(\d{4})-(\d{4})$/;
 				
 				if(!id_check) {
 					alert('아이디 중복 확인을 해주세요.');
@@ -248,7 +248,7 @@
 					$('#number_signup').focus();
 					return false;
 				} else if(!telPattern.test($('#number_signup').val().trim())){
-					alert('전화번호를 올바르게 입력해주세요.\n(예시:010-1234-5678 또는 02-1234-5678)');
+					alert('전화번호를 올바르게 입력해주세요.\n(예시:010-1234-5678)');
 					$('#number_signup').focus();
 					return false;
 				} else if($('#dueDate_signup').val() == ''){

@@ -573,6 +573,7 @@
 			JOIN tb_reservation_info tri ON trl.branch_code = tri.branch_code
 			JOIN tb_branch_info tbi on trl.branch_code = tbi.branch_code
 		WHERE user_id = #{user_id}
+		ORDER BY  rsv_date ASC
 	</select>
 	
 	<insert  id="updateReservationByAdmin" parameterType="map">
