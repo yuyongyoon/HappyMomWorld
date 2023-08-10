@@ -216,7 +216,7 @@ $(document).ready(function() {
 			let rsvTime = data.reservation_time.substring(0, 5);
 			let currentDate = fnCom.getToday();
 			let currentTime = fnCom.getCurrentTime();
-			console.log('예약 변경 >>',data)
+			//console.log('예약 변경 >>',data)
 			
 			modalPicker = new tui.DatePicker('#div_datepicker_modal', {
 				date: new Date(rsvDate),
@@ -248,28 +248,40 @@ $(document).ready(function() {
 			});
 			
 		},
-		// 예약 변경(modal)
+		// 예약 변경(modal) - 수정중
 		changeRsvModal: function(props, rowKey){
 			let rowData = statusGrid.getRow(selectedRow);
 			let data = props.grid.getRow(rowKey);
 			let rsvDate = $('#input_datepicker_modal').val();
 			let rsvMonth = rsvDate.substring(0,7);
+			let rsvTime = data.rsv_time.substring(0, 5);
+			let currentDate = fnCom.getToday();
+			let currentTime = fnCom.getCurrentTime();
+			
 			if($('#role').val() == 'SUPERADMIN'){
 				let superBranchCode = $('#select-branch');
 			}
 			
-			if (confirm("기존 예약이 취소됩니다. 예약을 변경하시겠습니까?")) {
-				let param = {
-					user_id			: rowData.user_id,
-					pre_rsv_date	: rowData.rsv_date,
-					pre_select_time	: rowData.select_time,
-					rsv_month		: rsvMonth,
-					rsv_date		: rsvDate,
-					select_time		: data.col,
-					super_branch_code	: superBranchCode
+			if (rsvDate < currentDate) {
+				alert("예약일이 지나 변경할 수 없습니다.");
+				return false;
+			} else if (rsvDate == currentDate && rsvTime <= currentTime) {
+				alert("예약시간이 지나 변경할 수 없습니다.");
+				return false;
+			} else {
+				if (confirm("기존 예약이 취소됩니다. 예약을 변경하시겠습니까?")) {
+					let param = {
+						user_id			: rowData.user_id,
+						pre_rsv_date	: rowData.rsv_date,
+						pre_select_time	: rowData.select_time,
+						rsv_month		: rsvMonth,
+						rsv_date		: rsvDate,
+						select_time		: data.col,
+						super_branch_code	: superBranchCode
+					}
+					console.log('예약 변경 param : ', param);
+					ajaxCom.updateReservation(param);
 				}
-				console.log('예약 변경 param : ', param);
-				ajaxCom.updateReservation(param);
 			}
 			
 		},
@@ -287,16 +299,16 @@ $(document).ready(function() {
 			} else if (rsvDate == currentDate && rsvTime <= currentTime) { //당일 취소 가능하게 할지 말지 고민중...
 				alert("취소할 수 없습니다.");
 				return false;
-			}
-
-			if (confirm("예약을 취소하시겠습니까?")) {
-				let param = {
-					user_id		: data.user_id,
-					select_time : data.select_time,
-					rsv_date	: data.rsv_date,
-					flag		: 'd'
+			} else {
+				if (confirm("예약을 취소하시겠습니까?")) {
+					let param = {
+						user_id		: data.user_id,
+						select_time : data.select_time,
+						rsv_date	: data.rsv_date,
+						flag		: 'd'
+					}
+					ajaxCom.removeReservation(param);
 				}
-				ajaxCom.removeReservation(param);
 			} 
 		},
 		// 마사지 확인 여부
@@ -566,7 +578,7 @@ $(document).ready(function() {
 														<span class="tui-ico-date"></span>
 														<div id="startDate-container" style="margin-left: -1px;"></div>
 													</div>
-													<span class="m-t-1 mr-1 ml-1"> ~ </span>
+													<span class="mt-1 mr-1 ml-1"> ~ </span>
 													<div class="tui-datepicker-input tui-datetime-input">
 														<input id="input_endDate" type="text" aria-label="Date">
 														<span class="tui-ico-date"></span>
