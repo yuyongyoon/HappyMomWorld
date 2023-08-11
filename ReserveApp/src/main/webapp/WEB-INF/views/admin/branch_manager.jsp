@@ -444,10 +444,8 @@ $('#select-branch').css('display', 'none');
 								</div>
 							</div>
 							
-							<!-- 지점 그리드 -->
 							<div id="branch_grid"></div>
 							
-							<!-- 지점 추가 modal -->
 							<div class="modal fade" id="addBranch_modal" tabindex="-1" role="dialog" aria-hidden="true">
 								<div class="modal-dialog modal-dialog-centered" role="document">
 									<div class="modal-content">
@@ -533,21 +531,25 @@ $('#select-branch').css('display', 'none');
 									</div>
 								</div>
 							</div>
-							<!-- 지점 정보 수정 modal -->
+							<!-- 지점 정보 modal -->
 							<div class="modal fade" id="editBranch_modal" tabindex="-1" role="dialog" aria-hidden="true">
 								<div class="modal-dialog modal-dialog-centered" role="document">
 									<div class="modal-content">
 										<div class="modal-header">
-											<h4 class="modal-title">지점 정보 수정</h4>
+											<h4 class="modal-title">지점 정보</h4>
+											<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+												<span aria-hidden="true">&times;</span>
+											</button>
 										</div>
-										<div class="modal-body">
+										<div class="modal-body mb-3">
 											<div class="col-12">
 												<div class="form-group row pb-0">
 													<div class="col-sm-3">
 														<label class="control-label mt-2">지점 이름</label>
 													</div>
 													<div class="col-sm-9">
-														<input type="text" class="form-control" id="input_branchName_edit">
+														<input type="text" class="form-control" id="input_branchName_edit"
+															style="border: 1px solid; color: black; background: transparent!important;" readonly>
 													</div>
 												</div>
 												<div class="form-group row pb-0">
@@ -555,7 +557,8 @@ $('#select-branch').css('display', 'none');
 														<label class="control-label mt-2" style="border: 0px;">전화번호</label>
 													</div>
 													<div class="col-sm-9">
-														<input type="text" class="form-control" id="input_branchTel_edit">
+														<input type="text" class="form-control" id="input_branchTel_edit"
+															style="border: 1px solid; color: black; background: transparent!important;" readonly>
 													</div>
 												</div>
 												<div class="form-group row pb-0">
@@ -563,7 +566,8 @@ $('#select-branch').css('display', 'none');
 														<label class="control-label mt-2" style="border: 0px;">주소</label>
 													</div>
 													<div class="col-sm-9">
-														<input type="text" class="form-control" id="input_branchAddr_edit">
+														<input type="text" class="form-control" id="input_branchAddr_edit"
+															style="border: 1px solid; color: black; background: transparent!important;" readonly>
 													</div>
 												</div>
 												<div class="form-group row pb-0">
@@ -581,7 +585,8 @@ $('#select-branch').css('display', 'none');
 														</label>
 													</div>
 													<div class="col-sm-9">
-														<input type="number" class="form-control" id="input_stdDueDate_edit" min=28>
+														<input type="number" class="form-control" id="input_stdDueDate_edit" min=28
+															style="border: 1px solid; color: black; background: transparent!important;" readonly>
 													</div>
 												</div>
 												<div class="form-group row pb-0">
@@ -589,19 +594,16 @@ $('#select-branch').css('display', 'none');
 														<label class="control-label mt-2">가입코드</label>
 													</div>
 													<div class="col-sm-9">
-														<input type="text" class="form-control" id="input_joinCode_edit" disabled>
+														<input type="text" class="form-control" id="input_joinCode_edit"
+															style="border: 1px solid; color: black; background: transparent!important;" readonly>
 													</div>
 												</div>
 											</div>
 										</div>
-										<div class="modal-footer">
-											<button type="button" class="btn btn-secondary" id="btn_editBranch">저장</button>
-											<button type="button" class="btn btn-info" id="btn_editBranch_close">취소</button>
-										</div>
 									</div>
 								</div>
 							</div>
-							<!-- 관리자 정보 수정 modal -->
+							
 							<div class="modal fade" id="editManager_modal" tabindex="-1" role="dialog" aria-hidden="true">
 								<div class="modal-dialog modal-dialog-centered" role="document">
 									<div class="modal-content">

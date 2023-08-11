@@ -86,7 +86,6 @@ $(document).ready(function() {
 					}
 				});
 			},
-			// 예약 변경 리스트
 			getReservationModal: function() {
 				let date = $('#input_datepicker_modal').val();
 				let month = date.substring(0,7);
@@ -117,7 +116,6 @@ $(document).ready(function() {
 					}
 				});
 			},
-			// 회원 예약 리스트(수정중)
 			getUserRsvListModal: function(id) {
 				$.doPost({
 					url	 	: "/admin/getUserReservationList",
@@ -187,7 +185,6 @@ $(document).ready(function() {
 			
 	};
 	
-	//이벤트 객체
 	btnCom = {
 		btn_download: function(){
 			tuiGrid.dataExport(statusGrid,'해피맘월드_예약현황.xlsx');
@@ -195,8 +192,7 @@ $(document).ready(function() {
 		btn_get: function(){
 			ajaxCom.getReservationStatusList();
 		}
-	}; //btnCom END
-	//기타 함수 객체
+	}; 
 	fnCom = {
 		getCurrentTime: function() {
 			const now = new Date();
@@ -209,7 +205,6 @@ $(document).ready(function() {
 			const day = String(now.getDate()).padStart(2, "0");
 			return year + "-" + month + "-" + day;
 		},
-		// 예약 변경(grid)
 		reservationChange: function(props, rowKey){
 			let data = props.grid.getRow(rowKey)
 			let rsvDate = data.rsv_date;
@@ -242,13 +237,11 @@ $(document).ready(function() {
 				$('#changeRsv_modal').modal('show');
 			}
 			
-			//체인지 이벤트
 			modalPicker.on('change', function(){
 				ajaxCom.getReservationModal()
 			});
 			
 		},
-		// 예약 변경(modal) - 수정중
 		changeRsvModal: function(props, rowKey){
 			let rowData = statusGrid.getRow(selectedRow);
 			let data = props.grid.getRow(rowKey);
@@ -285,7 +278,6 @@ $(document).ready(function() {
 			}
 			
 		},
-		// 예약 취소
 		reservationCancle: function(props, rowKey){
 			let data = props.grid.getRow(rowKey)
 			let rsvDate = data.rsv_date;
@@ -296,7 +288,7 @@ $(document).ready(function() {
 			if (rsvDate < currentDate) {
 				alert("예약일이 지나 취소할 수 없습니다.");
 				return false;
-			} else if (rsvDate == currentDate && rsvTime <= currentTime) { //당일 취소 가능하게 할지 말지 고민중...
+			} else if (rsvDate == currentDate && rsvTime <= currentTime) {
 				alert("취소할 수 없습니다.");
 				return false;
 			} else {
@@ -311,7 +303,6 @@ $(document).ready(function() {
 				}
 			} 
 		},
-		// 마사지 확인 여부
 		checkMassage: function(props, rowKey){
 			let data = props.grid.getRow(rowKey);
 			let rsvDate = data.rsv_date;
