@@ -506,7 +506,7 @@
 		JOIN tb_reservation_info b ON a.branch_code = b.branch_code 
 		<where>
 			a.rsv_status = 'N'
-			and a.rsv_date <![CDATA[<]]> #{today}
+			and a.rsv_date <![CDATA[<=]]> #{today}
 			<choose>
 				<when test="super_branch_code == null or super_branch_code == ''">
 					AND a.branch_code = #{branch_code}
