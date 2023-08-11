@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<script src="/static/common/js/qrcode/jquery.qrcode.min.js"></script>
 
 <script>
 $(document).ready(function() {
@@ -22,7 +23,6 @@ $(document).ready(function() {
 					super_branch_code : superBranchCode
 				},
 				success	: function(result) {
-					console.log(result)
 					if(result.branchInfo != null){
 						let data = result.branchInfo;
 						$('#input_brName').val(data.branch_name);
@@ -32,6 +32,9 @@ $(document).ready(function() {
 						$('#input_brJoincode').val(data.join_code);
 						$('#input_brCode').val(data.join_code);
 						$('#input_brDueDate').val(data.std_due_date);
+						$('#input_mainUrl').val(data.main_url);
+						
+						$('#qrcode').qrcode({width: 300,height: 300,text: data.main_url});
 					}
 				},
 				error	: function(xhr,status){
@@ -86,6 +89,11 @@ $('#select-branch').on('change', function(){
 	ajaxCom.getBranchPrintInfo();
 })
 </script>
+<style>
+#qrcode {
+	text-align: center;
+}
+</style>
 <div class="main-panel">
 	<div class="content">
 		<div class="page-inner">
@@ -105,42 +113,55 @@ $('#select-branch').on('change', function(){
 							</div>
 							<hr>
 							<div class="row">
-								<div class="col-12">
+								<div class="col-md-8">
 									<div class="row">
-										<div class="col-md-12">
-											<label for="input_brName">지점 이름</label>
-											<input type="text" class="form-control" id="input_brName">
+										<div class="col-12">
+											<div class="row">
+												<div class="col-md-12">
+													<label for="input_brName">지점 이름</label>
+													<input type="text" class="form-control" id="input_brName">
+												</div>
+											</div>
+											<div class="row mt-3">
+												<div class="col-md-12">
+													<label for="input_brTel">전화번호</label>
+													<input type="text" class="form-control" id="input_brTel">
+												</div>
+											</div>
+											<div class="row mt-3">
+												<div class="col-md-12">
+													<label for="input_brAddr">주소</label>
+													<input type="text" class="form-control" id="input_brAddr">
+												</div>
+											</div>
+											<div class="row mt-3">
+												<div class="col-md-12">
+													<label for="input_brHours">운영시간</label>
+													<input type="text" class="form-control" id="input_brHours">
+												</div>
+											</div>
+											<div class="row mt-3">
+												<div class="col-md-12">
+													<label for="input_brDueDate">기준 임신 주수</label>
+													<input type="number" class="form-control" id="input_brDueDate">
+												</div>
+											</div>
+											<div class="row mt-3">
+												<div class="col-md-12">
+													<label for="input_brCode">가입코드</label>
+													<input type="text" class="form-control" id="input_brCode" disabled>
+												</div>
+											</div>
 										</div>
 									</div>
-									<div class="row mt-3">
-										<div class="col-md-12">
-											<label for="input_brTel">전화번호</label>
-											<input type="text" class="form-control" id="input_brTel">
-										</div>
+								</div>
+								<div class="col-md-4">
+									<div class="col-md-12">
+										<label for="input_mainUrl">URL</label>
+										<input type="text" class="form-control" id="input_mainUrl" disabled>
 									</div>
-									<div class="row mt-3">
-										<div class="col-md-12">
-											<label for="input_brAddr">주소</label>
-											<input type="text" class="form-control" id="input_brAddr">
-										</div>
-									</div>
-									<div class="row mt-3">
-										<div class="col-md-12">
-											<label for="input_brHours">운영시간</label>
-											<input type="text" class="form-control" id="input_brHours">
-										</div>
-									</div>
-									<div class="row mt-3">
-										<div class="col-md-12">
-											<label for="input_brDueDate">기준 임신 주수</label>
-											<input type="number" class="form-control" id="input_brDueDate">
-										</div>
-									</div>
-									<div class="row mt-3">
-										<div class="col-md-12">
-											<label for="input_brCode">가입코드</label>
-											<input type="text" class="form-control" id="input_brCode" disabled>
-										</div>
+									<div class="col-md-12 mt-3">
+										<div id="qrcode"></div>
 									</div>
 								</div>
 							</div>

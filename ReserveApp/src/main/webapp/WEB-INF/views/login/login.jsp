@@ -111,7 +111,7 @@
 					</div>
 					<div class="form-group form-floating-label row pb-0">
 						<div class="col-sm-3">
-							<label class="control-label mt-2">출산 예정일</label>
+							<label class="placeholder mt-2">출산 예정일</label>
 						</div>
 						<div class="col-sm-9">
 							<div class="tui-datepicker-input tui-datetime-input tui-datepicker-custom" style="width: 100%;">

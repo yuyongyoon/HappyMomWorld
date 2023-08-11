@@ -422,7 +422,7 @@
 	</select>
 	
 	<select id="getBranchInfo" parameterType="map"  resultType="map">
-		SELECT a.branch_name, a.branch_tel, a.branch_addr, a.business_hours, b.join_code, a.std_due_date
+		SELECT a.branch_name, a.branch_tel, a.branch_addr, a.business_hours, b.join_code, a.std_due_date, a.main_url
 		FROM tb_branch_info a
 		LEFT OUTER JOIN tb_branch_mng b on a.branch_code = b.branch_code 
 		<where>
@@ -761,8 +761,10 @@
 				FROM tb_msg_log
 				WHERE msg_type = 'non_rsv'
 			) b ON a.id = b.user_id
+		JOIN tb_branch_info c on c.branch_code = a.branch_code 
 		<where>
 			a.user_role = 'USER' AND a.user_status = 'Y' AND a.massage_total - a.massage_cnt > 0
+			AND c.std_due_date <![CDATA[<]]> TRUNC((CURRENT_DATE - To_char(TO_DATE(a.due_date, 'YYYY-MM-DD') - INTERVAL '280 days', 'YYYY-MM-DD')::date)::numeric / 7)
 			<choose>
 				<when test="super_branch_code == null or super_branch_code == ''">
 					and a.branch_code = #{branch_code}
@@ -772,7 +774,7 @@
 				</otherwise>
 			</choose>
 		</where>
-		ORDER BY a.created_dt desc
+		ORDER BY 8 desc
 	</select>
 	
 	<select id="getMsgLogCnt" parameterType="map" resultType="int">
@@ -811,4 +813,15 @@
 			#{branch_code}, #{msg_type}, #{user_id}, #{msg_status}, #{login_id}, now(), #{login_id}, now(), #{rsv_date}
 		)
 	</insert>
+	
+	<select id="getMainUrl" resultType="map">
+		SELECT main_url 
+		FROM tb_branch_info
+		GROUP BY main_url
+	</select>
+	
+	<update id="updateUrl" parameterType="map">
+		UPDATE tb_branch_info
+		SET main_url = #{main_url}
+	</update>
 </mapper>

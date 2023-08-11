@@ -309,8 +309,6 @@ public class AdminController {
 		Map<String,Object> result = new HashMap<String,Object>();
 		List<Map<String,Object>> reservationStatusList = adminService.getUserReservationList(param);
 		result.put("userRsvList", reservationStatusList);
-		//System.out.println("=======================getUserRsvList=========");
-		//System.out.println(reservationStatusList);
 		return result;
 	}
 	
@@ -337,6 +335,24 @@ public class AdminController {
 	public Map<String,Object> updateRsvStatus(HttpServletRequest request, @RequestBody Map<String,Object> param) throws Exception {
 		Map<String,Object> result = new HashMap<String,Object>();
 		String msg = adminService.updateRsvStatus(param);
+		result.put("msg", msg);
+		return result;
+	}
+	
+	@RequestMapping(value = "/getMainUrl", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String,Object> getMainUrl(HttpServletRequest request, @RequestBody Map<String,Object> param) throws Exception {
+		Map<String,Object> result = new HashMap<String,Object>();
+		Map<String,Object> mainUrl = adminService.getMainUrl(param);
+		result.put("mainUrl", mainUrl);
+		return result;
+	}
+	
+	@RequestMapping(value = "/updateUrl", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String,Object> updateUrl(HttpServletRequest request, @RequestBody Map<String,Object> param) throws Exception {
+		Map<String,Object> result = new HashMap<String,Object>();
+		String msg = adminService.updateUrl(param);
 		result.put("msg", msg);
 		return result;
 	}

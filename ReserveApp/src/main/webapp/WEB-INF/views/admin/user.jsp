@@ -1,5 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-
+<style>
+label{
+	font-size: 13px!important;
+}
+</style>
 <script>
 $(document).ready(function() { 
 	let id_check = false;

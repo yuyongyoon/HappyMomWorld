@@ -1,6 +1,12 @@
 :root {
 	--info-color: #6c757d;  /* info 클래스의 색상을 회색으로 재정의 */
 }
+body {
+	font-size: 15px;
+}
+label, .tui-grid-container {
+	font-size: 15px!important;
+}
 .btn-info {
 	background-color: var(--info-color) !important;
 	border-color: var(--info-color) !important;
@@ -39,9 +45,9 @@ input .form-control {
 	line-height: 30px;
 	margin-bottom: 20px;
 }
-.button-list .header-btn {
-	height:37px;
-}
+/* .button-list .header-btn { */
+/* 	height:37px; */
+/* } */
 .tui-datepicker-input {
 	margin-top: 6px;
 	height: 28px !important;
