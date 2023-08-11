@@ -418,7 +418,7 @@ $(document).on('input', '#reservation_tbody input[type="number"]', function() {
 								<div class="col-md-12">
 									<div class="row">
 										<div class="col-sm-6">
-											<span class="row-title">예약 마스터 관리</span>
+											<span class="row-title">예약 생성</span>
 										</div>
 										<div class="col-sm-6">
 											<div class="button-list float-right">
