@@ -261,7 +261,7 @@ $(document).ready(function() {
 							<ul class="dropdown-menu dropdown-user animated fadeIn" aria-labelledby="userMenu">
 								<sec:authorize access="hasAnyRole('ROLE_USER')">
 									<li id="updateUserInfo_list">
-										<a class="dropdown-item" style="cursor:pointer;font-size:14px;">회원정보 변경</a>
+										<a class="dropdown-item" style="cursor:pointer;">정보 변경</a>
 									</li>
 									
 									<li class="updateUserPwd_list">
@@ -298,7 +298,7 @@ $(document).ready(function() {
 		<div class="modal-dialog modal-dialog-centered" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h4 class="modal-title" id="updateInfo_modalTitle">회원 정보 변경</h4>
+					<h4 class="modal-title" id="updateInfo_modalTitle">사용자 정보 변경</h4>
 				</div>
 				<div class="modal-body">
 					<div class="col-12">
