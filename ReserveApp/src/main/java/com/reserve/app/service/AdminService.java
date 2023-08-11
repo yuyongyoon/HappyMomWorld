@@ -73,37 +73,12 @@ public class AdminService {
 		return mapper.getBranchList(param);
 	}
 	
-	/*
-	 * @SuppressWarnings("unchecked") public String
-	 * saveBranchInfo(Map<String,Object> param) { String msg = "success";
-	 * 
-	 * List<Map<String,Object>> branchList =
-	 * (List<Map<String,Object>>)param.get("data");
-	 * 
-	 * try { for (Map<String,Object> branchData : branchList) { if
-	 * (branchData.get("status").equals("i")) { int p1 = (int)(Math.random() * 10);
-	 * int p2 = (int)(Math.random() * 10); char p3 =
-	 * (char)((int)(Math.random()*26)+97); char p4 =
-	 * (char)((int)(Math.random()*26)+97); String joinCode = "@" + p3 +
-	 * Integer.toString(p1) + p4 + Integer.toString(p2);
-	 * 
-	 * branchData.put("join_code", joinCode); mapper.addBranchInfo(branchData); }
-	 * else if (branchData.get("status").equals("u")) {
-	 * mapper.updateBranchInfo(branchData); } else {
-	 * mapper.deleteBranchInfo(branchData); } } } catch (Exception e) {
-	 * e.printStackTrace(); if (e.getCause() instanceof PSQLException) {
-	 * PSQLException psqlException = (PSQLException) e.getCause(); String sqlState =
-	 * psqlException.getSQLState(); if ("23505".equals(sqlState)) { String errorMsg
-	 * = "지점 코드가 중복되었습니다. 지점 코드를 변경 후 다시 저장하세요."; msg = errorMsg; } else { msg =
-	 * "fail"; } } else { msg = "fail"; } } return msg; }
-	 */
-	
 	public Map<String,Object> checkId(HashMap<String, Object> param) {
 		Map<String,Object> result = new HashMap<String,Object>();
 		int idCnt = mapper.checkId(param);
 		System.out.println("중복 아이디 수: "+idCnt);
 		
-		if(idCnt < 1) {// 아이디 중복X
+		if(idCnt < 1) {
 			result.put("msg", "success");
 		}else {
 			result.put("msg", "fail");
@@ -115,14 +90,12 @@ public class AdminService {
 		String msg = "success";
 		
 		try {
-			// 비밀번호 암호화
 			String pwd = param.get("password").toString();
 			SHA512PasswordEncoder sha512Service = new SHA512PasswordEncoder();
 			
 			String encpwd = sha512Service.encode(pwd);
 			param.put("encpwd", encpwd);
 			
-			// 가입 코드
 			int p1 = (int)(Math.random() * 10);
 			int p2 = (int)(Math.random() * 10);
 			char p3 = (char)((int)(Math.random()*26)+97);
@@ -214,18 +187,9 @@ public class AdminService {
 		try {
 			List<Map<String,Object>> saveReservationMasterData = (List<Map<String,Object>>)param.get("data");
 			Map<String,Object> delInfo = (Map<String,Object>)param.get("delInfo");
-//			Map<String,Object> branchReservationInfo = (Map<String,Object>)param.get("branchReservationInfo");
 			
 			mapper.deleteReservationMasterData(delInfo);
 			mapper.addReservationMasterData(saveReservationMasterData);
-
-//			int branchReservationInfoCnt = mapper.getCntBranchReservationInfo(branchReservationInfo);
-			
-//			if(branchReservationInfoCnt == 0) {
-//				mapper.addbranchReservationInfo(branchReservationInfo);
-//			} else if(branchReservationInfoCnt >= 1) {
-//				mapper.updatebranchReservationInfo(branchReservationInfo);
-//			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			msg = "fail";
@@ -234,42 +198,21 @@ public class AdminService {
 	}
 
 	public Map<String, Object> getBranchReservationInfo(Map<String, Object> param) throws Exception {
-//		int cntBranchReservationInfo = mapper.getCntBranchReservationInfo(param);
-		
-//		if(cntBranchReservationInfo == 0) {
-//			param.put("rsv_month", "2023-00");
-			return mapper.getBranchReservationInfo(param);
-//		} else {
-//			return mapper.getBranchReservationInfo(param);
-//		}
+		return mapper.getBranchReservationInfo(param);
 	}
-	
-//	public String saveBranchReservationInfo(Map<String,Object> param) {
-//		String msg = "success";
-//		try {
-//			int branchReservationInfo = mapper.getCntBranchReservationInfo(param);
-//			
-//			if(branchReservationInfo == 0) {
-//				mapper.addbranchReservationInfo(param);
-//			} else if(branchReservationInfo >= 1) {
-//				mapper.updatebranchReservationInfo(param);
-//			}
-//			
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			msg = "fail";
-//		}
-//		return msg;
-//	}
 	
 	public List<Map<String, Object>> getCalendarEvent(Map<String,Object> param){
 		return mapper.getCalendarEvent(param);
 	}
 	
-	public List<Map<String, Object>> getSeletedDateReservationList(Map<String,Object> param){
-		return mapper.getSeletedDateReservationList(param);
+	public List<Map<String, Object>> getRsvUserList(Map<String,Object> param){
+		return mapper.getRsvUserList(param);
 	}
 	
+	public Map<String, Object> getSeletedDateReservationList(Map<String,Object> param){
+		return mapper.getSeletedDateReservationList(param);
+	}
+		
 	public Map<String,Object> getRsvLastMonth(Map<String,Object> param) {
 		return mapper.getRsvLastMonth(param);
 	}
@@ -302,22 +245,15 @@ public class AdminService {
 		return msg;
 	}
 	
-	public List<Map<String, Object>> getReservationStatusList(Map<String, Object> param) throws Exception {
-		return mapper.getReservationStatusList(param);
+	public List<Map<String, Object>> getNonConfirmData(Map<String, Object> param) throws Exception {
+		return mapper.getNonConfirmData(param);
 	}
 	
-	public List<Map<String, Object>> getReservationModal(Map<String, Object> param) throws Exception {
+	public List<Map<String, Object>> getReservationList(Map<String, Object> param) throws Exception {
 		param.put("timeSlots", Arrays.asList("1", "2", "3", "4", "5", "6", "7", "8", "9", "10"));
-		List<Map<String, Object>> result = mapper.getReservationModal(param);
-		
-		return result;
+		return mapper.getReservationList(param);
 	}
 	
-	public List<Map<String, Object>> getUserReservationList(Map<String, Object> param) throws Exception {
-		return mapper.getUserReservationList(param);
-	}
-	
-	// 예약 변경
 	public String updateReservation(Map<String,Object> param){ 
 		String msg = "success";
 		try {
@@ -335,14 +271,14 @@ public class AdminService {
 			mapper.saveCancelLog(paramD); 
 			mapper.updateReservationByAdmin(paramU);
 			mapper.changeMagCnt(paramU);
-			 
+			
 		}catch (Exception e) {
 			e.printStackTrace();
 			msg = "fail";
 		}
 		return msg;
 	}
-	// 예약 취소
+
 	public String removeReservationByAdmin(Map<String,Object> param){ 
 		String msg = "success";
 		try {
@@ -355,10 +291,6 @@ public class AdminService {
 		}
 		return msg;
 	}
-	
-//	public Map<String,Object> getRecentlyBranchReservationInfo(Map<String,Object>param) throws Exception{
-//		return mapper.getRecentlyBranchReservationInfo(param);
-//	}
 	
 	public String updateRsvStatus(Map<String,Object> param){
 		String msg = "success";

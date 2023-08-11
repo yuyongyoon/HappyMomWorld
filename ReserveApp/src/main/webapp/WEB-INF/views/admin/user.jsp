@@ -314,7 +314,7 @@ $(document).ready(function() {
 														<label class="control-label mt-2" style="border: 0px;">전화번호</label>
 													</div>
 													<div class="col-sm-9">
-														<input type="tel" class="form-control" id="input_phoneNumber_edit" maxlength='13'>
+														<input type="text" class="form-control" id="input_phoneNumber_edit" maxlength='13'>
 													</div>
 												</div>
 												<div class="form-group row pb-0">

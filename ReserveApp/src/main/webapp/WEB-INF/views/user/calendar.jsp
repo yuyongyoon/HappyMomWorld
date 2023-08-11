@@ -50,6 +50,9 @@ $(document).ready(function() {
 	$('.fc-prev-button').attr('title', '이전 달');
 	$('.fc-next-button').attr('title', '다음 달');
 	
+	$('.fc-daygrid-day-events').css('font-weight', 'bolder');
+	$('.fc-daygrid-day-events').css('font-size','18px');
+	
 	$('.fc-prev-button').click(function() {
 		let currentDate = cfn_yearMonthFormat(calendar.getDate());
 		ajaxCom.getAvailableDate(currentDate);

@@ -483,7 +483,7 @@ $('#select-branch').css('display', 'none');
 														<label class="control-label mt-2" style="border: 0px;">전화번호</label>
 													</div>
 													<div class="col-sm-9">
-														<input type="tel" class="form-control" id="input_branchTel_add">
+														<input type="text" class="form-control" id="input_branchTel_add">
 													</div>
 												</div>
 												<div class="form-group row pb-0">
@@ -543,52 +543,52 @@ $('#select-branch').css('display', 'none');
 										<div class="modal-body">
 											<div class="col-12">
 												<div class="form-group row pb-0">
-													<div class="col-sm-3">
+													<div class="col-sm-4">
 														<label class="control-label mt-2">지점 이름</label>
 													</div>
-													<div class="col-sm-9">
+													<div class="col-sm-8">
 														<input type="text" class="form-control" id="input_branchName_edit">
 													</div>
 												</div>
 												<div class="form-group row pb-0">
-													<div class="col-sm-3">
+													<div class="col-sm-4">
 														<label class="control-label mt-2" style="border: 0px;">전화번호</label>
 													</div>
-													<div class="col-sm-9">
+													<div class="col-sm-8">
 														<input type="text" class="form-control" id="input_branchTel_edit">
 													</div>
 												</div>
 												<div class="form-group row pb-0">
-													<div class="col-sm-3">
+													<div class="col-sm-4">
 														<label class="control-label mt-2" style="border: 0px;">주소</label>
 													</div>
-													<div class="col-sm-9">
+													<div class="col-sm-8">
 														<input type="text" class="form-control" id="input_branchAddr_edit">
 													</div>
 												</div>
 												<div class="form-group row pb-0">
-													<div class="col-sm-3">
+													<div class="col-sm-4">
 														<label class="control-label mt-2">운영 시간</label>
 													</div>
-													<div class="col-sm-9">
+													<div class="col-sm-8">
 														<input type="text" class="form-control" id="input_branchTime_edit">
 													</div>
 												</div>
 												<div class="form-group row pb-0">
-													<div class="col-sm-3">
+													<div class="col-sm-4">
 														<label class="control-label mt-2">기준 임신 주수
 														<i class="fas fa-question-circle" data-toggle="popover" data-placement="bottom" data-content="마사지 예약 안내를 위한 기준이 되는 임신 주수를 입력해주세요." style="cursor:pointer;"></i>
 														</label>
 													</div>
-													<div class="col-sm-9">
+													<div class="col-sm-8">
 														<input type="number" class="form-control" id="input_stdDueDate_edit" min=28>
 													</div>
 												</div>
 												<div class="form-group row pb-0">
-													<div class="col-sm-3">
+													<div class="col-sm-4">
 														<label class="control-label mt-2">가입코드</label>
 													</div>
-													<div class="col-sm-9">
+													<div class="col-sm-8">
 														<input type="text" class="form-control" id="input_joinCode_edit" disabled>
 													</div>
 												</div>

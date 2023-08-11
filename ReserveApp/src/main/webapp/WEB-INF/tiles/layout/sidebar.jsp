@@ -20,11 +20,8 @@
 					<li class="nav-item" id="user">
 						<a href="/admin/user"><i class="fas fa-user-alt"></i><p>회원 관리</p></a>
 					</li>
-					<li class="nav-item" id="reservation_status">
-						<a href="/admin/reservation_status"><i class="far fa-calendar-alt"></i><p>예약 현황</p></a>
-					</li>
 					<li class="nav-item" id="reservation_master">
-						<a href="/admin/reservation_master"><i class="fas fa-cog"></i><p>예약 마스터 관리</p></a>
+						<a href="/admin/reservation_master"><i class="far fa-calendar-alt"></i><p>예약 생성</p></a>
 					</li>
 					<li class="nav-item" id="info_master">
 						<a href="/admin/info_master"><i class="fas fa-info-circle"></i><p>지점 정보 관리</p></a>

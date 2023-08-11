@@ -106,7 +106,7 @@
 						<label for="name_signup" class="placeholder">이름</label>
 					</div>
 					<div class="form-group form-floating-label">
-						<input  type="tel" id="number_signup" name="number__signup" class="form-control input-border-bottom"  maxlength='13' required>
+						<input  type="text" id="number_signup" name="number__signup" class="form-control input-border-bottom"  maxlength='13' required>
 						<label for="number_signup" class="placeholder">전화번호</label>
 					</div>
 					<div class="form-group form-floating-label row pb-0">

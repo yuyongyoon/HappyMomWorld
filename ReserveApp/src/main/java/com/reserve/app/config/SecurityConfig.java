@@ -38,7 +38,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			.authorizeRequests()
 				.antMatchers("/admin/dashboard").hasAnyRole("ADMIN", "SUPERADMIN")
 				.antMatchers("/admin/user").hasAnyRole("ADMIN", "SUPERADMIN")
-				.antMatchers("/admin/reservation_status").hasAnyRole("ADMIN", "SUPERADMIN")
 				.antMatchers("/admin/admin/reservation_master").hasAnyRole("ADMIN", "SUPERADMIN")
 				.antMatchers("/admin/info_master").hasAnyRole("ADMIN", "SUPERADMIN")
 				.antMatchers("/admin/branch_manager").hasAnyRole("SUPERADMIN")

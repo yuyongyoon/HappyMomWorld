@@ -14,7 +14,7 @@ public interface AdminMapper {
 	void updateAccount(Map<String, Object> param);
 
 	int checkId(Map<String,Object> param);
-	//=================================== 지점 관리 ===================================
+
 	List<Map<String, Object>> getBranchNameList(Map<String, Object> param);
 	
 	List<Map<String,Object>> getBranchList(Map<String,Object> param);
@@ -41,11 +41,7 @@ public interface AdminMapper {
 	
 	void deleteReservationMasterData(Map<String,Object> param);
 	
-//	int getCntBranchReservationInfo(Map<String,Object> param);
-	
 	Map<String, Object> getBranchReservationInfo(Map<String,Object> param);
-	
-//	int getCntbranchReservationInfo(Map<String,Object> param);
 	
 	int addbranchReservationInfo(Map<String,Object> param);
 	
@@ -53,17 +49,17 @@ public interface AdminMapper {
 	
 	List<Map<String,Object>> getCalendarEvent(Map<String,Object> param);
 	
-	List<Map<String,Object>> getSeletedDateReservationList(Map<String,Object> param);
+	List<Map<String,Object>> getRsvUserList(Map<String,Object> param);
+	
+	Map<String,Object> getSeletedDateReservationList(Map<String,Object> param);
 	
 	Map<String, Object> getBranchInfo(Map<String,Object> param);
 	
 	void saveBranchInfo(Map<String,Object> param);
-	//=================================== 예약 현황 ===================================
-	List<Map<String,Object>> getReservationStatusList(Map<String,Object> param);
+
+	List<Map<String,Object>> getNonConfirmData(Map<String,Object> param);
 	
-	List<Map<String,Object>> getReservationModal(Map<String,Object> param);
-	
-	List<Map<String,Object>> getUserReservationList(Map<String,Object> param);
+	List<Map<String,Object>> getReservationList(Map<String,Object> param);
 	
 	void updateReservationByAdmin(Map<String, Object> param);
 	
@@ -72,8 +68,6 @@ public interface AdminMapper {
 	void changeMagCnt(Map<String, Object> param);
 	
 	void saveCancelLog(Map<String,Object> param);
-	
-//	Map<String,Object> getRecentlyBranchReservationInfo(Map<String,Object> param);
 	
 	void updateRsvStatus(Map<String,Object> param);
 	

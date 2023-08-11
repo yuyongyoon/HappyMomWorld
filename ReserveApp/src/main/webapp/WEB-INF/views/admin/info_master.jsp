@@ -33,7 +33,7 @@ $(document).ready(function() {
 						$('#input_brCode').val(data.join_code);
 						$('#input_brDueDate').val(data.std_due_date);
 						$('#input_mainUrl').val(data.main_url);
-						
+						$("#qrcode").empty();
 						$('#qrcode').qrcode({width: 300,height: 300,text: data.main_url});
 					}
 				},

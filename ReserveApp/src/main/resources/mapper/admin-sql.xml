@@ -10,7 +10,7 @@
 			AND tb_user.user_role like 'SUPERADMIN'
 		ORDER BY tb_branch_mng.branch_code
 	</select>
-	<!--=============== 회원 관리 ===============-->
+	
 	<select id="getUserList" parameterType="map" resultType="map">
 		SELECT
 			a.id, a.name, a.phone_number, a.due_date, a.user_role, a.massage_cnt, a.massage_total, coalesce(b.has_reservation,0) as massage_reservation_cnt,
@@ -294,22 +294,6 @@
 		where branch_code=#{branch_code} and rsv_month=#{stdMonth}
 	</delete>
 	
-	<select id="getCntBranchReservationInfo" parameterType="map"  resultType="int">
-		SELECT count(branch_code)
-		FROM tb_reservation_info
-		<where>
-			rsv_month = #{rsv_month}
-			<choose>
-				<when test="super_branch_code == null or super_branch_code == ''">
-					and branch_code = #{branch_code}
-				</when>
-				<otherwise>
-					and branch_code = #{super_branch_code}
-				</otherwise>
-			</choose>
-		</where>
-	</select>
-	
 	<select id="getBranchReservationInfo" parameterType="map"  resultType="map">
 		SELECT t1_name, t2_name, t3_name, t4_name, t5_name, t6_name, t7_name, t8_name, t9_name, t10_name
 		FROM tb_reservation_info
@@ -392,22 +376,47 @@
 	</select>
 	
 	<select id="getSeletedDateReservationList" parameterType="map"  resultType="map">
-		SELECT rsv_date, a.user_id, c.phone_number, c.name as user_name,
-				CASE 
-					WHEN a.select_time = 't1' THEN b."t1_name"
-					WHEN a.select_time = 't2' THEN b."t2_name"
-					WHEN a.select_time = 't3' THEN b."t3_name"
-					WHEN a.select_time = 't4' THEN b."t4_name"
-					WHEN a.select_time = 't5' THEN b."t5_name"
-					WHEN a.select_time = 't6' THEN b."t6_name"
-					WHEN a.select_time = 't7' THEN b."t7_name"
-					WHEN a.select_time = 't8' THEN b."t8_name"
-					WHEN a.select_time = 't9' THEN b."t9_name"
-					WHEN a.select_time = 't10' THEN b."t10_name"
-				END AS "reservation_time"
+		SELECT
+			rsv_date,
+			GREATEST("1t" , "2t", "3t", "4t", "5t", "6t", "7t", "8t", "9t", "10t") AS max_rsv,
+			"1t" as "t1_times_cnt",
+			CASE WHEN "1t" <![CDATA[<>]]> 0 THEN (SELECT "t1_name" FROM tb_reservation_info WHERE  branch_code = 'b0001') ELSE NULL END AS "t1_times",
+			"2t" as "t2_times_cnt",
+			CASE WHEN "2t" <![CDATA[<>]]> 0 THEN (SELECT "t2_name" FROM tb_reservation_info WHERE  branch_code = 'b0001') ELSE NULL END AS "t2_times",
+			"3t" as "t3_times_cnt",
+			CASE WHEN "3t" <![CDATA[<>]]> 0 THEN (SELECT "t3_name" FROM tb_reservation_info WHERE  branch_code = 'b0001') ELSE NULL END AS "t3_times",
+			"4t" as "t4_times_cnt",
+			CASE WHEN "4t" <![CDATA[<>]]> 0 THEN (SELECT "t4_name" FROM tb_reservation_info WHERE  branch_code = 'b0001') ELSE NULL END AS "t4_times",
+			"5t" as "t5_times_cnt",
+			CASE WHEN "5t" <![CDATA[<>]]> 0 THEN (SELECT "t5_name" FROM tb_reservation_info WHERE  branch_code = 'b0001') ELSE NULL END AS "t5_times",
+			"6t" as "t6_times_cnt",
+			CASE WHEN "6t" <![CDATA[<>]]> 0 THEN (SELECT "t6_name" FROM tb_reservation_info WHERE  branch_code = 'b0001') ELSE NULL END AS "t6_times",
+			"7t" as "t7_times_cnt",
+			CASE WHEN "7t" <![CDATA[<>]]> 0 THEN (SELECT "t7_name" FROM tb_reservation_info WHERE  branch_code = 'b0001') ELSE NULL END AS "t7_times",
+			"8t" as "t8_times_cnt",
+			CASE WHEN "8t" <![CDATA[<>]]> 0 THEN (SELECT "t8_name" FROM tb_reservation_info WHERE  branch_code = 'b0001') ELSE NULL END AS "t8_times",
+			"9t" as "t9_times_cnt",
+			CASE WHEN "9t" <![CDATA[<>]]> 0 THEN (SELECT "t9_name" FROM tb_reservation_info  WHERE  branch_code = 'b0001') ELSE NULL END AS "t9_times",
+			"10t" as "t10_times_cnt",
+			CASE WHEN "10t" <![CDATA[<>]]> 0 THEN (SELECT "t10_name" FROM tb_reservation_info WHERE  branch_code = 'b0001') ELSE NULL END AS "t10_times"
+		FROM tb_reservation_master
+		<where>
+			rsv_date = #{rsv_date}
+			<choose>
+				<when test="super_branch_code == null or super_branch_code == ''">
+					and branch_code = #{branch_code}
+				</when>
+				<otherwise>
+					and branch_code = #{super_branch_code}
+				</otherwise>
+			</choose>
+		</where>
+	</select>
+	
+	<select id="getRsvUserList" parameterType="map"  resultType="map">
+		SELECT a.rsv_date, a.select_time, a.user_id, b."name", b.phone_number, a.rsv_status
 		FROM tb_reservation_list a
-		JOIN tb_reservation_info b ON a.branch_code = b.branch_code
-		JOIN tb_user c on a.user_id = c.id 
+		LEFT OUTER JOIN tb_user b on b.id = a.user_id 
 		<where>
 			a.rsv_date = #{rsv_date}
 			<choose>
@@ -420,6 +429,35 @@
 			</choose>
 		</where>
 	</select>
+	
+<!-- 		SELECT rsv_date, a.user_id, c.phone_number, c.name as user_name, -->
+<!-- 				CASE  -->
+<!-- 					WHEN a.select_time = 't1' THEN b."t1_name" -->
+<!-- 					WHEN a.select_time = 't2' THEN b."t2_name" -->
+<!-- 					WHEN a.select_time = 't3' THEN b."t3_name" -->
+<!-- 					WHEN a.select_time = 't4' THEN b."t4_name" -->
+<!-- 					WHEN a.select_time = 't5' THEN b."t5_name" -->
+<!-- 					WHEN a.select_time = 't6' THEN b."t6_name" -->
+<!-- 					WHEN a.select_time = 't7' THEN b."t7_name" -->
+<!-- 					WHEN a.select_time = 't8' THEN b."t8_name" -->
+<!-- 					WHEN a.select_time = 't9' THEN b."t9_name" -->
+<!-- 					WHEN a.select_time = 't10' THEN b."t10_name" -->
+<!-- 				END AS "reservation_time" -->
+<!-- 		FROM tb_reservation_list a -->
+<!-- 		JOIN tb_reservation_info b ON a.branch_code = b.branch_code -->
+<!-- 		JOIN tb_user c on a.user_id = c.id  -->
+<!-- 		<where> -->
+<!-- 			a.rsv_date = #{rsv_date} -->
+<!-- 			<choose> -->
+<!-- 				<when test="super_branch_code == null or super_branch_code == ''"> -->
+<!-- 					and a.branch_code = #{branch_code} -->
+<!-- 				</when> -->
+<!-- 				<otherwise> -->
+<!-- 					and a.branch_code = #{super_branch_code} -->
+<!-- 				</otherwise> -->
+<!-- 			</choose> -->
+<!-- 		</where> -->
+<!-- 	</select> -->
 	
 	<select id="getBranchInfo" parameterType="map"  resultType="map">
 		SELECT a.branch_name, a.branch_tel, a.branch_addr, a.business_hours, b.join_code, a.std_due_date, a.main_url
@@ -449,34 +487,26 @@
 			modified_dt = now()
 		WHERE branch_code = #{branch_code}
 	</update>
-	<!--=============== 예약 현황 조회 ===============-->	
-	<select id="getReservationStatusList" parameterType="map" resultType="map">
-		SELECT rsv_date, a.user_id, 
-			c."name", c.phone_number, c.due_date, c.user_status, c.massage_cnt, c.remark, c.massage_total,
-			coalesce(la.has_reservation,0) as massage_reservation_cnt, a.rsv_status,
-			TO_CHAR(c.created_dt, 'YYYY-MM-DD') AS created_dt,
-				TO_CHAR(a.created_dt, 'YYYY-MM-DD') AS created_dt, a.select_time,
+
+	<select id="getNonConfirmData" parameterType="map" resultType="map">
+		SELECT a.rsv_date, a.user_id, a.rsv_status, a.select_time,
 				CASE 
-					WHEN a.select_time = 't1' THEN b."t1_name"
-					WHEN a.select_time = 't2' THEN b."t2_name"
-					WHEN a.select_time = 't3' THEN b."t3_name"
-					WHEN a.select_time = 't4' THEN b."t4_name"
-					WHEN a.select_time = 't5' THEN b."t5_name"
-					WHEN a.select_time = 't6' THEN b."t6_name"
-					WHEN a.select_time = 't7' THEN b."t7_name"
-					WHEN a.select_time = 't8' THEN b."t8_name"
-					WHEN a.select_time = 't9' THEN b."t9_name"
-					WHEN a.select_time = 't10' THEN b."t10_name"
+					WHEN a.select_time = 't1' THEN substring(b."t1_name"::varchar,0,6)
+					WHEN a.select_time = 't2' THEN substring(b."t2_name"::varchar,0,6)
+					WHEN a.select_time = 't3' THEN substring(b."t3_name"::varchar,0,6)
+					WHEN a.select_time = 't4' THEN substring(b."t4_name"::varchar,0,6)
+					WHEN a.select_time = 't5' THEN substring(b."t5_name"::varchar,0,6)
+					WHEN a.select_time = 't6' THEN substring(b."t6_name"::varchar,0,6)
+					WHEN a.select_time = 't7' THEN substring(b."t7_name"::varchar,0,6)
+					WHEN a.select_time = 't8' THEN substring(b."t8_name"::varchar,0,6)
+					WHEN a.select_time = 't9' THEN substring(b."t9_name"::varchar,0,6)
+					WHEN a.select_time = 't10' THEN substring(b."t10_name"::varchar,0,6)
 				END AS "reservation_time"
 		FROM tb_reservation_list a
 		JOIN tb_reservation_info b ON a.branch_code = b.branch_code 
-		JOIN tb_user c on a.user_id = c."id"
-		LEFT OUTER JOIN
-			(
-				SELECT user_id, branch_code, COUNT(*) AS has_reservation
-				FROM tb_reservation_list
-				GROUP BY user_id, branch_code) la ON c.branch_code = la.branch_code AND c.id = la.user_id
 		<where>
+			a.rsv_status = 'N'
+			and a.rsv_date <![CDATA[<]]> #{today}
 			<choose>
 				<when test="super_branch_code == null or super_branch_code == ''">
 					AND a.branch_code = #{branch_code}
@@ -485,28 +515,11 @@
 					AND a.branch_code = #{super_branch_code}
 				</otherwise>
 			</choose>
-			<if test='userIdOrName != null and userIdOrName != ""'>
-				AND (
-					UPPER(a.user_id) LIKE '%' || UPPER(#{userIdOrName}) || '%'
-					OR UPPER(a.user_id) LIKE '%' || UPPER(#{userIdOrName}) || '%'
-				)
-			</if>
-			<if test='phoneNumber!=null and phoneNumber!=""'>
-				AND c.phone_number LIKE '%' || UPPER(#{phoneNumber}) || '%'
-			</if>
-			<if test="startDate != null and startDate != '' and endDate != null and endDate != ''">
-				AND rsv_date::date BETWEEN TO_TIMESTAMP(#{startDate}, 'YYYY-MM-DD') AND TO_TIMESTAMP(#{endDate}, 'YYYY-MM-DD') + INTERVAL '1 day' - INTERVAL '1 second'
-			</if>
-			<if test='rsv_status != null and rsv_status != ""'>
-				AND (
-					rsv_status = ANY(string_to_array(#{rsv_status},','))
-				)
-			</if>
 		</where>
-		ORDER BY rsv_date
+		ORDER BY a.rsv_date desc
 	</select>
 	
-	<select id="getReservationModal" parameterType="map" resultType="map">
+	<select id="getReservationList" parameterType="map" resultType="map">
 		<foreach collection="timeSlots" item="timeSlot" separator="UNION ALL">
 			SELECT
 				't${timeSlot}' AS col,
@@ -553,27 +566,6 @@
 					</where>
 				) as rsv_time
 		</foreach>
-	</select>
-	
-	<select id="getUserReservationList" parameterType="map" resultType="map">
-		SELECT rsv_date, rsv_status, select_time, tbi.branch_name,
-			CASE 
-				WHEN trl.select_time = 't1' THEN tri."t1_name"
-				WHEN trl.select_time = 't2' THEN tri."t2_name"
-				WHEN trl.select_time = 't3' THEN tri."t3_name"
-				WHEN trl.select_time = 't4' THEN tri."t4_name"
-				WHEN trl.select_time = 't5' THEN tri."t5_name"
-				WHEN trl.select_time = 't6' THEN tri."t6_name"
-				WHEN trl.select_time = 't7' THEN tri."t7_name"
-				WHEN trl.select_time = 't8' THEN tri."t8_name"
-				WHEN trl.select_time = 't9' THEN tri."t9_name"
-				WHEN trl.select_time = 't10' THEN tri."t10_name"
-			END AS "reservation_time"
-		FROM tb_reservation_list trl
-			JOIN tb_reservation_info tri ON trl.branch_code = tri.branch_code
-			JOIN tb_branch_info tbi on trl.branch_code = tbi.branch_code
-		WHERE user_id = #{user_id}
-		ORDER BY  rsv_date ASC
 	</select>
 	
 	<insert  id="updateReservationByAdmin" parameterType="map">
@@ -627,24 +619,7 @@
 			</choose>
 		)
 	</insert>
-	
-<!-- 	<select id="getRecentlyBranchReservationInfo" parameterType="map" resultType="map"> -->
-<!-- 		SELECT rsv_month, t1_name, t2_name, t3_name, t4_name, t5_name, t6_name, t7_name, t8_name, t9_name, t10_name -->
-<!-- 		FROM tb_reservation_info -->
-<!-- 		<where> -->
-<!-- 			<choose> -->
-<!-- 				<when test="super_branch_code == null or super_branch_code == ''"> -->
-<!-- 					and branch_code = #{branch_code} -->
-<!-- 				</when> -->
-<!-- 				<otherwise> -->
-<!-- 					and branch_code = #{super_branch_code} -->
-<!-- 				</otherwise> -->
-<!-- 			</choose> -->
-<!-- 		</where> -->
-<!-- 		ORDER BY rsv_month desc -->
-<!-- 		limit 1 -->
-<!-- 	</select> -->
-	
+
 	<update id="updateRsvStatus" parameterType="map">
 		UPDATE tb_reservation_list
 		SET rsv_status = #{rsv_status}
@@ -708,16 +683,16 @@
 	
 	<select id="getRecentRsvData" parameterType="map" resultType="map">
 		SELECT a.user_id, a.rsv_date, a.select_time, TO_CHAR(a.created_dt, 'YYYY-MM-DD') as created_dt,
-				CASE WHEN a.select_time = 't1' then b.t1_name
-					 WHEN a.select_time = 't2' then b.t2_name 
-					 WHEN a.select_time = 't3' then b.t3_name 
-					 WHEN a.select_time = 't4' then b.t4_name 
-					 WHEN a.select_time = 't5' then b.t5_name 
-					 WHEN a.select_time = 't6' then b.t6_name 
-					 WHEN a.select_time = 't7' then b.t7_name 
-					 WHEN a.select_time = 't8' then b.t8_name
-					 WHEN a.select_time = 't9' then b.t9_name
-					 WHEN a.select_time = 't10' then b.t10_name
+				CASE WHEN a.select_time = 't1' then substring(b.t1_name::varchar,0,6)
+					 WHEN a.select_time = 't2' then substring(b.t2_name::varchar,0,6)
+					 WHEN a.select_time = 't3' then substring(b.t3_name::varchar,0,6)
+					 WHEN a.select_time = 't4' then substring(b.t4_name::varchar,0,6)
+					 WHEN a.select_time = 't5' then substring(b.t5_name::varchar,0,6)
+					 WHEN a.select_time = 't6' then substring(b.t6_name::varchar,0,6)
+					 WHEN a.select_time = 't7' then substring(b.t7_name::varchar,0,6)
+					 WHEN a.select_time = 't8' then substring(b.t8_name::varchar,0,6)
+					 WHEN a.select_time = 't9' then substring(b.t9_name::varchar,0,6)
+					 WHEN a.select_time = 't10' then substring(b.t10_name::varchar,0,6)
 				END as select_time_nm,
 				CASE
 					WHEN c.status IS NOT NULL THEN c.status
@@ -742,7 +717,7 @@
 				</otherwise>
 			</choose>
 		</where>
-		ORDER BY a.user_id, created_dt desc
+		ORDER BY created_dt desc, rsv_date
 	</select>
 	
 	<select id="getNonRsvData" parameterType="map" resultType="map">

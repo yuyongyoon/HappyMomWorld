@@ -4,6 +4,17 @@
 $(document).ready(function() {
 	let calendarEl = document.getElementById('calendar');
 	let calendarList = [];
+	let modalPicker;
+	let changeRsvGrid;
+	let joinGrid;
+	let recentRsvGrid;
+	let nonRecentRsvGrid;
+	let nonConfirmGrid;
+	let nonConfirmData;
+	let recentJoinData;
+	let recentRsvData;
+	let nonRsvData;
+	
 	calendar = new FullCalendar.Calendar(calendarEl, {
 		initialView: 'dayGridMonth',
 		height: 700,
@@ -41,10 +52,14 @@ $(document).ready(function() {
 	let refreshButton = $('.fc-refresh-button');
 	let spanTag = $('<span>').addClass('btn-label').html('<i class="fas fa-sync"></i>');
 	refreshButton.append(spanTag);
+	
+	$('.fc-prev-button').attr('title', '이전 달');
+	$('.fc-next-button').attr('title', '다음 달');
 
 	$('.fc-daygrid-day-events').css('font-weight', 'bolder');
 	$('.fc-daygrid-day-events').css('margin-top','15px');
 	$('.fc-daygrid-day-events').css('font-size','18px');
+	$('.fc-scroller').css('overflow', 'hidden hidden')
 	
 	$('.fc-prev-button').click(function() {
 		let currentDate = cfn_yearMonthFormat(calendar.getDate());
@@ -55,10 +70,6 @@ $(document).ready(function() {
 		let currentDate = cfn_yearMonthFormat(calendar.getDate());
 		ajaxCom.getCalendarEvent(currentDate);
 	})
-	
-	let recentJoinData;
-	let recentRsvData;
-	let nonRsvData;
 	
 	ajaxCom = {
 		getCalendarEvent: function(rsvMonth){
@@ -127,8 +138,11 @@ $(document).ready(function() {
 				url		: "/admin/getSeletedDateReservationList",
 				data	: param,
 				success	: function(result){
+					if(typeof result.theaderData != 'undefined' && result.rsvUserList.length >= 0){
+						fnCom.createTable(result)
+					}
+					
 					$('#click_dt').text(date);
-					fnCom.createTr(result.reservationList)
 				},
 				error	: function(xhr,status){
 					alert('오류가 발생했습니다.');
@@ -141,11 +155,13 @@ $(document).ready(function() {
 			
 			if($('#select-branch').val() != '' && $('#role').val() == 'SUPERADMIN') {
 				param = {
-					super_branch_code : $('#select-branch').val()
+					super_branch_code : $('#select-branch').val(),
+					today			: fnCom.getToday()
 				}
 			} else {
 				param = {
-					branch_code : ''
+					branch_code : '',
+					today			: fnCom.getToday()
 				}
 			}
 			
@@ -178,6 +194,13 @@ $(document).ready(function() {
 						nonRsvData = result.nonRsvData;
 					} else {
 						$('#nonRsvCnt').text(0 + ' 명');
+					}
+					
+					if(result.nonConfirmData.length > 0) {
+						$('#nonConfirmCnt').text(result.nonConfirmData.length + ' 건');
+						nonConfirmData = result.nonConfirmData;
+					} else {
+						$('#nonConfirmCnt').text(0 + ' 건');
 					}
 				},
 				error	: function(xhr,status){
@@ -273,6 +296,127 @@ $(document).ready(function() {
 					}
 				}
 			})
+		},
+		updateRsvStatus: function(param, ori){
+			$.doPost({
+				url	 	: "/admin/updateRsvStatus",
+				data 	: param,
+				success	: function(result) {
+					if(result.msg == 'success') {
+						alert('변경되었습니다.');
+						if(ori == 'modal'){
+							$('#user_modal').modal('hide');
+							ajaxCom.getSeletedDateReservationList(param.rsv_date);
+						} else {
+							ajaxCom.getNonConfirmData();
+						}
+					} else {
+						alert('오류가 발생했습니다.');
+					}
+				},
+				error	: function(xhr,status){
+					alert('오류가 발생했습니다.');
+				}
+			});
+		},
+		removeReservation: function(param){
+			$.doPost({
+				url	 	: "/admin/removeReservationByAdmin",
+				data 	: param,
+				success	: function(result) {
+					if(result.msg == 'success') {
+						alert('취소되었습니다.');
+						$('#user_modal').modal('hide');
+						ajaxCom.getCalendarEvent(fnCom.getToday());
+						ajaxCom.getSeletedDateReservationList(param.rsv_date);
+					} else {
+						alert('오류가 발생했습니다.');
+					}
+				},
+				error	: function(xhr,status){
+					alert('오류가 발생했습니다.');
+				}
+			});
+		},
+		getReservationList: function() {
+			let date = $('#input_datepicker_modal').val();
+			let month = date.substring(0,7);
+			let superBranchCode;
+			
+			if($('#role').val() == 'SUPERADMIN'){
+				superBranchCode = $('#select-branch').val();
+			}
+			
+			$.doPost({
+				url	 	: "/admin/getReservationList",
+				data 	: {
+					rsv_date			: date,
+					rsv_month			: month,
+					super_branch_code	: superBranchCode
+				},
+				success	: function(result) {
+					let newData = [];
+					result.reservationList.forEach( d => {
+						if(d.cnt != 0) {
+							newData.push(d);
+						}
+					})
+
+					changeRsvGrid.resetData(newData);
+				},
+				error	: function(xhr,status){
+					alert('오류가 발생했습니다.');
+				}
+			});
+		},
+		updateReservation: function(param){
+			$.doPost({
+				url	 	: "/admin/updateReservation",
+				data 	: param,
+				success	: function(result) {
+					if(result.msg == 'success') {
+						alert('예약이 변경되었습니다.');
+						$('#changeRsv_modal').modal('hide');
+						ajaxCom.getCalendarEvent(fnCom.getToday());
+						ajaxCom.getSeletedDateReservationList(param.rsv_date);
+					} else {
+						alert('오류가 발생했습니다.');
+					}
+				},
+				error	: function(xhr,status){
+					alert('오류가 발생했습니다.');
+				}
+			});
+		},
+		getNonConfirmData : function() {
+			
+			if($('#role').val() == 'SUPERADMIN'){
+				let superBranchCode = $('#select-branch');
+			}
+			
+			if($('#select-branch').val() != ''){
+				superBranchCode = $('#select-branch').val();
+			} else {
+				superBranchCode = '';
+			}
+			
+			$.doPost({
+				url	 	: "/admin/getNonConfirmData",
+				data 	: {
+					today			: fnCom.getToday(),
+					super_branch_code 	: superBranchCode,
+				},
+				success	: function(result) {
+					if(result.nonConfirmData.length > 0){
+						nonConfirmData = result.nonConfirmData;
+						nonConfirmGrid.resetData(result.nonConfirmData);
+						$('#nonConfirmCnt').text(nonConfirmData.length + ' 건');
+					}
+				},
+				error	: function(xhr,status){
+					alert('오류가 발생했습니다.');
+				}
+			});
 		}
 	};
 	
@@ -287,25 +431,145 @@ $(document).ready(function() {
 			ajaxCom.getRecentRsvData();
 		},
 		btn_download_rsvGrid: function(){
-			tuiGrid.dataExport(recentRsvGrid,'최근_예약한_회원.xlsx');
+			tuiGrid.dataExport(recentRsvGrid,'7일간_예약_내역.xlsx');
 		},
 		btn_getNonRsvGrid: function() {
 			ajaxCom.getNonRsvData();
 		},
 		btn_download_NonRsvGrid: function(){
 			tuiGrid.dataExport(nonRecentRsvGrid,'미완료_예약_회원.xlsx');
-		}
+		},
+		btn_getNonConfirmGrid: function(){
+			ajaxCom.getNonConfirmData();
+		},
+		btn_download_NonConfirmGrid: function(){
+			tuiGrid.dataExport(nonConfirmGrid,'마사지_미완료_회원.xlsx');
+		},
+		btn_change: function(){
+			if($('#select_status').val() == 'Y'){
+				alert('마사지 완료를 미완료로 변경 후 예약을 변경해주세요.');
+				return false;
+			} 
+			
+			$('#user_modal').modal('hide');
+			
+			modalPicker = new tui.DatePicker('#div_datepicker_modal', {
+				date: new Date($('#rsv_date').val()),
+				language: 'ko',
+				input: {
+					element: '#input_datepicker_modal',
+					format: 'yyyy-MM-dd'
+				}
+			});
+			
+			$('#changeRsv_modal').modal('show');
+			tuiGrid.destroyGrid(changeRsvGrid);
+			
+			modalPicker.on('change', function(){
+				let currentDate = fnCom.getToday();
+				let selectedDate = $('#input_datepicker_modal').val();
+				
+				if(selectedDate < currentDate){
+					alert('오늘보다 이전 날짜로 예약일을 변경할 수 없습니다.');
+					return false;
+				} else {
+					ajaxCom.getReservationList();
+				}
+			});
+			
+		},
+		btn_cancel: function(){
+			if (confirm("예약을 취소하시겠습니까?")) {
+				let param = {
+					user_id : $('#input_id').val(),
+					select_time : $('#rsv_time').val(),
+					rsv_date : $('#rsv_date').val(),
+					flag		: 'd'
+				}
+				ajaxCom.removeReservation(param);
+			}
+		},
+		
 	}
 	
 	fnCom = {
-		createTr : function(data){
-			$("#reservation_tbody").empty();
-			
-			data.forEach((reservation, index) => {
-				let row = '<tr><td>'+Number(index+1)+'</td><td>'+reservation.user_name+'</td><td>'+reservation.phone_number+'</td>'+reservation.user_id+'<td>'+reservation.reservation_time.substring(0,5)+'</td></tr>';
-				
-				$("#reservation_tbody").append(row);
+		getToday: function() {
+			const now = new Date();
+			const year = now.getFullYear();
+			const month = String(now.getMonth() + 1).padStart(2, '0');
+			const day = String(now.getDate()).padStart(2, '0');
+			return year + '-' + month + '-' + day;
+		},
+		createTable : function(result){
+			$('#rsv_theader > tr> .rsvth').each(function() {
+				$(this).remove();
 			});
+			
+			$('#rsv_tbody').empty();
+			
+			let stdData = result.theaderData;
+			let rsvUserList = result.rsvUserList;
+			let keys = Object.keys(stdData).filter(function(key) {
+				return key.endsWith('_times');
+			});
+			keys.sort();
+
+			for(let i = 1; i <= stdData.max_rsv; i++) {
+				$('#rsv_theader tr').append('<th scope="col" class="rsvth">예약자 ' + (i) + '</th>');
+			}
+			
+			for (let i = 0; i < keys.length; i++) {
+				let rowHtml = '<tr>';
+				rowHtml += '<td style="text-align: center;">' + stdData[keys[i]].substring(0,5) + '</td>';
+			
+				let tdCnt = stdData.max_rsv;
+				let reservedUsers = rsvUserList.filter(user => user.select_time == keys[i].split('_')[0]);
+				let availableCount = stdData[keys[i] + '_cnt'];
+				let rsvDate = stdData.rsv_date;
+				let currentDate = fnCom.getToday();
+			
+				for (let j = 0; j < stdData.max_rsv; j++) {
+					if (tdCnt > 0) {
+						if (j < reservedUsers.length) {
+							let userName = reservedUsers[j].name != '' ? reservedUsers[j].name : '예약 가능';
+							if(userName != '예약 가능'){
+								rowHtml += '<td class="userClick" style="text-align: center; text-decoration: underline; cursor: pointer;" user_id="'+reservedUsers[j].user_id+'" rsv_times="'+reservedUsers[j].select_time+'" phone="'+reservedUsers[j].phone_number+'" rsv_status="'+reservedUsers[j].rsv_status+'" rsv_date="'+stdData.rsv_date+'">' + userName + '</td>';
+							} else {
+								if(rsvDate < currentDate){
+									rowHtml += '<td style="text-align: center; color:gray;">예약 안됨</td>';
+								} else {
+									rowHtml += '<td style="text-align: center; color:blue;">' + userName + '</td>';
+								}
+							}
+							
+						} else {
+							if (j < availableCount) {
+								if(rsvDate < currentDate){
+									rowHtml += '<td style="text-align: center; color:gray;">예약 안됨</td>';
+								} else {
+									rowHtml += '<td style="text-align:center; color:blue;">예약 가능</td>';
+								}
+							} else {
+								rowHtml += '<td style="text-align: center;">X</td>';
+							}
+						}
+						tdCnt--;
+					}
+				}
+				rowHtml += '</tr>';
+				$('#rsv_tbody').append(rowHtml);
+			}
+			
+			$('.userClick').on('click', function(){
+				$('#input_id').val($(this).attr('user_id'));
+				$('#input_nm').val($(this).text());
+				$('#input_phone').val($(this).attr('phone'));
+				$('#select_status').val($(this).attr('rsv_status'));
+				$('#rsv_time').val($(this).attr('rsv_times'));
+				$('#rsv_date').val($(this).attr('rsv_date'));
+				
+				$('#user_modal').modal('show');
+			})
 		},
 		joinGridConfirm : function(props, rowKey){
 			let rowData = joinGrid.getRow(rowKey);
@@ -374,7 +638,32 @@ $(document).ready(function() {
 			if(confirm('상태를 변경하시겠습니까?')) {
 				ajaxCom.saveMsgLog(param, 'non_rsv');
 			}
-		}
+		},
+		changeRsvModal: function(props, rowKey){
+			let data = props.grid.getRow(rowKey);
+			let rsvDate = $('#input_datepicker_modal').val();
+			let rsvMonth = rsvDate.substring(0,7);
+			let rsvTime = data.rsv_time.substring(0, 5);
+			let superBranchCode
+			
+			if($('#role').val() == 'SUPERADMIN'){
+				superBranchCode = $('#select-branch');
+			}
+			
+			if (confirm("기존 예약이 취소됩니다. 예약을 변경하시겠습니까?")) {
+				let param = {
+					user_id			: $('#input_id').val(),
+					pre_rsv_date	: $('#rsv_date').val(),
+					pre_select_time	: $('#rsv_time').val(),
+					rsv_month		: rsvMonth,
+					rsv_date		: rsvDate,
+					select_time		: data.col,
+					super_branch_code	: superBranchCode
+				}
+				
+				ajaxCom.updateReservation(param);
+			}
+		},
 	}
 
 	ajaxCom.getCalendarEvent(cfn_yearMonthFormat(new Date()));
@@ -384,10 +673,6 @@ $(document).ready(function() {
 		ajaxCom.getCalendarEvent(cfn_yearMonthFormat(new Date()));
 		ajaxCom.getDashboardInfo();
 	});
-	
-	let joinGrid;
-	let recentRsvGrid;
-	let nonRecentRsvGrid;
 	
 	$('#recentJoin').click(function() {
 		tuiGrid.destroyGrid(joinGrid);
@@ -405,7 +690,7 @@ $(document).ready(function() {
 					rowHeight : 32,
 					minRowHeight : 25,
 					columns: [
-						{header : 'id',			name : 'id',			align:'left',	 sortable: true},
+						{header : '아이디',			name : 'id',			align:'left',	 sortable: true},
 						{header : '이름',			name : 'name',			align:'left',	 sortable: true},
 						{header : '전화번호',		name : 'phone_number',	align:'left',	 sortable: true},
 						{header : '가입일',		name : 'created_dt',	align:'center', sortable: true},
@@ -443,16 +728,16 @@ $(document).ready(function() {
 					rowHeight : 32,
 					minRowHeight : 25,
 					columns: [
-						{header : 'id',			name : 'user_id',			align:'left',	 sortable: true},
+						{header : '아이디',			name : 'user_id',			align:'left',	 sortable: true},
 						{header : '예약일',		name : 'rsv_date',			align:'center',	 sortable: true},
 						{header : '예약 시간',		name : 'select_time_nm',	align:'center',	 sortable: true},
-						{header : '예약한 시간',	name : 'created_dt',		align:'center', sortable: true},
+						{header : '예약한 날짜',	name : 'created_dt',		align:'center', sortable: true},
 						{header : '알림 상태',			name : 'msg_status',	 align:'center', sortable: true, formatter: 'listItemText', disabled:true, editor: { type: 'select', options: { listItems: [{text:'전송', value:'Y'},{text:'미전송',value:'N'}]}}},
 						{header : '알림 상태 변경',		name : 'change',			align:'center',  
 							renderer: {
 								type : ButtonRenderer,
 								options : {
-									value : '확인',
+									value : '변경',
 									click: fnCom.recentRsvGridConfirm
 								}
 							}
@@ -480,17 +765,18 @@ $(document).ready(function() {
 					rowHeight : 32,
 					minRowHeight : 25,
 					columns: [
-						{header : 'id',				name : 'id',			align:'left',	 sortable: true},
-						{header : '전화번호',			name : 'phone_number',			align:'center',	 sortable: true},
-						{header : '잔여 예약 건수',		name : 'free_rsv_cnt',		align:'center', sortable: true},
+						{header : '아이디',			name : 'id',				align:'left',	 sortable: true},
+						{header : '전화번호',			name : 'phone_number',		align:'center',	 sortable: true},
+						{header : '잔여 마사지 횟수',	name : 'free_rsv_cnt',		align:'center', sortable: true},
 						{header : '전체 마사지 횟수',	name : 'massage_total',		align:'center', sortable: true},
-						{header : '임신 주수',			name : 'pregnancy_weeks',		align:'center', sortable: true},
-						{header : '상태',			name : 'msg_status',	 align:'center', sortable: true, formatter: 'listItemText', disabled:true, editor: { type: 'select', options: { listItems: [{text:'확인', value:'Y'},{text:'미확인',value:'N'}]}}},
-						{header : '상태 확인',			name : 'change',			align:'center', width : 100, 
+						{header : '출산 예정일',		name : 'due_date',			align:'center', sortable: true},
+						{header : '임신 주수',			name : 'pregnancy_weeks',	align:'center', sortable: true},
+						{header : '알림 상태',			name : 'msg_status',		align:'center', sortable: true, formatter: 'listItemText', disabled:true, editor: { type: 'select', options: { listItems: [{text:'전송', value:'Y'},{text:'미전송',value:'N'}]}}},
+						{header : '알림 상태 변경',		name : 'change',			align:'center', 
 							renderer: {
 								type : ButtonRenderer,
 								options : {
-									value : '확인',
+									value : '변경',
 									click: fnCom.nonRsvGridConfirm
 								}
 							}
@@ -502,15 +788,121 @@ $(document).ready(function() {
 		);
 	});
 	
+	$('#nonConfirm').click(function(){
+		tuiGrid.destroyGrid(nonConfirmGrid);
+		$('#nonConfirmModal').modal('show');
+	})
+	
+	$('#nonConfirmModal').on('shown.bs.modal', function(e){
+		nonConfirmGrid = tuiGrid.createGrid (
+				{
+					gridId : 'nonConfirmGrid',
+					height : 400,
+					scrollY : true,
+					readOnlyColorFlag : false,
+					rowHeaders: ['rowNum'],
+					rowHeight : 32,
+					minRowHeight : 25,
+					columns: [
+						
+						{header : '예약일',			name : 'rsv_date',			align:'center',	 sortable: true},
+						{header : '예약시간',			name : 'reservation_time',	align:'center', sortable: true},
+						{header : 'id',				name : 'user_id',			align:'left',	 sortable: true},
+						{header : '마사지 확인',			name : 'rsv_status',	align:'center', sortable: true, style:'cursor:pointer;text-decoration:underline;',
+							formatter: 'listItemText', disabled:false, 
+							editor: { type: 'select', options: { listItems: [{text:'완료', value:'Y'},{text:'미완료',value:'N'}]}}},
+						{header : '예약시간',			name : 'select_time',		hidden:true}
+					]
+				},
+				nonConfirmData,
+				{
+					afteredit: function(rowKey,colName,preval,newval,grid){
+						if(colName == 'rsv_status'){
+							let data = nonConfirmGrid.getRow(rowKey);
+							
+							let param = {
+								user_id : data.user_id,
+								select_time : data.select_time,
+								rsv_date : data.rsv_date,
+								rsv_status : newval
+							}
+							
+							if(preval == 'N') {
+								if(confirm('마사지 완료로 변경하시겠습니까?')){
+									ajaxCom.updateRsvStatus(param, 'grid');
+								}
+							} else {
+								if(confirm('마사지 미완료로 변경하시겠습니까?')){
+									ajaxCom.updateRsvStatus(param, 'grid');
+								}
+							}
+						}
+						
+					}
+				}
+		);
+	});
+	
 	$('#goToRsvMaster').click(function(){
 		window.location.href = '/admin/reservation_master';
 	})
+	
+	$('#select_status').on('change', function(){
+		let param = {
+			user_id : $('#input_id').val(),
+			select_time : $('#rsv_time').val(),
+			rsv_date : $('#rsv_date').val(),
+			rsv_status : $('#select_status').val()
+		}
+		
+		if($('#select_status').val() == 'Y') {
+			if(confirm('마사지 완료로 변경하시겠습니까?')){
+				ajaxCom.updateRsvStatus(param, 'modal');
+			}
+		} else {
+			if(confirm('마사지 미완료로 변경하시겠습니까?')){
+				ajaxCom.updateRsvStatus(param, 'modal');
+			}
+		}
+	});
+	
+	$('#changeRsv_modal').on('shown.bs.modal', function(e){
+		changeRsvGrid = tuiGrid.createGrid (
+				{
+					gridId : 'grid_changeRsv_modal',
+					height : 250,
+					rowHeight : 32,
+					minRowHeight : 25,
+					scrollY : true,
+					readOnlyColorFlag : false,
+					columns: [
+						{header : '예약 가능 시간',		name : 'rsv_time',	width: 250,	align:'center', sortable: true},
+						{header : '예약한 시간',		name : 'remark',	hidden:true},
+						{header : '예약 변경',			name : 'change',	width: 200,	align:'center', 
+							renderer: {
+								type : ButtonRenderer,
+								options : {
+									value : '변경',
+									click: fnCom.changeRsvModal
+								}
+							}
+						}
+					]
+				},
+				[],
+				{}
+			);
+			ajaxCom.getReservationList();
+	});
 })
 </script>
 
 <style>
 a:link {
 	color : black;
+}
+.table td{
+	font-size: 15px!important;
 }
 .fc-daygrid-event{
 	height:25px !important;
@@ -579,64 +971,69 @@ a:link {
 					</div>
 				</div>
 				<div class="col-md-4">
-					<div class="card">
+					<div class="card mb-2">
 						<div class="card-header pb-0">
 							<h2 class="fw-bold">알림</h2>
 						</div>
 						<div class="card-body">
-							<div class="d-flex mb-2" style="cursor:pointer;" id="goToRsvMaster">
+							<div class="d-flex" style="cursor:pointer;" id="goToRsvMaster">
 								<div class="avatar">
 									<span class="avatar-title rounded-circle border border-white bg-info"><i class="fas fa-calendar-alt"></i></span>
 								</div>
 								<div class="flex-1 ml-3 pt-3 mb-3">
-									<h3 class="text-uppercase fw-bold mb-1">마지막 예약 생성 월<span class="text-warning pl-3" id="rsvLstMonth"></span></h3>
+									<h4 class="fw-bold mb-1">마지막 예약 생성 월<span class="text-warning pl-3" id="rsvLstMonth"></span></h4>
 								</div>
 							</div>
-							<div class="d-flex mb-2" style="cursor:pointer;" id="recentJoin">
-								<div class="avatar">
-									<span class="avatar-title rounded-circle border border-white bg-success"><i class="fas fa-user-clock"></i></span>
-								</div>
-								<div class="flex-1 ml-3 pt-3 mb-3">
-									<h3 class="text-uppercase fw-bold mb-1">최근 7일 내 가입한 회원<span class="text-warning pl-3" id="recentJoinCnt"></span></h3>
-								</div>
-							</div>
-							<div class="d-flex mb-2" style="cursor:pointer;" id="recentRsv">
-								<div class="avatar">
-									<span class="avatar-title rounded-circle border border-white bg-primary"><i class="far fa-calendar-plus"></i></span>
-								</div>
-								<div class="flex-1 ml-3 pt-3 mb-3">
-									<h3 class="text-uppercase fw-bold mb-1">7일 간 예약 내역<span class="text-warning pl-3" id="recentRsvCnt"></span></h3>
-								</div>
-							</div>
-							<div class="d-flex mb-2" style="cursor:pointer;" id="nonRsv">
+							<div class="d-flex" style="cursor:pointer;" id="nonRsv">
 								<div class="avatar">
 									<span class="avatar-title rounded-circle border border-white bg-danger"><i class="fas fa-bullhorn"></i></span>
 								</div>
 								<div class="flex-1 ml-3 pt-3 mb-3">
-									<h3 class="text-uppercase fw-bold mb-1">예약이 완료되지 않은 회원 <span class="text-warning pl-3" id="nonRsvCnt"></span></h3>
+									<h4 class="fw-bold mb-1">예약이 완료되지 않은 회원 <span class="text-warning pl-3" id="nonRsvCnt"></span></h4>
+								</div>
+							</div>
+							<div class="d-flex" style="cursor:pointer;" id="recentJoin">
+								<div class="avatar">
+									<span class="avatar-title rounded-circle border border-white bg-success"><i class="fas fa-user-clock"></i></span>
+								</div>
+								<div class="flex-1 ml-3 pt-3 mb-3">
+									<h4 class="fw-bold mb-1">7일 내 가입한 회원<span class="text-warning pl-3" id="recentJoinCnt"></span></h4>
+								</div>
+							</div>
+							<div class="d-flex" style="cursor:pointer;" id="recentRsv">
+								<div class="avatar">
+									<span class="avatar-title rounded-circle border border-white bg-primary"><i class="far fa-calendar-plus"></i></span>
+								</div>
+								<div class="flex-1 ml-3 pt-3 mb-3">
+									<h4 class="fw-bold mb-1">7일 간 예약 내역<span class="text-warning pl-3" id="recentRsvCnt"></span></h4>
+								</div>
+							</div>
+							<div class="d-flex" style="cursor:pointer;" id="nonConfirm">
+								<div class="avatar">
+									<span class="avatar-title rounded-circle border border-white bg-warning"><i class="fas fa-check"></i></span>
+								</div>
+								<div class="flex-1 ml-3 pt-3 mb-3">
+									<h4 class="fw-bold mb-1">마사지 완료가 되지 않은 예약 내역<span class="text-warning pl-3" id="nonConfirmCnt"></span></h4>
 								</div>
 							</div>
 						</div>
 					</div>
 					
-					<div class="card" style="min-height:370px;">
+					<div class="card" style="min-height:300px;">
 						<div class="card-header pb-0">
 							<div class="row">
 								<h2 class="fw-bold"><span id="click_dt" class="ml-3"></span>&nbsp;예약 확인</h2>
 							</div>
 						</div>
 						<div class="card-body pb-0" >
-							<div class="table-responsive" style="overflow-y: auto;max-height: 300px;">
+							<div class="table-responsive" style="overflow-y: auto;max-height: 350px;">
 								<table class="table table-head-bg-secondary">
-									<thead>
+									<thead id="rsv_theader" style="text-align:center;">
 										<tr>
-											<th scope="col" id="idx">No</th>
-											<th scope="col" id="user_name">이름</th>
-											<th scope="col" id="phone_number">전화번호</th>
-											<th scope="col" id="reservation_time">예약시간</th>
+											<th scope="col" id="rsv_times">시간</th>
 										</tr>
 									</thead>
-									<tbody id="reservation_tbody">
+									<tbody id="rsv_tbody">
 									</tbody>
 								</table>
 							</div>
@@ -720,6 +1117,117 @@ a:link {
 				</div>
 				<div>
 					<div id="nonRecentRsvGrid"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade " id="nonConfirmModal" tabindex="-1" aria-labelledby="alertModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" style="max-width: 1000px!important;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h2 class="modal-title" id="alertModalLabel">마사지 완료가 되지 않은 예약 내역</h2>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div>
+					<div class="col-sm-12">
+						<div class="button-list float-right">
+							<button type="button" id="btn_getNonConfirmGrid" class="btn btn-icon btn-round btn-warning float-left ml-1 mb-2 btn-sm" data-toggle="tooltip" data-placement="bottom" title="조회"><i class="fas fa-sync"></i></button>
+							<button type="button" id="btn_download_NonConfirmGrid" class="btn btn-icon btn-round btn-warning float-left ml-1 mb-2 btn-sm" data-toggle="tooltip" data-placement="bottom" title="다운로드"><i class="fas fa-file-excel"></i></button>
+						</div>
+					</div>
+				</div>
+				<div>
+					<div id="nonConfirmGrid"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="user_modal" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title">예약자 정보</h4>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="col-12">
+					<div class="form-group row pb-0">
+						<div class="col-sm-3">
+							<label class="control-label mt-2">예약자 ID</label>
+						</div>
+						<div class="col-sm-9">
+							<input type="text" class="form-control" id="input_id" disabled>
+						</div>
+					</div>
+					<div class="form-group row pb-0">
+						<div class="col-sm-3">
+							<label class="control-label mt-2">예약자 이름</label>
+						</div>
+						<div class="col-sm-9">
+							<input type="text" class="form-control" id="input_nm" disabled>
+						</div>
+					</div>
+					<div class="form-group row pb-0">
+						<div class="col-sm-3">
+							<label class="control-label mt-2">전화번호</label>
+						</div>
+						<div class="col-sm-9">
+							<input type="text" class="form-control" id="input_phone" disabled>
+						</div>
+					</div>
+					<div class="form-group row pb-0">
+						<div class="col-sm-3">
+							<label class="control-label mt-2">마사지 완료</label>
+						</div>
+						<div class="col-sm-9">
+							<select class="form-control" id="select_status">
+								<option value="N">미완료</option>
+								<option value="Y">완료</option>
+							</select>
+						</div>
+					</div>
+					<input type="text" id="rsv_time" style="display:none;">
+					<input type="text" id="rsv_date" style="display:none;">
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-danger" id="btn_cancel">예약 취소</button>
+				<button type="button" class="btn btn-secondary" id="btn_change">예약 변경</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="changeRsv_modal" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title">예약 변경</h4>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="form-group pb-0" style="margin: 6px;">
+				<label class="control-label mt-2 mr-3">예약할 날짜 선택</label>
+				<div class="tui-datepicker-input tui-datetime-input tui-has-focus"
+					style="margin-bottom: 6px;">
+					<input type="text" id="input_datepicker_modal" aria-label="date">
+					<span class="tui-ico-date"></span>
+				</div>
+				<div class="datepicker-cell" id="div_datepicker_modal"></div>
+			</div>
+			<div class="modal-body">
+				<div>
+					<div id="grid_changeRsv_modal"></div>
 				</div>
 			</div>
 		</div>

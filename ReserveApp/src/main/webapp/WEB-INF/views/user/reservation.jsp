@@ -113,7 +113,8 @@
 								<div class="col-md-12">
 									<div class="row">
 										<div class="col-sm-6">
-											<span class="row-title">예약 확인&nbsp&nbsp&nbsp&nbsp</span>
+											<span class="row-title">예약 확인</span>
+											<br>
 											<span class="row-title" style="font-size: 25px;">(</span>
 											<span class="row-title" id="massageCnt" style="font-size: 25px;"></span>
 											<span class="row-title" style="font-size: 25px;">회 예약 / 총 </span>

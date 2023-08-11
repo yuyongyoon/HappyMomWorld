@@ -255,23 +255,23 @@ $(document).ready(function() {
 					
 						<li class="nav-item dropdown hidden-caret">
 							<a class="nav-link dropdown-toggle" href="#" id="userMenu" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-								<i class="fas fa-user"></i><span style="margin-left:10px"><sec:authentication property="principal.name" /> 님</span>
+								<i class="fas fa-user"></i><span style="margin-left:10px;font-size:14px"><sec:authentication property="principal.name"/> 님</span>
 							</a>
 							
 							<ul class="dropdown-menu dropdown-user animated fadeIn" aria-labelledby="userMenu">
 								<sec:authorize access="hasAnyRole('ROLE_USER')">
 									<li id="updateUserInfo_list">
-										<a class="dropdown-item" style="cursor:pointer;">회원정보 변경</a>
+										<a class="dropdown-item" style="cursor:pointer;font-size:14px;">회원정보 변경</a>
 									</li>
 									
 									<li class="updateUserPwd_list">
-										<a class="dropdown-item" style="cursor:pointer;">비밀번호 변경</a>
+										<a class="dropdown-item" style="cursor:pointer;font-size:14px">비밀번호 변경</a>
 									</li>
 								</sec:authorize>
 								
 								<sec:authorize access="hasAnyRole('ROLE_ADMIN','ROLE_SUPERADMIN')">
 									<li class="updateUserPwd_list">
-										<a class="dropdown-item" style="cursor:pointer;">비밀번호 변경</a>
+										<a class="dropdown-item" style="cursor:pointer;font-size:14px">비밀번호 변경</a>
 									</li>
 								</sec:authorize>
 								
@@ -326,7 +326,7 @@ $(document).ready(function() {
 								<label class="control-label mt-2" style="border: 0px;">전화번호</label>
 							</div>
 							<div class="col-sm-9">
-								<input type="tel" class="form-control" id="input_phoneNumber_info" maxlength='13'>
+								<input type="text" class="form-control" id="input_phoneNumber_info" maxlength='13'>
 							</div>
 						</div>
 						<div class="form-group row pb-0">
@@ -362,10 +362,10 @@ $(document).ready(function() {
 					<form>
 						<div class="col-12">
 							<div class="form-group row pb-0">
-								<div class="col-sm-3">
+								<div class="col-sm-4">
 									<label for="input_orgPwd_pwd" class="control-label mt-2">기존 비밀번호</label>
 								</div>
-								<div class="col-sm-9">
+								<div class="col-sm-8">
 									<input type="password" class="form-control" id="input_orgPwd_pwd" autoComplete="off"/>
 									<div class="show-password-nav">
 										<i class="flaticon-interface"></i>
@@ -376,10 +376,10 @@ $(document).ready(function() {
 								<span id="checkOrgPwd_msg" style="color: red; display: flex;justify-content: center;"></span>
 							</div>
 							<div class="form-group row pb-0">
-								<div class="col-sm-3">
+								<div class="col-sm-4">
 									<label class="control-label mt-2" style="border: 0px;">새 비밀번호</label>
 								</div>
-								<div class="col-sm-9">
+								<div class="col-sm-8">
 									<input type="password" class="form-control" id="input_newPwd_pwd" maxlength='13' autoComplete="off">
 									<div class="show-password-nav">
 										<i class="flaticon-interface"></i>
@@ -387,10 +387,10 @@ $(document).ready(function() {
 								</div>
 							</div>
 							<div class="form-group row pb-0">
-								<div class="col-sm-3">
+								<div class="col-sm-4">
 									<label class="control-label mt-2" style="border: 0px;">새 비밀번호 확인</label>
 								</div>
-								<div class="col-sm-9">
+								<div class="col-sm-8">
 									<input type="password" class="form-control" id="input_checkNewPwd_pwd" maxlength='13' autoComplete="off">
 									<div class="show-password-nav">
 										<i class="flaticon-interface"></i>
@@ -405,7 +405,7 @@ $(document).ready(function() {
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-secondary" id="btn_updatePwd_save">비밀번호 변경</button>
-					<button type="button" class="btn btn-pwd" id="btn_updatePwd_close">취소</button>
+					<button type="button" class="btn btn-pwd btn-info" id="btn_updatePwd_close">취소</button>
 				</div>
 			</div>
 		</div>
