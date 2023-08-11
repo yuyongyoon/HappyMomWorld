@@ -550,7 +550,7 @@ $(document).ready(function() {
 									rowHtml += '<td style="text-align:center; color:blue;">예약 가능</td>';
 								}
 							} else {
-								rowHtml += '<td style="text-align: center;">X</td>';
+								rowHtml += '<td style="text-align: center; color:red;">예약 불가</td>';
 							}
 						}
 						tdCnt--;
@@ -559,6 +559,10 @@ $(document).ready(function() {
 				rowHtml += '</tr>';
 				$('#rsv_tbody').append(rowHtml);
 			}
+			
+			$('.table-responsive').css('overflow-x', 'auto');
+			$('.table-responsive').css('max-width', '470px;'); 
+			$('.rsvth').css('min-width', '100px');
 			
 			$('.userClick').on('click', function(){
 				$('#input_id').val($(this).attr('user_id'));
